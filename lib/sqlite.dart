@@ -102,9 +102,6 @@ Future<SensorDB> getAllEntries(String databasePath) async {
       maps[i]['d10'],
     );
   });
-  returnList.forEach((element) {
-    print('${element.timeStamp}, ${element._measurements}');
-  });
   return SensorDB(returnList);
 }
 
