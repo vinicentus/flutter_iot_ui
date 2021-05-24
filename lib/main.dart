@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Flutter Graph Demo',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Graph Demo Home Page'),
     );
   }
 }
@@ -65,17 +65,19 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: FutureBuilder(
-        future: getAllEntries(dbPath),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.hasData) {
-            return SPS30DataChart(snapshot.data);
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error'));
-          } else {
-            return CircularProgressIndicator();
-          }
-        },
+      body: Center(
+        child: FutureBuilder(
+          future: getAllEntries(dbPath),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.hasData) {
+              return SPS30DataChart(snapshot.data);
+            } else if (snapshot.hasError) {
+              return Text('Error');
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
       ),
     );
   }
