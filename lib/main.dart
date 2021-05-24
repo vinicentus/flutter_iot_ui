@@ -4,7 +4,8 @@ import 'package:flutter_iot_ui/time_series_chart.dart';
 
 void main() {
   initDBLib();
-  getAllEntries('/home/pi/test.db').then((value) => print(value.entryList));
+  getAllEntries('/home/pi/IoT-Microservice/app/oracle/sensor_data.db')
+      .then((value) => print(value.entryList));
   runApp(MyApp());
 }
 
