@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/sqlite.dart';
-import 'package:flutter_iot_ui/time_series_chart.dart';
+import 'package:flutter_iot_ui/sps30_data_chart.dart';
+
+String dbPath = '/home/pi/IoT-Microservice/app/oracle/sensor_data.db';
 
 void main() {
   initDBLib();
-  getAllEntries('/home/pi/IoT-Microservice/app/oracle/sensor_data.db')
-      .then((value) => print(value.entryList));
   runApp(MyApp());
 }
 
@@ -65,10 +65,17 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: SimpleTimeSeriesChart.withSampleData(),
+      body: FutureBuilder(
+        future: getAllEntries(dbPath),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.hasData) {
+            return SPS30DataChart(snapshot.data);
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error'));
+          } else {
+            return CircularProgressIndicator();
+          }
+        },
       ),
     );
   }
