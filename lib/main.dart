@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/sqlite.dart';
 import 'package:flutter_iot_ui/time_series_chart.dart';
 
 void main() {
+  initDBLib();
+  getAllEntries('/home/pi/test.db').then((value) => print('done'));
   runApp(MyApp());
 }
 
