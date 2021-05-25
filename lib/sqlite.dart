@@ -86,6 +86,8 @@ Future<SensorDB> getAllEntries(String databasePath) async {
   var db = await openDatabase(databasePath, readOnly: true);
   print('IsOpen: ${db.isOpen}');
   final List<Map<String, dynamic>> maps = await db.query('sensor_output');
+  await db.close();
+
   var returnList = List.generate(maps.length, (i) {
     return SPS30SensorDataEntry.createFromDB(
       maps[i]['date'],
