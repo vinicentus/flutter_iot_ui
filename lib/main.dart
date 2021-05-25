@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/sqlite.dart';
@@ -53,19 +53,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final rnd = Random();
+  // TODO: don't fetch the whole database every time...
+  Stream<SensorDB> dbUpdates() async* {
+    // Init
+    SensorDB db = await getAllEntries(dbPath);
+    yield db;
 
-  final List<SPS30SensorDataEntry> mockDataBase = [
-    SPS30SensorDataEntry(
-        DateTime(2017, 10, 10), [75, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-  ];
-
-  void createRandomEntry() {
-    var newTime = mockDataBase.last.timeStamp.add(Duration(hours: 1));
-    this.setState(() {
-      mockDataBase.add(SPS30SensorDataEntry(
-          newTime, [1, 1, 2, 3, 4, 5, 6, 7, rnd.nextInt(50), 9]));
-    });
+    while (true) {
+      db = await Future.delayed(
+          Duration(minutes: 1), () => getAllEntries(dbPath));
+      yield db;
+    }
   }
 
   @override
@@ -84,10 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: StreamBuilder(
-          stream: Stream.periodic(Duration(seconds: 1), (_) {
-            createRandomEntry();
-            return SensorDB(mockDataBase);
-          }),
+          stream: dbUpdates(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               return SPS30DataChart(snapshot.data);
