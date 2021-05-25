@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter_iot_ui/mock/mock_db.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -10,7 +11,9 @@ void initDBLib() {
     // Change the default factory
     databaseFactory = databaseFactoryFfi;
   } else {
-    print('not running on Linux, DB library not initialized');
+    print('not running on Linux, using mock DB');
+    databaseFactory = databaseFactoryMock;
+    //setMockDatabaseFactory(databaseFactoryMock);
   }
 }
 
