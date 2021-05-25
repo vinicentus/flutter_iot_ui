@@ -83,7 +83,7 @@ class SensorDB {
 
 Future<SensorDB> getAllEntries(String databasePath) async {
   print('opening db...');
-  var db = await openDatabase(databasePath);
+  var db = await openDatabase(databasePath, readOnly: true);
   print('IsOpen: ${db.isOpen}');
   final List<Map<String, dynamic>> maps = await db.query('sensor_output');
   var returnList = List.generate(maps.length, (i) {
