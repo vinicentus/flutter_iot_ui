@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/sqlite.dart';
 import 'package:flutter_iot_ui/sps30_data_chart.dart';
@@ -51,6 +53,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final rnd = Random();
+
+  final List<SPS30SensorDataEntry> mockDataBase = [
+    SPS30SensorDataEntry(
+        DateTime(2017, 10, 10), [75, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+  ];
+
+  void createRandomEntry() {
+    var newTime = mockDataBase.last.timeStamp.add(Duration(hours: 1));
+    this.setState(() {
+      mockDataBase.add(SPS30SensorDataEntry(
+          newTime, [1, 1, 2, 3, 4, 5, 6, 7, rnd.nextInt(50), 9]));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -66,8 +83,11 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: FutureBuilder(
-          future: getAllEntries(dbPath),
+        child: StreamBuilder(
+          stream: Stream.periodic(Duration(seconds: 1), (_) {
+            createRandomEntry();
+            return SensorDB(mockDataBase);
+          }),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               return SPS30DataChart(snapshot.data);

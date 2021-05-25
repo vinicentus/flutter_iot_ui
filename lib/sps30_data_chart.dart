@@ -6,7 +6,7 @@ class SPS30DataChart extends StatelessWidget {
   final List<charts.Series<SPS30SensorDataEntry, DateTime>> seriesList;
   final bool animate;
 
-  SPS30DataChart(SensorDB sensorDB, {this.animate = false})
+  SPS30DataChart(SensorDB sensorDB, {this.animate = true})
       : this.seriesList = [
           new charts.Series<SPS30SensorDataEntry, DateTime>(
               id: 'Number Concentration PM10 [#/cm³]',
