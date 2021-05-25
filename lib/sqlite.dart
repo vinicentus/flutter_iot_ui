@@ -10,7 +10,7 @@ void initDBLib() {
     // Change the default factory
     databaseFactory = databaseFactoryFfi;
   } else {
-    print("not running on Linux, DB library not initialized");
+    print('not running on Linux, DB library not initialized');
   }
 }
 
