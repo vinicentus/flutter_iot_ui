@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     while (true) {
       db = await Future.delayed(
-          Duration(minutes: 1), () => getAllEntries(dbPath));
+          Duration(seconds: 5), () => getAllEntries(dbPath));
       yield db;
     }
   }
