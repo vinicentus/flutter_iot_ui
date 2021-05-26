@@ -1,0 +1,65 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build-rm-copy-run",
+			"type": "shell",
+			"command": "echo Hello ",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"flutter: flutter build bundle",
+				"remove remote folder",
+				"copy build folder",
+				"run flutter-pi"
+			],
+			"problemMatcher": []
+		},
+		{
+			"type": "flutter",
+			"command": "flutter",
+			"args": [
+				"build",
+				"bundle"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"label": "flutter: flutter build bundle"
+		},
+		{
+			"type": "shell",
+			"command": "ssh",
+			"args": [
+				"pi@193.167.36.202",
+				"rm -rf /home/pi/flutter_iot_ui_assets"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"label": "remove remote folder"
+		},
+		{
+			"type": "shell",
+			"command": "scp",
+			"args": [
+				"-r",
+				".\\build\\flutter_assets",
+				"pi@193.167.36.202:/home/pi/flutter_iot_ui_assets"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"label": "copy build folder"
+		},
+		{
+			"type": "shell",
+			"command": "ssh",
+			"args": [
+				"pi@193.167.36.202",
+				"sudo flutter-pi /home/pi/flutter_iot_ui_assets"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"label": "run flutter-pi"
+		}
+	]
+}
