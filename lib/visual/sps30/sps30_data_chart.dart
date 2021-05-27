@@ -6,7 +6,7 @@ class SPS30DataChart extends StatelessWidget {
   final List<charts.Series<SPS30SensorDataEntry, DateTime>> seriesList;
   final bool animate;
 
-  SPS30DataChart(SensorDB sensorDB, {this.animate = true})
+  SPS30DataChart(List<SPS30SensorDataEntry> sensorDB, {this.animate = true})
       : this.seriesList = [
           new charts.Series<SPS30SensorDataEntry, DateTime>(
               id: 'Number Concentration PM10 [#/cm³]',
@@ -14,17 +14,8 @@ class SPS30DataChart extends StatelessWidget {
               domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
               measureFn: (SPS30SensorDataEntry value, _) =>
                   value.numberConcentrationPM10,
-              data: sensorDB.entryList),
+              data: sensorDB),
         ];
-
-  /// Creates a [TimeSeriesChart] with sample data and no transition.
-  factory SPS30DataChart.withSampleData() {
-    return new SPS30DataChart(
-      _createSampleData(),
-      // Disable animations for image tests.
-      animate: false,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,21 +27,5 @@ class SPS30DataChart extends StatelessWidget {
       // specified, the default creates local date time.
       dateTimeFactory: const charts.LocalDateTimeFactory(),
     );
-  }
-
-  /// Create one series with sample hard coded data.
-  static SensorDB _createSampleData() {
-    final data = [
-      new SPS30SensorDataEntry(
-          new DateTime(2017, 9, 19), [5, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-      new SPS30SensorDataEntry(
-          new DateTime(2017, 9, 26), [25, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-      new SPS30SensorDataEntry(
-          new DateTime(2017, 10, 3), [100, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-      new SPS30SensorDataEntry(
-          new DateTime(2017, 10, 10), [75, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    ];
-
-    return SensorDB(data);
   }
 }

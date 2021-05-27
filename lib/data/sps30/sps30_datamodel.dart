@@ -50,17 +50,3 @@ class SPS30SensorDataEntry {
   )   : this.timeStamp = DateTime.parse('$dateString $timeString'),
         this._measurements = [d1, d2, d3, d4, d5, d6, d7, d8, d9, d10];
 }
-
-// TODO: use typedef
-// as in https://dart.dev/guides/language/language-tour#typedefs
-// when support for a newer flutter engine is available in flutter-pi.
-// This feature relies on dart 2.13 or higher.
-class SensorDB {
-  final List<SPS30SensorDataEntry> entryList;
-
-  SensorDB(this.entryList);
-
-  /* void addEntry(List<SPS30SensorDataEntry> input) {
-    this.entryList.addAll(input);
-  } */
-}

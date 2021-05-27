@@ -17,7 +17,7 @@ void initDBLib() {
   }
 }
 
-Future<SensorDB> getAllEntries(String databasePath) async {
+Future<List<SPS30SensorDataEntry>> getAllEntries(String databasePath) async {
   print('opening db...');
   var db = await openDatabase(databasePath, readOnly: true);
   print('IsOpen: ${db.isOpen}');
@@ -40,7 +40,7 @@ Future<SensorDB> getAllEntries(String databasePath) async {
       maps[i]['d10'],
     );
   });
-  return SensorDB(returnList);
+  return returnList;
 }
 
 Future<SPS30SensorDataEntry> getEntriesFromDate(date) async {}

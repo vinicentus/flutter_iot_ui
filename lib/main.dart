@@ -55,9 +55,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // TODO: don't fetch the whole database every time...
-  Stream<SensorDB> dbUpdates() async* {
+  Stream<List<SPS30SensorDataEntry>> dbUpdates() async* {
     // Init
-    SensorDB db = await getAllEntries(dbPath);
+    List<SPS30SensorDataEntry> db = await getAllEntries(dbPath);
     yield db;
 
     while (true) {
