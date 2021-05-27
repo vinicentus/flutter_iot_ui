@@ -130,24 +130,24 @@ class MockDatabase implements Database {
       String orderBy,
       int limit,
       int offset}) async {
-    if (table == 'sensor_output') {
+    if (table == 'sensor_output' || table == 'scd30_output') {
       var prevDateTime = DateTime.tryParse((data.isEmpty
-          ? '2021-50-25 00:00:00'
+          ? DateTime.now().toIso8601String()
           : '${data.elementAt(data.length - 1)['date']} ${data.elementAt(data.length - 1)['time']}'));
       var nextDateTime = prevDateTime.add(Duration(minutes: 5));
       data.add({
         'date': nextDateTime.toIso8601String().split('T').first,
         'time': nextDateTime.toIso8601String().split('T').last,
-        'd1': 1,
-        'd2': 1,
-        'd3': 1,
-        'd4': 1,
-        'd5': 1,
-        'd6': 1,
-        'd7': 1,
-        'd8': 1,
-        'd9': rnd.nextInt(50),
-        'd10': 1,
+        'd1': rnd.nextDouble() * 50,
+        'd2': rnd.nextDouble() * 50,
+        'd3': rnd.nextDouble() * 50,
+        'd4': rnd.nextDouble() * 50,
+        'd5': rnd.nextDouble() * 50,
+        'd6': rnd.nextDouble() * 50,
+        'd7': rnd.nextDouble() * 50,
+        'd8': rnd.nextDouble() * 50,
+        'd9': rnd.nextDouble() * 50,
+        'd10': rnd.nextDouble() * 50,
       });
       return data;
     } else {

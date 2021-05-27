@@ -1,11 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
-import 'package:flutter_iot_ui/visual/sps30/sps30_data_chart.dart';
-import 'package:flutter_iot_ui/data/sps30/sps30_datamodel.dart';
-
-String dbPath = '/home/pi/IoT-Microservice/app/oracle/sensor_data.db';
+import 'package:flutter_iot_ui/visual/scd30/scd30_page.dart';
+import 'package:flutter_iot_ui/visual/sps30/sps30_page.dart';
 
 void main() {
   initDBLib();
@@ -30,71 +26,11 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Graph Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  // TODO: don't fetch the whole database every time...
-  Stream<List<SPS30SensorDataEntry>> dbUpdates() async* {
-    // Init
-    List<SPS30SensorDataEntry> db = await getAllEntries(dbPath);
-    yield db;
-
-    while (true) {
-      db = await Future.delayed(
-          Duration(seconds: 5), () => getAllEntries(dbPath));
-      yield db;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: StreamBuilder(
-          stream: dbUpdates(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.hasData) {
-              return SPS30DataChart(snapshot.data);
-            } else if (snapshot.hasError) {
-              return Text('Error');
-            } else {
-              return CircularProgressIndicator();
-            }
-          },
-        ),
-      ),
+      initialRoute: '/sps_page',
+      routes: {
+        '/sps_page': (context) => SPS30Page(),
+        '/scd_page': (context) => SCD30Page(),
+      },
     );
   }
 }
