@@ -6,6 +6,9 @@ import 'package:sqflite_common/src/database.dart';
 import 'package:sqflite_common/src/factory.dart';
 import 'package:synchronized/synchronized.dart';
 
+// Note to self: Don't touch unless absolutely necessary!
+// I'm by no means proud of the following code, but it works for now...
+
 class DatabaseFactoryMock implements SqfliteDatabaseFactory {
   var db;
 

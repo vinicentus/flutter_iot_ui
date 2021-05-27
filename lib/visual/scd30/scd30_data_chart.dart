@@ -16,13 +16,13 @@ class SCD30DataChart extends StatelessWidget {
               data: sensorDB),
           new charts.Series<SCD30SensorDataEntry, DateTime>(
               id: 'Temperature',
-              colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+              colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
               domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
               measureFn: (SCD30SensorDataEntry value, _) => value.temperature,
               data: sensorDB),
           new charts.Series<SCD30SensorDataEntry, DateTime>(
               id: 'Humidity',
-              colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
+              colorFn: (_, __) => charts.MaterialPalette.purple.shadeDefault,
               domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
               measureFn: (SCD30SensorDataEntry value, _) => value.humidity,
               data: sensorDB),

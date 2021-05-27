@@ -58,7 +58,23 @@ class _SCD30PageState extends State<SCD30Page> {
           stream: dbUpdates(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
-              return SCD30DataChart(snapshot.data);
+              return Column(
+                children: [
+                  Flexible(
+                    child: FractionallySizedBox(
+                      heightFactor: 0.95,
+                      child: SCD30DataChart(snapshot.data),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      CheckboxWidget('blue'),
+                      CheckboxWidget('green'),
+                      CheckboxWidget('purple'),
+                    ],
+                  )
+                ],
+              );
             } else if (snapshot.hasError) {
               return Text('Error');
             } else {
@@ -67,6 +83,39 @@ class _SCD30PageState extends State<SCD30Page> {
           },
         ),
       ),
+    );
+  }
+}
+
+class CheckboxWidget extends StatefulWidget {
+  final displayText;
+
+  const CheckboxWidget(this.displayText, {Key key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return CheckboxWidgetState();
+  }
+}
+
+class CheckboxWidgetState extends State<CheckboxWidget> {
+  bool isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Checkbox(
+          checkColor: Colors.white,
+          value: isChecked,
+          onChanged: (bool value) {
+            setState(() {
+              isChecked = value;
+            });
+          },
+        ),
+        Text(widget.displayText),
+      ],
     );
   }
 }
