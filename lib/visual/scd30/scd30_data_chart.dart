@@ -9,10 +9,22 @@ class SCD30DataChart extends StatelessWidget {
   SCD30DataChart(List<SCD30SensorDataEntry> sensorDB, {this.animate = true})
       : this.seriesList = [
           new charts.Series<SCD30SensorDataEntry, DateTime>(
-              id: 'Number Concentration PM10 [#/cm³]',
+              id: 'Carbon Dioxide',
+              colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+              domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
+              measureFn: (SCD30SensorDataEntry value, _) => value.carbonDioxide,
+              data: sensorDB),
+          new charts.Series<SCD30SensorDataEntry, DateTime>(
+              id: 'Temperature',
               colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
               domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
               measureFn: (SCD30SensorDataEntry value, _) => value.temperature,
+              data: sensorDB),
+          new charts.Series<SCD30SensorDataEntry, DateTime>(
+              id: 'Humidity',
+              colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
+              domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
+              measureFn: (SCD30SensorDataEntry value, _) => value.humidity,
               data: sensorDB),
         ];
 

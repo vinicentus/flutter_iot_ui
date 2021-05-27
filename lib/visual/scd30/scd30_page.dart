@@ -8,7 +8,7 @@ import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
 import 'package:flutter_iot_ui/visual/scd30/scd30_data_chart.dart';
 
 class SCD30Page extends StatefulWidget {
-  final String title = 'Flutter IoT UI';
+  final String title = 'SCD30 Sensor Data';
 
   @override
   _SCD30PageState createState() => _SCD30PageState();
