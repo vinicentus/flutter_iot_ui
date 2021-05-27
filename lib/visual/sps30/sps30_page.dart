@@ -18,7 +18,7 @@ class _SPS30PageState extends State<SPS30Page> {
   // TODO: don't fetch the whole database every time...
   Stream<List<SPS30SensorDataEntry>> dbUpdates() async* {
     // Init
-    List<SPS30SensorDataEntry> db = await getAllSPS30Entries(dbPath);
+    var db = await getAllSPS30Entries(dbPath);
     yield db;
 
     while (_continue) {

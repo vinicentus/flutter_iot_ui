@@ -20,7 +20,7 @@ class _SCD30PageState extends State<SCD30Page> {
   // TODO: don't fetch the whole database every time...
   Stream<List<SCD30SensorDataEntry>> dbUpdates() async* {
     // Init
-    List<SCD30SensorDataEntry> db = await getAllSCD30Entries(dbPath);
+    var db = await getAllSCD30Entries(dbPath);
     yield db;
 
     while (_continue) {
