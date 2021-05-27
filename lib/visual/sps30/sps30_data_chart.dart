@@ -1,6 +1,6 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
-import 'package:flutter_iot_ui/sqlite.dart';
+import 'package:flutter_iot_ui/data/sps30/sps30_datamodel.dart';
 
 class SPS30DataChart extends StatelessWidget {
   final List<charts.Series<SPS30SensorDataEntry, DateTime>> seriesList;

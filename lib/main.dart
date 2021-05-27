@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_iot_ui/sqlite.dart';
-import 'package:flutter_iot_ui/sps30_data_chart.dart';
+import 'package:flutter_iot_ui/data/sqlite.dart';
+import 'package:flutter_iot_ui/visual/sps30/sps30_data_chart.dart';
+import 'package:flutter_iot_ui/data/sps30/sps30_datamodel.dart';
 
 String dbPath = '/home/pi/IoT-Microservice/app/oracle/sensor_data.db';
 
