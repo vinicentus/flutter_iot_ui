@@ -74,47 +74,44 @@ class _SCD30PageState extends State<SCD30Page> {
             ? Column(
                 children: [
                   Flexible(
-                    child: FractionallySizedBox(
-                      heightFactor: 0.95,
-                      child: charts.TimeSeriesChart(
-                        [
-                          if (_showCarbonDioxide)
-                            charts.Series<SCD30SensorDataEntry, DateTime>(
-                                id: 'Carbon Dioxide',
-                                colorFn: (_, __) =>
-                                    charts.MaterialPalette.blue.shadeDefault,
-                                domainFn: (SCD30SensorDataEntry value, _) =>
-                                    value.timeStamp,
-                                measureFn: (SCD30SensorDataEntry value, _) =>
-                                    value.carbonDioxide,
-                                data: _dataList),
-                          if (_showTemperature)
-                            charts.Series<SCD30SensorDataEntry, DateTime>(
-                                id: 'Temperature',
-                                colorFn: (_, __) =>
-                                    charts.MaterialPalette.green.shadeDefault,
-                                domainFn: (SCD30SensorDataEntry value, _) =>
-                                    value.timeStamp,
-                                measureFn: (SCD30SensorDataEntry value, _) =>
-                                    value.temperature,
-                                data: _dataList),
-                          if (_showHumidity)
-                            charts.Series<SCD30SensorDataEntry, DateTime>(
-                                id: 'Humidity',
-                                colorFn: (_, __) =>
-                                    charts.MaterialPalette.purple.shadeDefault,
-                                domainFn: (SCD30SensorDataEntry value, _) =>
-                                    value.timeStamp,
-                                measureFn: (SCD30SensorDataEntry value, _) =>
-                                    value.humidity,
-                                data: _dataList),
-                        ],
-                        animate: true,
-                        // Optionally pass in a [DateTimeFactory] used by the chart. The factory
-                        // should create the same type of [DateTime] as the data provided. If none
-                        // specified, the default creates local date time.
-                        dateTimeFactory: const charts.LocalDateTimeFactory(),
-                      ),
+                    child: charts.TimeSeriesChart(
+                      [
+                        if (_showCarbonDioxide)
+                          charts.Series<SCD30SensorDataEntry, DateTime>(
+                              id: 'Carbon Dioxide',
+                              colorFn: (_, __) =>
+                                  charts.MaterialPalette.blue.shadeDefault,
+                              domainFn: (SCD30SensorDataEntry value, _) =>
+                                  value.timeStamp,
+                              measureFn: (SCD30SensorDataEntry value, _) =>
+                                  value.carbonDioxide,
+                              data: _dataList),
+                        if (_showTemperature)
+                          charts.Series<SCD30SensorDataEntry, DateTime>(
+                              id: 'Temperature',
+                              colorFn: (_, __) =>
+                                  charts.MaterialPalette.green.shadeDefault,
+                              domainFn: (SCD30SensorDataEntry value, _) =>
+                                  value.timeStamp,
+                              measureFn: (SCD30SensorDataEntry value, _) =>
+                                  value.temperature,
+                              data: _dataList),
+                        if (_showHumidity)
+                          charts.Series<SCD30SensorDataEntry, DateTime>(
+                              id: 'Humidity',
+                              colorFn: (_, __) =>
+                                  charts.MaterialPalette.purple.shadeDefault,
+                              domainFn: (SCD30SensorDataEntry value, _) =>
+                                  value.timeStamp,
+                              measureFn: (SCD30SensorDataEntry value, _) =>
+                                  value.humidity,
+                              data: _dataList),
+                      ],
+                      animate: true,
+                      // Optionally pass in a [DateTimeFactory] used by the chart. The factory
+                      // should create the same type of [DateTime] as the data provided. If none
+                      // specified, the default creates local date time.
+                      dateTimeFactory: const charts.LocalDateTimeFactory(),
                     ),
                   ),
                   Row(
