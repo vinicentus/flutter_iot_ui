@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
 import 'package:flutter_iot_ui/data/mock_db.dart';
 import 'package:flutter_iot_ui/data/scd30/scd30_datamodel.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -11,6 +12,11 @@ void initDBLib() {
     sqfliteFfiInit();
     // Change the default factory
     databaseFactory = databaseFactoryFfi;
+  } else if (Platform.isWindows) {
+    print('runining on Windows, using local db');
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+    dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
   } else {
     print('not running on Linux, using mock DB');
     databaseFactory = databaseFactoryMock;

@@ -61,5 +61,16 @@
 			"problemMatcher": [],
 			"label": "run flutter-pi"
 		}
+		{
+			"type": "shell",
+			"command": "scp",
+			"args": [
+				"-r",
+				"pi@193.167.36.202:/home/pi/IoT-Microservice/app/oracle/sensor_data.db",
+				"C:\\Users\\langstvi\\OneDrive - Arcada\\Documents\\sensor_data.db"
+			],
+			"problemMatcher": [],
+			"label": "copy db to local"
+		},
 	]
 }
