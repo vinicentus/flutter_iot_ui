@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/sps_page',
+      initialRoute: '/scd_page',
       routes: {
         '/sps_page': (context) => SPS30Page(),
         '/scd_page': (context) => SCD30Page(),
