@@ -60,7 +60,7 @@
 			"group": "build",
 			"problemMatcher": [],
 			"label": "run flutter-pi"
-		}
+		},
 		{
 			"type": "shell",
 			"command": "scp",
