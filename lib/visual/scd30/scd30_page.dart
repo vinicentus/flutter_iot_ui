@@ -1,11 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/scd30/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
-import 'package:flutter_iot_ui/visual/scd30/scd30_data_chart.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class SCD30Page extends StatefulWidget {
   final String title = 'SCD30 Sensor Data';
@@ -15,6 +14,13 @@ class SCD30Page extends StatefulWidget {
 }
 
 class _SCD30PageState extends State<SCD30Page> {
+  bool _showCarbonDioxide = true;
+  bool _showTemperature = true;
+  bool _showHumidity = true;
+
+  // TODO: move to separate data provider (maybe usin provider or bloc)
+  List<SCD30SensorDataEntry> _dataList = [];
+
   bool _continue = true;
 
   // TODO: don't fetch the whole database every time...
@@ -28,6 +34,16 @@ class _SCD30PageState extends State<SCD30Page> {
           Duration(seconds: 5), () => getAllSCD30Entries(dbPath));
       yield db;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    dbUpdates().listen((data) {
+      setState(() {
+        _dataList = data;
+      });
+    });
   }
 
   @override
@@ -54,68 +70,97 @@ class _SCD30PageState extends State<SCD30Page> {
       ),
       drawer: NavDrawer(),
       body: Center(
-        child: StreamBuilder(
-          stream: dbUpdates(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.hasData) {
-              return Column(
+        child: this._dataList.isNotEmpty
+            ? Column(
                 children: [
                   Flexible(
                     child: FractionallySizedBox(
                       heightFactor: 0.95,
-                      child: SCD30DataChart(snapshot.data),
+                      child: charts.TimeSeriesChart(
+                        [
+                          if (_showCarbonDioxide)
+                            charts.Series<SCD30SensorDataEntry, DateTime>(
+                                id: 'Carbon Dioxide',
+                                colorFn: (_, __) =>
+                                    charts.MaterialPalette.blue.shadeDefault,
+                                domainFn: (SCD30SensorDataEntry value, _) =>
+                                    value.timeStamp,
+                                measureFn: (SCD30SensorDataEntry value, _) =>
+                                    value.carbonDioxide,
+                                data: _dataList),
+                          if (_showTemperature)
+                            charts.Series<SCD30SensorDataEntry, DateTime>(
+                                id: 'Temperature',
+                                colorFn: (_, __) =>
+                                    charts.MaterialPalette.green.shadeDefault,
+                                domainFn: (SCD30SensorDataEntry value, _) =>
+                                    value.timeStamp,
+                                measureFn: (SCD30SensorDataEntry value, _) =>
+                                    value.temperature,
+                                data: _dataList),
+                          if (_showHumidity)
+                            charts.Series<SCD30SensorDataEntry, DateTime>(
+                                id: 'Humidity',
+                                colorFn: (_, __) =>
+                                    charts.MaterialPalette.purple.shadeDefault,
+                                domainFn: (SCD30SensorDataEntry value, _) =>
+                                    value.timeStamp,
+                                measureFn: (SCD30SensorDataEntry value, _) =>
+                                    value.humidity,
+                                data: _dataList),
+                        ],
+                        animate: true,
+                        // Optionally pass in a [DateTimeFactory] used by the chart. The factory
+                        // should create the same type of [DateTime] as the data provided. If none
+                        // specified, the default creates local date time.
+                        dateTimeFactory: const charts.LocalDateTimeFactory(),
+                      ),
                     ),
                   ),
                   Row(
                     children: [
-                      CheckboxWidget('blue'),
-                      CheckboxWidget('green'),
-                      CheckboxWidget('purple'),
+                      Row(children: [
+                        Checkbox(
+                          checkColor: Colors.white,
+                          value: _showCarbonDioxide,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showCarbonDioxide = value;
+                            });
+                          },
+                        ),
+                        Text('Carbon Dioxide'),
+                      ]),
+                      Row(children: [
+                        Checkbox(
+                          checkColor: Colors.white,
+                          value: _showTemperature,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showTemperature = value;
+                            });
+                          },
+                        ),
+                        Text('Temperature'),
+                      ]),
+                      Row(children: [
+                        Checkbox(
+                          checkColor: Colors.white,
+                          value: _showHumidity,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showHumidity = value;
+                            });
+                          },
+                        ),
+                        Text('Humidity'),
+                      ]),
                     ],
                   )
                 ],
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error');
-            } else {
-              return CircularProgressIndicator();
-            }
-          },
-        ),
+              )
+            : CircularProgressIndicator(),
       ),
-    );
-  }
-}
-
-class CheckboxWidget extends StatefulWidget {
-  final displayText;
-
-  const CheckboxWidget(this.displayText, {Key key}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return CheckboxWidgetState();
-  }
-}
-
-class CheckboxWidgetState extends State<CheckboxWidget> {
-  bool isChecked = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Checkbox(
-          checkColor: Colors.white,
-          value: isChecked,
-          onChanged: (bool value) {
-            setState(() {
-              isChecked = value;
-            });
-          },
-        ),
-        Text(widget.displayText),
-      ],
     );
   }
 }
