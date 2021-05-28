@@ -115,10 +115,11 @@ class _SCD30PageState extends State<SCD30Page> {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Row(children: [
                         Checkbox(
-                          checkColor: Colors.white,
+                          activeColor: Colors.blue,
                           value: _showCarbonDioxide,
                           onChanged: (bool value) {
                             setState(() {
@@ -130,7 +131,7 @@ class _SCD30PageState extends State<SCD30Page> {
                       ]),
                       Row(children: [
                         Checkbox(
-                          checkColor: Colors.white,
+                          activeColor: Colors.green,
                           value: _showTemperature,
                           onChanged: (bool value) {
                             setState(() {
@@ -142,7 +143,7 @@ class _SCD30PageState extends State<SCD30Page> {
                       ]),
                       Row(children: [
                         Checkbox(
-                          checkColor: Colors.white,
+                          activeColor: Colors.purple,
                           value: _showHumidity,
                           onChanged: (bool value) {
                             setState(() {
