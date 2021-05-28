@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/sps30/sps30_datamodel.dart';
+import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
@@ -49,6 +50,7 @@ class _SPS30PageState extends State<SPS30Page> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
+        actions: [AppbarTrailingInfo()],
       ),
       drawer: NavDrawer(),
       body: Center(
