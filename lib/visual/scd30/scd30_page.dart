@@ -6,6 +6,7 @@ import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter_iot_ui/visual/checkbox_widget.dart';
 
 class SCD30Page extends StatefulWidget {
   final String title = 'SCD30 Sensor Data';
@@ -73,92 +74,84 @@ class _SCD30PageState extends State<SCD30Page> {
       drawer: NavDrawer(),
       body: Center(
         child: this._dataList.isNotEmpty
-            ? Column(
-                children: [
-                  Flexible(
-                    child: charts.TimeSeriesChart(
-                      [
-                        if (_showCarbonDioxide)
-                          charts.Series<SCD30SensorDataEntry, DateTime>(
-                              id: 'Carbon Dioxide',
-                              colorFn: (_, __) =>
-                                  charts.MaterialPalette.blue.shadeDefault,
-                              domainFn: (SCD30SensorDataEntry value, _) =>
-                                  value.timeStamp,
-                              measureFn: (SCD30SensorDataEntry value, _) =>
-                                  value.carbonDioxide,
-                              data: _dataList),
-                        if (_showTemperature)
-                          charts.Series<SCD30SensorDataEntry, DateTime>(
-                              id: 'Temperature',
-                              colorFn: (_, __) =>
-                                  charts.MaterialPalette.green.shadeDefault,
-                              domainFn: (SCD30SensorDataEntry value, _) =>
-                                  value.timeStamp,
-                              measureFn: (SCD30SensorDataEntry value, _) =>
-                                  value.temperature,
-                              data: _dataList),
-                        if (_showHumidity)
-                          charts.Series<SCD30SensorDataEntry, DateTime>(
-                              id: 'Humidity',
-                              colorFn: (_, __) =>
-                                  charts.MaterialPalette.purple.shadeDefault,
-                              domainFn: (SCD30SensorDataEntry value, _) =>
-                                  value.timeStamp,
-                              measureFn: (SCD30SensorDataEntry value, _) =>
-                                  value.humidity,
-                              data: _dataList),
-                      ],
-                      animate: true,
-                      // Optionally pass in a [DateTimeFactory] used by the chart. The factory
-                      // should create the same type of [DateTime] as the data provided. If none
-                      // specified, the default creates local date time.
-                      dateTimeFactory: const charts.LocalDateTimeFactory(),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Row(children: [
-                        Checkbox(
-                          activeColor: Colors.blue,
-                          value: _showCarbonDioxide,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showCarbonDioxide = value;
-                            });
-                          },
-                        ),
-                        Text('Carbon Dioxide'),
-                      ]),
-                      Row(children: [
-                        Checkbox(
-                          activeColor: Colors.green,
-                          value: _showTemperature,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showTemperature = value;
-                            });
-                          },
-                        ),
-                        Text('Temperature'),
-                      ]),
-                      Row(children: [
-                        Checkbox(
-                          activeColor: Colors.purple,
-                          value: _showHumidity,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showHumidity = value;
-                            });
-                          },
-                        ),
-                        Text('Humidity'),
-                      ]),
+            ? Column(children: [
+                Flexible(
+                  child: charts.TimeSeriesChart(
+                    [
+                      if (_showCarbonDioxide)
+                        charts.Series<SCD30SensorDataEntry, DateTime>(
+                            id: 'Carbon Dioxide',
+                            colorFn: (_, __) =>
+                                charts.MaterialPalette.blue.shadeDefault,
+                            domainFn: (SCD30SensorDataEntry value, _) =>
+                                value.timeStamp,
+                            measureFn: (SCD30SensorDataEntry value, _) =>
+                                value.carbonDioxide,
+                            data: _dataList),
+                      if (_showTemperature)
+                        charts.Series<SCD30SensorDataEntry, DateTime>(
+                            id: 'Temperature',
+                            colorFn: (_, __) =>
+                                charts.MaterialPalette.red.shadeDefault,
+                            domainFn: (SCD30SensorDataEntry value, _) =>
+                                value.timeStamp,
+                            measureFn: (SCD30SensorDataEntry value, _) =>
+                                value.temperature,
+                            data: _dataList),
+                      if (_showHumidity)
+                        charts.Series<SCD30SensorDataEntry, DateTime>(
+                            id: 'Humidity',
+                            colorFn: (_, __) =>
+                                charts.MaterialPalette.yellow.shadeDefault,
+                            domainFn: (SCD30SensorDataEntry value, _) =>
+                                value.timeStamp,
+                            measureFn: (SCD30SensorDataEntry value, _) =>
+                                value.humidity,
+                            data: _dataList),
                     ],
-                  )
-                ],
-              )
+                    animate: true,
+                    // Optionally pass in a [DateTimeFactory] used by the chart. The factory
+                    // should create the same type of [DateTime] as the data provided. If none
+                    // specified, the default creates local date time.
+                    dateTimeFactory: const charts.LocalDateTimeFactory(),
+                  ),
+                ),
+                Wrap(children: [
+                  CheckboxWidget(
+                    text: 'Carbon Dioxide',
+                    color: charts.ColorUtil.toDartColor(
+                        charts.MaterialPalette.blue.shadeDefault),
+                    value: _showCarbonDioxide,
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _showCarbonDioxide = value;
+                      });
+                    },
+                  ),
+                  CheckboxWidget(
+                    text: 'Temperature',
+                    color: charts.ColorUtil.toDartColor(
+                        charts.MaterialPalette.red.shadeDefault),
+                    value: _showTemperature,
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _showTemperature = value;
+                      });
+                    },
+                  ),
+                  CheckboxWidget(
+                    text: 'Humidity',
+                    color: charts.ColorUtil.toDartColor(
+                        charts.MaterialPalette.yellow.shadeDefault),
+                    value: _showHumidity,
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _showHumidity = value;
+                      });
+                    },
+                  ),
+                ]),
+              ])
             : CircularProgressIndicator(),
       ),
     );

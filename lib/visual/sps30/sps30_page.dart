@@ -6,6 +6,7 @@ import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter_iot_ui/visual/checkbox_widget.dart';
 
 class SPS30Page extends StatefulWidget {
   final String title = 'SPS30 Sensor Data';
@@ -99,7 +100,7 @@ class _SPS30PageState extends State<SPS30Page> {
                           charts.Series<SPS30SensorDataEntry, DateTime>(
                               id: 'Mass Concentration PM2.5 (µg/m³)',
                               colorFn: (_, __) =>
-                                  charts.MaterialPalette.green.shadeDefault,
+                                  charts.MaterialPalette.red.shadeDefault,
                               domainFn: (SPS30SensorDataEntry value, _) =>
                                   value.timeStamp,
                               measureFn: (SPS30SensorDataEntry value, _) =>
@@ -109,7 +110,7 @@ class _SPS30PageState extends State<SPS30Page> {
                           charts.Series<SPS30SensorDataEntry, DateTime>(
                               id: 'Mass Concentration PM4.0 (µg/m³)',
                               colorFn: (_, __) =>
-                                  charts.MaterialPalette.purple.shadeDefault,
+                                  charts.MaterialPalette.yellow.shadeDefault,
                               domainFn: (SPS30SensorDataEntry value, _) =>
                                   value.timeStamp,
                               measureFn: (SPS30SensorDataEntry value, _) =>
@@ -118,8 +119,8 @@ class _SPS30PageState extends State<SPS30Page> {
                         if (_showMassConcentrationPM10)
                           charts.Series<SPS30SensorDataEntry, DateTime>(
                               id: 'Mass Concentration PM10 (µg/m³)',
-                              colorFn: (_, __) => charts
-                                  .MaterialPalette.deepOrange.shadeDefault,
+                              colorFn: (_, __) =>
+                                  charts.MaterialPalette.green.shadeDefault,
                               domainFn: (SPS30SensorDataEntry value, _) =>
                                   value.timeStamp,
                               measureFn: (SPS30SensorDataEntry value, _) =>
@@ -128,8 +129,8 @@ class _SPS30PageState extends State<SPS30Page> {
                         if (_showNumberConcentrationPM0_5)
                           charts.Series<SPS30SensorDataEntry, DateTime>(
                               id: 'Number Concentration PM0.5 (#/cm³)',
-                              colorFn: (_, __) => charts
-                                  .MaterialPalette.deepOrange.shadeDefault,
+                              colorFn: (_, __) =>
+                                  charts.MaterialPalette.purple.shadeDefault,
                               domainFn: (SPS30SensorDataEntry value, _) =>
                                   value.timeStamp,
                               measureFn: (SPS30SensorDataEntry value, _) =>
@@ -138,8 +139,8 @@ class _SPS30PageState extends State<SPS30Page> {
                         if (_showNumberConcentrationPM1_0)
                           charts.Series<SPS30SensorDataEntry, DateTime>(
                               id: 'Number Concentration PM1.0 (#/cm³)',
-                              colorFn: (_, __) => charts
-                                  .MaterialPalette.deepOrange.shadeDefault,
+                              colorFn: (_, __) =>
+                                  charts.MaterialPalette.cyan.shadeDefault,
                               domainFn: (SPS30SensorDataEntry value, _) =>
                                   value.timeStamp,
                               measureFn: (SPS30SensorDataEntry value, _) =>
@@ -158,8 +159,8 @@ class _SPS30PageState extends State<SPS30Page> {
                         if (_showNumberConcentrationPM4_0)
                           charts.Series<SPS30SensorDataEntry, DateTime>(
                               id: 'Number Concentration PM4.0 (#/cm³)',
-                              colorFn: (_, __) => charts
-                                  .MaterialPalette.deepOrange.shadeDefault,
+                              colorFn: (_, __) =>
+                                  charts.MaterialPalette.lime.shadeDefault,
                               domainFn: (SPS30SensorDataEntry value, _) =>
                                   value.timeStamp,
                               measureFn: (SPS30SensorDataEntry value, _) =>
@@ -168,8 +169,8 @@ class _SPS30PageState extends State<SPS30Page> {
                         if (_showNumberConcentrationPM10)
                           charts.Series<SPS30SensorDataEntry, DateTime>(
                               id: 'Number Concentration PM10 (#/cm³)',
-                              colorFn: (_, __) => charts
-                                  .MaterialPalette.deepOrange.shadeDefault,
+                              colorFn: (_, __) =>
+                                  charts.MaterialPalette.indigo.shadeDefault,
                               domainFn: (SPS30SensorDataEntry value, _) =>
                                   value.timeStamp,
                               measureFn: (SPS30SensorDataEntry value, _) =>
@@ -178,8 +179,8 @@ class _SPS30PageState extends State<SPS30Page> {
                         if (_showtypicalParticleSize)
                           charts.Series<SPS30SensorDataEntry, DateTime>(
                               id: 'Typical Particle Size (µm)',
-                              colorFn: (_, __) => charts
-                                  .MaterialPalette.deepOrange.shadeDefault,
+                              colorFn: (_, __) =>
+                                  charts.MaterialPalette.pink.shadeDefault,
                               domainFn: (SPS30SensorDataEntry value, _) =>
                                   value.timeStamp,
                               measureFn: (SPS30SensorDataEntry value, _) =>
@@ -195,130 +196,116 @@ class _SPS30PageState extends State<SPS30Page> {
                   ),
                   Wrap(
                     children: [
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Checkbox(
-                          activeColor: Colors.blue,
-                          value: _showMassConcentrationPM1_0,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showMassConcentrationPM1_0 = value;
-                            });
-                          },
-                        ),
-                        Text('Mass Concentration PM1.0 (µg/m³)'),
-                      ]),
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Checkbox(
-                          activeColor: Colors.green,
-                          value: _showMassConcentrationPM2_5,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showMassConcentrationPM2_5 = value;
-                            });
-                          },
-                        ),
-                        Text('Mass Concentration PM2.5 (µg/m³)'),
-                      ]),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Checkbox(
-                            activeColor: Colors.purple,
-                            value: _showMassConcentrationPM4_0,
-                            onChanged: (bool value) {
-                              setState(() {
-                                _showMassConcentrationPM4_0 = value;
-                              });
-                            },
-                          ),
-                          Text('Mass Concentration PM4.0 (µg/m³)'),
-                        ],
+                      CheckboxWidget(
+                        text: 'Mass Concentration PM1.0 (µg/m³)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.blue.shadeDefault),
+                        value: _showMassConcentrationPM1_0,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showMassConcentrationPM1_0 = value;
+                          });
+                        },
                       ),
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Checkbox(
-                          activeColor: Colors.deepOrange,
-                          value: _showMassConcentrationPM10,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showMassConcentrationPM10 = value;
-                            });
-                          },
-                        ),
-                        Text('Mass Concentration PM10 (µg/m³)'),
-                      ]),
-                      // TODO: split into two rows here
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Checkbox(
-                          activeColor: Colors.deepOrange,
-                          value: _showNumberConcentrationPM0_5,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showNumberConcentrationPM0_5 = value;
-                            });
-                          },
-                        ),
-                        Text('Number Concentration PM0.5 (#/cm³)'),
-                      ]),
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Checkbox(
-                          activeColor: Colors.deepOrange,
-                          value: _showNumberConcentrationPM1_0,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showNumberConcentrationPM1_0 = value;
-                            });
-                          },
-                        ),
-                        Text('Number Concentration PM1.0 (#/cm³)'),
-                      ]),
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Checkbox(
-                          activeColor: Colors.deepOrange,
-                          value: _showNumberConcentrationPM2_5,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showNumberConcentrationPM2_5 = value;
-                            });
-                          },
-                        ),
-                        Text('Number Concentration PM2.5 (#/cm³)'),
-                      ]),
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Checkbox(
-                          activeColor: Colors.deepOrange,
-                          value: _showNumberConcentrationPM4_0,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showNumberConcentrationPM4_0 = value;
-                            });
-                          },
-                        ),
-                        Text('Number Concentration PM4.0 (#/cm³)'),
-                      ]),
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Checkbox(
-                          activeColor: Colors.deepOrange,
-                          value: _showNumberConcentrationPM10,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showNumberConcentrationPM10 = value;
-                            });
-                          },
-                        ),
-                        Text('Number Concentration PM10 (#/cm³)'),
-                      ]),
-                      Row(mainAxisSize: MainAxisSize.min, children: [
-                        Checkbox(
-                          activeColor: Colors.deepOrange,
-                          value: _showtypicalParticleSize,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showtypicalParticleSize = value;
-                            });
-                          },
-                        ),
-                        Text('Typical Particle Size (µm)'),
-                      ]),
+                      CheckboxWidget(
+                        text: 'Mass Concentration PM2.5 (µg/m³)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.red.shadeDefault),
+                        value: _showMassConcentrationPM2_5,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showMassConcentrationPM2_5 = value;
+                          });
+                        },
+                      ),
+                      CheckboxWidget(
+                        text: 'Mass Concentration PM4.0 (µg/m³)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.yellow.shadeDefault),
+                        value: _showMassConcentrationPM4_0,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showMassConcentrationPM4_0 = value;
+                          });
+                        },
+                      ),
+                      CheckboxWidget(
+                        text: 'Mass Concentration PM10 (µg/m³)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.green.shadeDefault),
+                        value: _showMassConcentrationPM10,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showMassConcentrationPM10 = value;
+                          });
+                        },
+                      ),
+                      CheckboxWidget(
+                        text: 'Number Concentration PM0.5 (#/cm³)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.purple.shadeDefault),
+                        value: _showNumberConcentrationPM0_5,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showNumberConcentrationPM0_5 = value;
+                          });
+                        },
+                      ),
+                      CheckboxWidget(
+                        text: 'Number Concentration PM1.0 (#/cm³)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.cyan.shadeDefault),
+                        value: _showNumberConcentrationPM1_0,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showNumberConcentrationPM1_0 = value;
+                          });
+                        },
+                      ),
+                      CheckboxWidget(
+                        text: 'Number Concentration PM2.5 (#/cm³)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.deepOrange.shadeDefault),
+                        value: _showNumberConcentrationPM2_5,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showNumberConcentrationPM2_5 = value;
+                          });
+                        },
+                      ),
+                      CheckboxWidget(
+                        text: 'Number Concentration PM4.0 (#/cm³)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.lime.shadeDefault),
+                        value: _showNumberConcentrationPM4_0,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showNumberConcentrationPM4_0 = value;
+                          });
+                        },
+                      ),
+                      CheckboxWidget(
+                        text: 'Number Concentration PM10 (#/cm³)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.indigo.shadeDefault),
+                        value: _showNumberConcentrationPM10,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showNumberConcentrationPM10 = value;
+                          });
+                        },
+                      ),
+                      CheckboxWidget(
+                        text: 'Typical Particle Size (µm)',
+                        color: charts.ColorUtil.toDartColor(
+                            charts.MaterialPalette.pink.shadeDefault),
+                        value: _showtypicalParticleSize,
+                        callbackFunction: (bool value) {
+                          setState(() {
+                            _showtypicalParticleSize = value;
+                          });
+                        },
+                      ),
                     ],
                   )
                 ],
