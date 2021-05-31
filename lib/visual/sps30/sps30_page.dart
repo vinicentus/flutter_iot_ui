@@ -125,6 +125,66 @@ class _SPS30PageState extends State<SPS30Page> {
                               measureFn: (SPS30SensorDataEntry value, _) =>
                                   value.massConcentrationPM10,
                               data: _dataList),
+                        if (_showNumberConcentrationPM0_5)
+                          charts.Series<SPS30SensorDataEntry, DateTime>(
+                              id: 'Number Concentration PM0.5 (#/cm³)',
+                              colorFn: (_, __) => charts
+                                  .MaterialPalette.deepOrange.shadeDefault,
+                              domainFn: (SPS30SensorDataEntry value, _) =>
+                                  value.timeStamp,
+                              measureFn: (SPS30SensorDataEntry value, _) =>
+                                  value.numberConcentrationPM0_5,
+                              data: _dataList),
+                        if (_showNumberConcentrationPM1_0)
+                          charts.Series<SPS30SensorDataEntry, DateTime>(
+                              id: 'Number Concentration PM1.0 (#/cm³)',
+                              colorFn: (_, __) => charts
+                                  .MaterialPalette.deepOrange.shadeDefault,
+                              domainFn: (SPS30SensorDataEntry value, _) =>
+                                  value.timeStamp,
+                              measureFn: (SPS30SensorDataEntry value, _) =>
+                                  value.numberConcentrationPM1_0,
+                              data: _dataList),
+                        if (_showNumberConcentrationPM2_5)
+                          charts.Series<SPS30SensorDataEntry, DateTime>(
+                              id: 'Number Concentration PM2.5 (#/cm³)',
+                              colorFn: (_, __) => charts
+                                  .MaterialPalette.deepOrange.shadeDefault,
+                              domainFn: (SPS30SensorDataEntry value, _) =>
+                                  value.timeStamp,
+                              measureFn: (SPS30SensorDataEntry value, _) =>
+                                  value.numberConcentrationPM2_5,
+                              data: _dataList),
+                        if (_showNumberConcentrationPM4_0)
+                          charts.Series<SPS30SensorDataEntry, DateTime>(
+                              id: 'Number Concentration PM4.0 (#/cm³)',
+                              colorFn: (_, __) => charts
+                                  .MaterialPalette.deepOrange.shadeDefault,
+                              domainFn: (SPS30SensorDataEntry value, _) =>
+                                  value.timeStamp,
+                              measureFn: (SPS30SensorDataEntry value, _) =>
+                                  value.numberConcentrationPM4_0,
+                              data: _dataList),
+                        if (_showNumberConcentrationPM10)
+                          charts.Series<SPS30SensorDataEntry, DateTime>(
+                              id: 'Number Concentration PM10 (#/cm³)',
+                              colorFn: (_, __) => charts
+                                  .MaterialPalette.deepOrange.shadeDefault,
+                              domainFn: (SPS30SensorDataEntry value, _) =>
+                                  value.timeStamp,
+                              measureFn: (SPS30SensorDataEntry value, _) =>
+                                  value.numberConcentrationPM10,
+                              data: _dataList),
+                        if (_showtypicalParticleSize)
+                          charts.Series<SPS30SensorDataEntry, DateTime>(
+                              id: 'Typical Particle Size (µm)',
+                              colorFn: (_, __) => charts
+                                  .MaterialPalette.deepOrange.shadeDefault,
+                              domainFn: (SPS30SensorDataEntry value, _) =>
+                                  value.timeStamp,
+                              measureFn: (SPS30SensorDataEntry value, _) =>
+                                  value.typicalParticleSize,
+                              data: _dataList),
                       ],
                       animate: true,
                       // Optionally pass in a [DateTimeFactory] used by the chart. The factory
@@ -133,10 +193,9 @@ class _SPS30PageState extends State<SPS30Page> {
                       dateTimeFactory: const charts.LocalDateTimeFactory(),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  Wrap(
                     children: [
-                      Row(children: [
+                      Row(mainAxisSize: MainAxisSize.min, children: [
                         Checkbox(
                           activeColor: Colors.blue,
                           value: _showMassConcentrationPM1_0,
@@ -148,7 +207,7 @@ class _SPS30PageState extends State<SPS30Page> {
                         ),
                         Text('Mass Concentration PM1.0 (µg/m³)'),
                       ]),
-                      Row(children: [
+                      Row(mainAxisSize: MainAxisSize.min, children: [
                         Checkbox(
                           activeColor: Colors.green,
                           value: _showMassConcentrationPM2_5,
@@ -160,19 +219,22 @@ class _SPS30PageState extends State<SPS30Page> {
                         ),
                         Text('Mass Concentration PM2.5 (µg/m³)'),
                       ]),
-                      Row(children: [
-                        Checkbox(
-                          activeColor: Colors.purple,
-                          value: _showMassConcentrationPM4_0,
-                          onChanged: (bool value) {
-                            setState(() {
-                              _showMassConcentrationPM4_0 = value;
-                            });
-                          },
-                        ),
-                        Text('Mass Concentration PM4.0 (µg/m³)'),
-                      ]),
-                      Row(children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                            activeColor: Colors.purple,
+                            value: _showMassConcentrationPM4_0,
+                            onChanged: (bool value) {
+                              setState(() {
+                                _showMassConcentrationPM4_0 = value;
+                              });
+                            },
+                          ),
+                          Text('Mass Concentration PM4.0 (µg/m³)'),
+                        ],
+                      ),
+                      Row(mainAxisSize: MainAxisSize.min, children: [
                         Checkbox(
                           activeColor: Colors.deepOrange,
                           value: _showMassConcentrationPM10,
@@ -183,6 +245,79 @@ class _SPS30PageState extends State<SPS30Page> {
                           },
                         ),
                         Text('Mass Concentration PM10 (µg/m³)'),
+                      ]),
+                      // TODO: split into two rows here
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        Checkbox(
+                          activeColor: Colors.deepOrange,
+                          value: _showNumberConcentrationPM0_5,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showNumberConcentrationPM0_5 = value;
+                            });
+                          },
+                        ),
+                        Text('Number Concentration PM0.5 (#/cm³)'),
+                      ]),
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        Checkbox(
+                          activeColor: Colors.deepOrange,
+                          value: _showNumberConcentrationPM1_0,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showNumberConcentrationPM1_0 = value;
+                            });
+                          },
+                        ),
+                        Text('Number Concentration PM1.0 (#/cm³)'),
+                      ]),
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        Checkbox(
+                          activeColor: Colors.deepOrange,
+                          value: _showNumberConcentrationPM2_5,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showNumberConcentrationPM2_5 = value;
+                            });
+                          },
+                        ),
+                        Text('Number Concentration PM2.5 (#/cm³)'),
+                      ]),
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        Checkbox(
+                          activeColor: Colors.deepOrange,
+                          value: _showNumberConcentrationPM4_0,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showNumberConcentrationPM4_0 = value;
+                            });
+                          },
+                        ),
+                        Text('Number Concentration PM4.0 (#/cm³)'),
+                      ]),
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        Checkbox(
+                          activeColor: Colors.deepOrange,
+                          value: _showNumberConcentrationPM10,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showNumberConcentrationPM10 = value;
+                            });
+                          },
+                        ),
+                        Text('Number Concentration PM10 (#/cm³)'),
+                      ]),
+                      Row(mainAxisSize: MainAxisSize.min, children: [
+                        Checkbox(
+                          activeColor: Colors.deepOrange,
+                          value: _showtypicalParticleSize,
+                          onChanged: (bool value) {
+                            setState(() {
+                              _showtypicalParticleSize = value;
+                            });
+                          },
+                        ),
+                        Text('Typical Particle Size (µm)'),
                       ]),
                     ],
                   )
