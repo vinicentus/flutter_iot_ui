@@ -16,11 +16,10 @@ class SCD30SensorDataEntry {
   SCD30SensorDataEntry(this.timeStamp, this._measurements);
 
   SCD30SensorDataEntry.createFromDB(
-    String dateString,
-    String timeString,
+    String dateTime,
     double d1,
     double d2,
     double d3,
-  )   : this.timeStamp = DateTime.parse('$dateString $timeString'),
+  )   : this.timeStamp = DateTime.parse(dateTime),
         this._measurements = [d1, d2, d3];
 }

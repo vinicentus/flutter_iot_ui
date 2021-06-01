@@ -35,8 +35,7 @@ class SPS30SensorDataEntry {
   SPS30SensorDataEntry(this.timeStamp, this._measurements);
 
   SPS30SensorDataEntry.createFromDB(
-    String dateString,
-    String timeString,
+    String dateTime,
     num d1,
     num d2,
     num d3,
@@ -47,6 +46,6 @@ class SPS30SensorDataEntry {
     num d8,
     num d9,
     num d10,
-  )   : this.timeStamp = DateTime.parse('$dateString $timeString'),
+  )   : this.timeStamp = DateTime.parse(dateTime),
         this._measurements = [d1, d2, d3, d4, d5, d6, d7, d8, d9, d10];
 }

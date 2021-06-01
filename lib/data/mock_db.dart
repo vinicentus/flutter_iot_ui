@@ -133,7 +133,7 @@ class MockDatabase implements Database {
       String orderBy,
       int limit,
       int offset}) async {
-    if (table == 'sensor_output' || table == 'scd30_output') {
+    if (table == 'sps30_output' || table == 'scd30_output') {
       var prevDateTime = DateTime.tryParse((data.isEmpty
           ? DateTime.now().toIso8601String()
           : '${data.elementAt(data.length - 1)['date']} ${data.elementAt(data.length - 1)['time']}'));

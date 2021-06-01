@@ -25,15 +25,18 @@ class _SCD30PageState extends State<SCD30Page> {
 
   bool _continue = true;
 
-  // TODO: don't fetch the whole database every time...
   Stream<List<SCD30SensorDataEntry>> dbUpdates() async* {
     // Init
-    var db = await getAllSCD30Entries(dbPath);
+    var today = DateTime.now();
+    var yesterday = today.subtract(Duration(days: 1));
+    var db = await getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today);
     yield db;
 
     while (_continue) {
-      db = await Future.delayed(
-          Duration(seconds: 5), () => getAllSCD30Entries(dbPath));
+      today = DateTime.now();
+      yesterday = today.subtract(Duration(days: 1));
+      db = await Future.delayed(Duration(seconds: 5),
+          () => getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today));
       yield db;
     }
   }
