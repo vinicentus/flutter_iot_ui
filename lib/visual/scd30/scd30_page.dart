@@ -121,7 +121,7 @@ class _SCD30PageState extends State<SCD30Page> {
                 ),
                 Wrap(children: [
                   CheckboxWidget(
-                    text: 'Carbon Dioxide',
+                    text: 'Canrbon Dioxide (ppm)',
                     color: charts.ColorUtil.toDartColor(
                         charts.MaterialPalette.blue.shadeDefault),
                     value: _showCarbonDioxide,
@@ -132,7 +132,7 @@ class _SCD30PageState extends State<SCD30Page> {
                     },
                   ),
                   CheckboxWidget(
-                    text: 'Temperature',
+                    text: 'Temperature (°C)',
                     color: charts.ColorUtil.toDartColor(
                         charts.MaterialPalette.red.shadeDefault),
                     value: _showTemperature,
@@ -143,7 +143,7 @@ class _SCD30PageState extends State<SCD30Page> {
                     },
                   ),
                   CheckboxWidget(
-                    text: 'Humidity',
+                    text: 'Humidity (%RH)',
                     color: charts.ColorUtil.toDartColor(
                         charts.MaterialPalette.yellow.shadeDefault),
                     value: _showHumidity,
