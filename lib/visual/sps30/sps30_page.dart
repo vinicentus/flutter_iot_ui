@@ -313,7 +313,10 @@ class _SPS30PageState extends State<SPS30Page> {
                   )
                 ],
               )
-            : CircularProgressIndicator(),
+            : Center(
+                child: Column(
+                    children: [CircularProgressIndicator(), Text('No data.')]),
+              ),
       ),
     );
   }

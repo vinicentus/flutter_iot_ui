@@ -155,7 +155,10 @@ class _SCD30PageState extends State<SCD30Page> {
                   ),
                 ]),
               ])
-            : CircularProgressIndicator(),
+            : Center(
+                child: Column(
+                    children: [CircularProgressIndicator(), Text('No data.')]),
+              ),
       ),
     );
   }
