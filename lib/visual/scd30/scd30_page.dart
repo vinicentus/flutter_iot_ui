@@ -121,7 +121,7 @@ class _SCD30PageState extends State<SCD30Page> {
                 ),
                 Wrap(children: [
                   CheckboxWidget(
-                    text: 'Canrbon Dioxide (ppm)',
+                    text: 'Carbon Dioxide (ppm)',
                     color: charts.ColorUtil.toDartColor(
                         charts.MaterialPalette.blue.shadeDefault),
                     value: _showCarbonDioxide,

@@ -4,7 +4,7 @@ class SCD30SensorDataEntry {
 
   // f"CO2: {m[0]:.2f}ppm, temp: {m[1]:.2f}'C, rh: {m[2]:.2f}%"
 
-  /// Canrbon Dioxide (ppm)
+  /// Carbon Dioxide (ppm)
   get carbonDioxide => this._measurements[0];
 
   /// Temperature (°C)
