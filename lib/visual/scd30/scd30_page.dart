@@ -6,7 +6,6 @@ import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:flutter_iot_ui/visual/checkbox_widget.dart';
 
 class SCD30Page extends StatefulWidget {
   final String title = 'SCD30 Sensor Data';
@@ -16,10 +15,6 @@ class SCD30Page extends StatefulWidget {
 }
 
 class _SCD30PageState extends State<SCD30Page> {
-  bool _showCarbonDioxide = true;
-  bool _showTemperature = true;
-  bool _showHumidity = true;
-
   // TODO: move to separate data provider (maybe usin provider or bloc)
   List<SCD30SensorDataEntry> _dataList = [];
 
@@ -75,91 +70,84 @@ class _SCD30PageState extends State<SCD30Page> {
         actions: [AppbarTrailingInfo()],
       ),
       drawer: NavDrawer(),
-      body: Center(
-        child: this._dataList.isNotEmpty
-            ? Column(children: [
-                Flexible(
-                  child: charts.TimeSeriesChart(
-                    [
-                      if (_showCarbonDioxide)
-                        charts.Series<SCD30SensorDataEntry, DateTime>(
-                            id: 'Carbon Dioxide',
-                            colorFn: (_, __) =>
-                                charts.MaterialPalette.blue.shadeDefault,
-                            domainFn: (SCD30SensorDataEntry value, _) =>
-                                value.timeStamp,
-                            measureFn: (SCD30SensorDataEntry value, _) =>
-                                value.carbonDioxide,
-                            data: _dataList),
-                      if (_showTemperature)
-                        charts.Series<SCD30SensorDataEntry, DateTime>(
-                            id: 'Temperature',
-                            colorFn: (_, __) =>
-                                charts.MaterialPalette.red.shadeDefault,
-                            domainFn: (SCD30SensorDataEntry value, _) =>
-                                value.timeStamp,
-                            measureFn: (SCD30SensorDataEntry value, _) =>
-                                value.temperature,
-                            data: _dataList),
-                      if (_showHumidity)
-                        charts.Series<SCD30SensorDataEntry, DateTime>(
-                            id: 'Humidity',
-                            colorFn: (_, __) =>
-                                charts.MaterialPalette.yellow.shadeDefault,
-                            domainFn: (SCD30SensorDataEntry value, _) =>
-                                value.timeStamp,
-                            measureFn: (SCD30SensorDataEntry value, _) =>
-                                value.humidity,
-                            data: _dataList),
-                    ],
-                    animate: true,
-                    // Optionally pass in a [DateTimeFactory] used by the chart. The factory
-                    // should create the same type of [DateTime] as the data provided. If none
-                    // specified, the default creates local date time.
-                    dateTimeFactory: const charts.LocalDateTimeFactory(),
-                  ),
+      body: this._dataList.isNotEmpty
+          ? charts.TimeSeriesChart(
+              [
+                charts.Series<SCD30SensorDataEntry, DateTime>(
+                    id: 'Carbon Dioxide (ppm)',
+                    colorFn: (_, __) =>
+                        charts.MaterialPalette.blue.shadeDefault,
+                    domainFn: (SCD30SensorDataEntry value, _) =>
+                        value.timeStamp,
+                    measureFn: (SCD30SensorDataEntry value, _) =>
+                        value.carbonDioxide,
+                    data: _dataList),
+                charts.Series<SCD30SensorDataEntry, DateTime>(
+                    id: 'Temperature (°C)',
+                    colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+                    domainFn: (SCD30SensorDataEntry value, _) =>
+                        value.timeStamp,
+                    measureFn: (SCD30SensorDataEntry value, _) =>
+                        value.temperature,
+                    data: _dataList),
+                charts.Series<SCD30SensorDataEntry, DateTime>(
+                    id: 'Humidity (%RH)',
+                    colorFn: (_, __) =>
+                        charts.MaterialPalette.yellow.shadeDefault,
+                    domainFn: (SCD30SensorDataEntry value, _) =>
+                        value.timeStamp,
+                    measureFn: (SCD30SensorDataEntry value, _) =>
+                        value.humidity,
+                    data: _dataList),
+              ],
+              animate: true,
+              // Optionally pass in a [DateTimeFactory] used by the chart. The factory
+              // should create the same type of [DateTime] as the data provided. If none
+              // specified, the default creates local date time.
+              dateTimeFactory: const charts.LocalDateTimeFactory(),
+              behaviors: [
+                charts.SeriesLegend(
+                  // Positions for "start" and "end" will be left and right respectively
+                  // for widgets with a build context that has directionality ltr.
+                  // For rtl, "start" and "end" will be right and left respectively.
+                  // Since this example has directionality of ltr, the legend is
+                  // positioned on the right side of the chart.
+                  position: charts.BehaviorPosition.bottom,
+                  // By default, if the position of the chart is on the left or right of
+                  // the chart, [horizontalFirst] is set to false. This means that the
+                  // legend entries will grow as new rows first instead of a new column.
+                  horizontalFirst: true,
+                  // This defines the padding around each legend entry.
+                  cellPadding: EdgeInsets.symmetric(horizontal: 10),
+                  showMeasures: true,
+                  // TODO: change to last
+                  // Using last doesn't work when we hide one of the lines
+                  legendDefaultMeasure: charts.LegendDefaultMeasure.none,
+                  measureFormatter: (num value) {
+                    // Despite some initial confusion, it turns out that this actually rounds the numbers
+                    return value == null || value.isNaN
+                        ? '-'
+                        : value.toStringAsFixed(1);
+                  },
                 ),
-                Wrap(children: [
-                  CheckboxWidget(
-                    text: 'Carbon Dioxide (ppm)',
-                    color: charts.ColorUtil.toDartColor(
-                        charts.MaterialPalette.blue.shadeDefault),
-                    value: _showCarbonDioxide,
-                    callbackFunction: (bool value) {
-                      setState(() {
-                        _showCarbonDioxide = value;
-                      });
-                    },
-                  ),
-                  CheckboxWidget(
-                    text: 'Temperature (°C)',
-                    color: charts.ColorUtil.toDartColor(
-                        charts.MaterialPalette.red.shadeDefault),
-                    value: _showTemperature,
-                    callbackFunction: (bool value) {
-                      setState(() {
-                        _showTemperature = value;
-                      });
-                    },
-                  ),
-                  CheckboxWidget(
-                    text: 'Humidity (%RH)',
-                    color: charts.ColorUtil.toDartColor(
-                        charts.MaterialPalette.yellow.shadeDefault),
-                    value: _showHumidity,
-                    callbackFunction: (bool value) {
-                      setState(() {
-                        _showHumidity = value;
-                      });
-                    },
-                  ),
-                ]),
-              ])
-            : Center(
-                child: Column(
-                    children: [CircularProgressIndicator(), Text('No data.')]),
-              ),
-      ),
+                // charts.InitialSelection(
+                //   selectedDataConfig: [
+                //     charts.SeriesDatumConfig<DateTime>(
+                //         'Carbon Dioxide (ppm)',
+                //         _dataList?.last?.timeStamp),
+                //     charts.SeriesDatumConfig<DateTime>(
+                //         'Temperature (°C)', _dataList?.last?.timeStamp),
+                //     charts.SeriesDatumConfig<DateTime>(
+                //         'Humidity (%RH)', _dataList?.last?.timeStamp)
+                //   ],
+                // ),
+              ],
+            )
+          : Center(
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [CircularProgressIndicator(), Text('No data.')]),
+            ),
     );
   }
 }
