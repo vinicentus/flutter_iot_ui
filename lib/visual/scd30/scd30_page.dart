@@ -15,11 +15,6 @@ class SCD30Page extends StatefulWidget {
 }
 
 class _SCD30PageState extends State<SCD30Page> {
-  // TODO: move to separate data provider (maybe usin provider or bloc)
-  List<SCD30SensorDataEntry> _dataList = [];
-
-  bool _continue = true;
-
   Stream<List<SCD30SensorDataEntry>> dbUpdates() async* {
     // Init
     var today = DateTime.now();
@@ -27,31 +22,13 @@ class _SCD30PageState extends State<SCD30Page> {
     var db = await getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today);
     yield db;
 
-    while (_continue) {
+    while (this.mounted) {
       today = DateTime.now();
       yesterday = today.subtract(Duration(days: 1));
       db = await Future.delayed(Duration(seconds: 5),
           () => getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today));
       yield db;
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    dbUpdates().listen((data) {
-      setState(() {
-        _dataList = data;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    // This stops the stream
-    // could have laso used a StreamController
-    _continue = false;
-    super.dispose();
   }
 
   @override
@@ -70,8 +47,11 @@ class _SCD30PageState extends State<SCD30Page> {
         actions: [AppbarTrailingInfo()],
       ),
       drawer: NavDrawer(),
-      body: this._dataList.isNotEmpty
-          ? charts.TimeSeriesChart(
+      body: StreamBuilder(
+        stream: dbUpdates(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return charts.TimeSeriesChart(
               [
                 charts.Series<SCD30SensorDataEntry, DateTime>(
                     id: 'Carbon Dioxide (ppm)',
@@ -81,7 +61,7 @@ class _SCD30PageState extends State<SCD30Page> {
                         value.timeStamp,
                     measureFn: (SCD30SensorDataEntry value, _) =>
                         value.carbonDioxide,
-                    data: _dataList),
+                    data: snapshot.data),
                 charts.Series<SCD30SensorDataEntry, DateTime>(
                     id: 'Temperature (°C)',
                     colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
@@ -89,7 +69,7 @@ class _SCD30PageState extends State<SCD30Page> {
                         value.timeStamp,
                     measureFn: (SCD30SensorDataEntry value, _) =>
                         value.temperature,
-                    data: _dataList),
+                    data: snapshot.data),
                 charts.Series<SCD30SensorDataEntry, DateTime>(
                     id: 'Humidity (%RH)',
                     colorFn: (_, __) =>
@@ -98,7 +78,7 @@ class _SCD30PageState extends State<SCD30Page> {
                         value.timeStamp,
                     measureFn: (SCD30SensorDataEntry value, _) =>
                         value.humidity,
-                    data: _dataList),
+                    data: snapshot.data),
               ],
               animate: true,
               // Optionally pass in a [DateTimeFactory] used by the chart. The factory
@@ -142,12 +122,19 @@ class _SCD30PageState extends State<SCD30Page> {
                 //   ],
                 // ),
               ],
-            )
-          : Center(
-              child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [CircularProgressIndicator(), Text('No data.')]),
-            ),
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error.'));
+          } else {
+            return Center(
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                CircularProgressIndicator(),
+                Text('No data (yet).')
+              ]),
+            );
+          }
+        },
+      ),
     );
   }
 }
