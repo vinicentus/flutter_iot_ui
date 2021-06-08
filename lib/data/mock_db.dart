@@ -139,8 +139,7 @@ class MockDatabase implements Database {
           : '${data.elementAt(data.length - 1)['date']} ${data.elementAt(data.length - 1)['time']}'));
       var nextDateTime = prevDateTime.add(Duration(minutes: 5));
       data.add({
-        'date': nextDateTime.toIso8601String().split('T').first,
-        'time': nextDateTime.toIso8601String().split('T').last,
+        'datetime': nextDateTime.toIso8601String().split('.').first,
         'd1': rnd.nextDouble() * 50,
         'd2': rnd.nextDouble() * 50,
         'd3': rnd.nextDouble() * 50,

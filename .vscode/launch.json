@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "flutter_iot_ui (Flutter)",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "flutter profile",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        }
+    ]
+}
