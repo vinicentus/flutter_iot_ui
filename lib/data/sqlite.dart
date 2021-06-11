@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
 import 'package:flutter_iot_ui/data/mock_db.dart';
-import 'package:flutter_iot_ui/data/scd30/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:flutter_iot_ui/data/sps30/sps30_datamodel.dart';
+import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
 
 void initDBLib() {
   if (Platform.isLinux) {
