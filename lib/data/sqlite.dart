@@ -6,6 +6,7 @@ import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
+import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 
 void initDBLib() {
   if (Platform.isLinux) {
@@ -23,6 +24,49 @@ void initDBLib() {
     databaseFactory = databaseFactoryMock;
     //setMockDatabaseFactory(databaseFactoryMock);
   }
+}
+
+Future<List<SVM30SensorDataEntry>> getAllSVM30Entries(
+    String databasePath) async {
+  print('opening db...');
+  var db = await openDatabase(databasePath, readOnly: true);
+  print('IsOpen: ${db.isOpen}');
+  final List<Map<String, dynamic>> maps = await db.query('svm30_output');
+  await db.close();
+
+  var returnList = List.generate(maps.length, (i) {
+    return SVM30SensorDataEntry.createFromDB(
+      maps[i]['datetime'],
+      maps[i]['co2'],
+      maps[i]['tvoc'],
+    );
+  });
+  return returnList;
+}
+
+Future<List<SVM30SensorDataEntry>> getSVM30EntriesBetweenDateTimes(
+    String databasePath, DateTime start, DateTime stop) async {
+  print('opening db...');
+  var db = await openDatabase(databasePath, readOnly: true);
+  print('IsOpen: ${db.isOpen}');
+  final List<Map<String, dynamic>> maps = await db.query('svm30_output',
+      // The question marks are filled in with values from whereArgs
+      where: 'datetime >= ? AND datetime <= ?',
+      whereArgs: [
+        // We use UTC ni the database
+        start.toUtc().toIso8601String().split('.')[0] + 'Z',
+        stop.toUtc().toIso8601String().split('.')[0] + 'Z',
+      ]);
+  await db.close();
+
+  var returnList = List.generate(maps.length, (i) {
+    return SVM30SensorDataEntry.createFromDB(
+      maps[i]['datetime'],
+      maps[i]['co2'],
+      maps[i]['tvoc'],
+    );
+  });
+  return returnList;
 }
 
 Future<List<SPS30SensorDataEntry>> getAllSPS30Entries(

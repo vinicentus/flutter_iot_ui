@@ -35,6 +35,11 @@ class NavDrawer extends StatelessWidget {
           onTap: () => Navigator.of(context).pushReplacementNamed('/scd_page'),
         ),
         ListTile(
+          leading: Icon(Icons.verified_user),
+          title: Text('SVM30'),
+          onTap: () => Navigator.of(context).pushReplacementNamed('/svm_page'),
+        ),
+        ListTile(
           leading: Icon(Icons.border_color),
           title: Text('Other'),
           onTap: () => Navigator.of(context).pop(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/visual/scd30_page.dart';
 import 'package:flutter_iot_ui/visual/sps30_page.dart';
+import 'package:flutter_iot_ui/visual/svm30_page.dart';
 
 void main() {
   initDBLib();
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/sps_page': (context) => SPS30Page(),
         '/scd_page': (context) => SCD30Page(),
+        '/svm_page': (context) => SVM30Page(),
       },
     );
   }
