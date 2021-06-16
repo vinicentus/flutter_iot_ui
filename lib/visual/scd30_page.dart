@@ -50,7 +50,7 @@ class _SCD30PageState extends State<SCD30Page> {
       body: StreamBuilder(
         stream: dbUpdates(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && (snapshot.data as List).isNotEmpty) {
             return charts.TimeSeriesChart(
               [
                 charts.Series<SCD30SensorDataEntry, DateTime>(

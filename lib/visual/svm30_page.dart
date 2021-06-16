@@ -50,7 +50,7 @@ class _SVM30PageState extends State<SVM30Page> {
       body: StreamBuilder(
         stream: dbUpdates(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && (snapshot.data as List).isNotEmpty) {
             return charts.TimeSeriesChart(
               [
                 charts.Series<SVM30SensorDataEntry, DateTime>(
