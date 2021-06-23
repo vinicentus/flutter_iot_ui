@@ -57,7 +57,7 @@
 				"pi@193.167.36.202",
 				// The physical screen dimensions are approximately 74 by 49 mm (taken from aspect ration and 3.5" diagonal size)
 				// "sudo flutter-pi  --dimensions \"74,49\" /home/pi/flutter_iot_ui_assets"
-				"sudo flutter-pi /home/pi/flutter_iot_ui_assets"
+				"sudo flutter-pi -r 90 /home/pi/flutter_iot_ui_assets"
 			],
 			"group": "build",
 			"problemMatcher": [],
