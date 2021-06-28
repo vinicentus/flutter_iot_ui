@@ -88,8 +88,6 @@ class _SVM30PageState extends State<SVM30Page> {
                   // the chart, [horizontalFirst] is set to false. This means that the
                   // legend entries will grow as new rows first instead of a new column.
                   horizontalFirst: true,
-                  // This defines the padding around each legend entry.
-                  cellPadding: EdgeInsets.symmetric(horizontal: 10),
                   showMeasures: true,
                   // TODO: change to last
                   // Using last doesn't work when we hide one of the lines

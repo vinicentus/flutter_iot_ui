@@ -97,8 +97,6 @@ class _SCD30PageState extends State<SCD30Page> {
                   // the chart, [horizontalFirst] is set to false. This means that the
                   // legend entries will grow as new rows first instead of a new column.
                   horizontalFirst: true,
-                  // This defines the padding around each legend entry.
-                  cellPadding: EdgeInsets.symmetric(horizontal: 10),
                   showMeasures: true,
                   // TODO: change to last
                   // Using last doesn't work when we hide one of the lines

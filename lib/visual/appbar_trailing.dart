@@ -15,20 +15,19 @@ class AppbarTrailingInfoState extends State<AppbarTrailingInfo> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: StreamBuilder(
-            // This stream is listened to and canceled automatically
-            stream: Stream.periodic(const Duration(seconds: 1)),
-            builder: (context, snapshot) {
-              return Center(
-                child: Text(
-                  DateFormat('MM/dd/yyyy hh:mm:ss').format(DateTime.now()),
-                  textScaleFactor: 2,
-                ),
-              );
-            },
-          ),
+        StreamBuilder(
+          // This stream is listened to and canceled automatically
+          stream: Stream.periodic(const Duration(seconds: 1)),
+          builder: (context, snapshot) {
+            final ThemeData theme = Theme.of(context);
+            final ColorScheme colorScheme = theme.colorScheme;
+            return Text(
+              DateFormat('MM/dd/yyyy hh:mm:ss').format(DateTime.now()),
+              // This is the default text size for the AppBar title, so we use it here as well
+              style: theme.textTheme.headline6
+                  .copyWith(color: colorScheme.onPrimary),
+            );
+          },
         ),
       ],
     );
