@@ -36,9 +36,8 @@ class _GeneralGraphPageState extends State<GeneralGraphPage> {
                   horizontalFirst: true,
                   desiredMaxColumns: 2,
                   showMeasures: true,
-                  // TODO: change to last
                   // Using last doesn't work when we hide one of the lines
-                  legendDefaultMeasure: charts.LegendDefaultMeasure.none,
+                  legendDefaultMeasure: charts.LegendDefaultMeasure.lastValue,
                   measureFormatter: (num value) {
                     // Despite some initial confusion, it turns out that this actually rounds the numbers
                     return value == null || value.isNaN
