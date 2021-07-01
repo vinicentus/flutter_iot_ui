@@ -22,7 +22,7 @@ class AppbarTrailingInfoState extends State<AppbarTrailingInfo> {
             final ThemeData theme = Theme.of(context);
             final ColorScheme colorScheme = theme.colorScheme;
             return Text(
-              DateFormat('MM/dd/yyyy hh:mm:ss').format(DateTime.now()),
+              DateFormat('MM/dd/yyyy hh:mm').format(DateTime.now()),
               // This is the default text size for the AppBar title, so we use it here as well
               style: theme.textTheme.headline6
                   .copyWith(color: colorScheme.onPrimary),
