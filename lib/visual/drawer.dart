@@ -58,6 +58,24 @@ class NavDrawer extends StatelessWidget {
               Navigator.of(context).pushReplacementNamed('/humidity_page'),
         ),
         ListTile(
+          leading: Icon(Icons.air),
+          title: Text('Mass Concentration'),
+          onTap: () => Navigator.of(context)
+              .pushReplacementNamed('/massconcentration_page'),
+        ),
+        ListTile(
+          leading: Icon(Icons.ac_unit),
+          title: Text('Number Concentration'),
+          onTap: () => Navigator.of(context)
+              .pushReplacementNamed('/numberconcentration_page'),
+        ),
+        ListTile(
+          leading: Icon(Icons.add_road),
+          title: Text('Typical Particle Size'),
+          onTap: () => Navigator.of(context)
+              .pushReplacementNamed('/typicalparticlesize_page'),
+        ),
+        ListTile(
           leading: Icon(Icons.settings),
           title: Text('Settings'),
           onTap: () => Navigator.of(context).pop(),

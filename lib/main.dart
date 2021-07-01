@@ -36,6 +36,9 @@ class MyApp extends StatelessWidget {
         '/carbondioxide_page': (context) => CarbonDioxidePage(),
         '/temperature_page': (context) => TemperaturePage(),
         '/humidity_page': (context) => HumidityPage(),
+        '/massconcentration_page': (context) => MassConcentrationPage(),
+        '/numberconcentration_page': (context) => NumberConcentrationPage(),
+        '/typicalparticlesize_page': (context) => TypicalParticleSizePage(),
       },
     );
   }
