@@ -24,17 +24,6 @@ class NavDrawer extends StatelessWidget {
           ),
         ),
         ListTile(
-          leading: Icon(Icons.input),
-          title: Text('SPS30'),
-          //selected: this.selectedRoute == '/sps_chart',
-          onTap: () => Navigator.of(context).pushReplacementNamed('/sps_page'),
-        ),
-        ListTile(
-          leading: Icon(Icons.verified_user),
-          title: Text('SCD30'),
-          onTap: () => Navigator.of(context).pushReplacementNamed('/scd_page'),
-        ),
-        ListTile(
           leading: Icon(Icons.airplay),
           title: Text('SVM30'),
           onTap: () => Navigator.of(context).pushReplacementNamed('/svm_page'),

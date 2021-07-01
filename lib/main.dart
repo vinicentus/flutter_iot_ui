@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
-import 'package:flutter_iot_ui/visual/scd30_page.dart';
-import 'package:flutter_iot_ui/visual/sps30_page.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
 
 void main() {
@@ -28,10 +26,8 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/scd_page',
+      initialRoute: '/carbondioxide_page',
       routes: {
-        '/sps_page': (context) => SPS30Page(),
-        '/scd_page': (context) => SCD30Page(),
         '/svm_page': (context) => SVM30Page(),
         '/carbondioxide_page': (context) => CarbonDioxidePage(),
         '/temperature_page': (context) => TemperaturePage(),
