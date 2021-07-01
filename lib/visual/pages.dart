@@ -8,7 +8,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_iot_ui/visual/general_graph_page.dart';
 
 class CarbonDioxidePage extends StatefulWidget {
-  final String title = 'SCD30 Sensor Data';
+  final String title = 'Carbon Dioxide';
 
   @override
   _CarbonDioxidePageState createState() => _CarbonDioxidePageState();
@@ -35,6 +35,7 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SCD30SensorDataEntry, DateTime>(
                   id: 'Carbon Dioxide (ppm)',
@@ -47,7 +48,7 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
 }
 
 class TemperaturePage extends StatefulWidget {
-  final String title = 'SCD30 Sensor Data';
+  final String title = 'Temperature';
 
   @override
   _TemperaturePageState createState() => _TemperaturePageState();
@@ -73,6 +74,7 @@ class _TemperaturePageState extends State<TemperaturePage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SCD30SensorDataEntry, DateTime>(
                   id: 'Temperature (°C)',
@@ -85,7 +87,7 @@ class _TemperaturePageState extends State<TemperaturePage> {
 }
 
 class HumidityPage extends StatefulWidget {
-  final String title = 'SCD30 Sensor Data';
+  final String title = 'Humidity';
 
   @override
   _HumidityPageState createState() => _HumidityPageState();
@@ -111,6 +113,7 @@ class _HumidityPageState extends State<HumidityPage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SCD30SensorDataEntry, DateTime>(
                   id: 'Humidity (%RH)',
@@ -122,7 +125,7 @@ class _HumidityPageState extends State<HumidityPage> {
 }
 
 class MassConcentrationPage extends StatefulWidget {
-  final String title = 'SCD30 Sensor Data';
+  final String title = 'Mass Concentration';
 
   @override
   _MassConcentrationPageState createState() => _MassConcentrationPageState();
@@ -148,6 +151,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
                   id: 'Mass Concentration PM1.0 (µg/m³)',
@@ -183,7 +187,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
 }
 
 class NumberConcentrationPage extends StatefulWidget {
-  final String title = 'SCD30 Sensor Data';
+  final String title = 'Number concentration';
 
   @override
   _NumberConcentrationPageState createState() =>
@@ -210,6 +214,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
                   id: 'Number Concentration PM0.5 (#/cm³)',
@@ -254,7 +259,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
 }
 
 class TypicalParticleSizePage extends StatefulWidget {
-  final String title = 'SCD30 Sensor Data';
+  final String title = 'Typical Particle Size';
 
   @override
   _TypicalParticleSizePageState createState() =>
@@ -281,6 +286,7 @@ class _TypicalParticleSizePageState extends State<TypicalParticleSizePage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
                   id: 'Typical Particle Size (µm)',

@@ -4,11 +4,14 @@ import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 class GeneralGraphPage extends StatefulWidget {
-  final String title = 'SCD30 Sensor Data';
+  final String title;
   final Stream<List<charts.Series<dynamic, DateTime>>> seriesListStream;
 
-  GeneralGraphPage({Key key, @required this.seriesListStream})
-      : super(key: key);
+  GeneralGraphPage({
+    Key key,
+    @required this.title,
+    @required this.seriesListStream,
+  }) : super(key: key);
 
   @override
   _GeneralGraphPageState createState() => _GeneralGraphPageState();
