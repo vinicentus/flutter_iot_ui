@@ -37,7 +37,6 @@ class _GeneralGraphPageState extends State<GeneralGraphPage> {
                 charts.SeriesLegend(
                   position: charts.BehaviorPosition.bottom,
                   horizontalFirst: true,
-                  desiredMaxColumns: 2,
                   showMeasures: true,
                   // Using last doesn't work when we hide one of the lines
                   legendDefaultMeasure: charts.LegendDefaultMeasure.lastValue,

@@ -8,7 +8,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_iot_ui/visual/general_graph_page.dart';
 
 class CarbonDioxidePage extends StatefulWidget {
-  final String title = 'Carbon Dioxide';
+  final String title = 'Carbon Dioxide (ppm)';
 
   @override
   _CarbonDioxidePageState createState() => _CarbonDioxidePageState();
@@ -38,7 +38,7 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SCD30SensorDataEntry, DateTime>(
-                  id: 'Carbon Dioxide (ppm)',
+                  id: 'Carbon Dioxide',
                   domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SCD30SensorDataEntry value, _) =>
                       value.carbonDioxide,
@@ -48,7 +48,7 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
 }
 
 class TemperaturePage extends StatefulWidget {
-  final String title = 'Temperature';
+  final String title = 'Temperature (°C)';
 
   @override
   _TemperaturePageState createState() => _TemperaturePageState();
@@ -77,7 +77,7 @@ class _TemperaturePageState extends State<TemperaturePage> {
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SCD30SensorDataEntry, DateTime>(
-                  id: 'Temperature (°C)',
+                  id: 'Temperature',
                   domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SCD30SensorDataEntry value, _) =>
                       value.temperature,
@@ -87,7 +87,7 @@ class _TemperaturePageState extends State<TemperaturePage> {
 }
 
 class HumidityPage extends StatefulWidget {
-  final String title = 'Humidity';
+  final String title = 'Humidity (%RH)';
 
   @override
   _HumidityPageState createState() => _HumidityPageState();
@@ -116,7 +116,7 @@ class _HumidityPageState extends State<HumidityPage> {
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SCD30SensorDataEntry, DateTime>(
-                  id: 'Humidity (%RH)',
+                  id: 'Humidity',
                   domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SCD30SensorDataEntry value, _) => value.humidity,
                   data: event),
@@ -125,7 +125,7 @@ class _HumidityPageState extends State<HumidityPage> {
 }
 
 class MassConcentrationPage extends StatefulWidget {
-  final String title = 'Mass Concentration';
+  final String title = 'Mass Concentration (µg/m³)';
 
   @override
   _MassConcentrationPageState createState() => _MassConcentrationPageState();
@@ -154,21 +154,21 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Mass Concentration PM1.0 (µg/m³)',
+                  id: 'PM1.0',
                   colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
                       value.massConcentrationPM1_0,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Mass Concentration PM2.5 (µg/m³)',
+                  id: 'PM2.5',
                   colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
                       value.massConcentrationPM2_5,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Mass Concentration PM4.0 (µg/m³)',
+                  id: 'PM4.0',
                   colorFn: (_, __) =>
                       charts.MaterialPalette.yellow.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
@@ -176,7 +176,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       value.massConcentrationPM4_0,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Mass Concentration PM10 (µg/m³)',
+                  id: 'PM10',
                   colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
@@ -187,7 +187,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
 }
 
 class NumberConcentrationPage extends StatefulWidget {
-  final String title = 'Number concentration';
+  final String title = 'Number concentration (#/cm³)';
 
   @override
   _NumberConcentrationPageState createState() =>
@@ -217,7 +217,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Number Concentration PM0.5 (#/cm³)',
+                  id: 'PM0.5',
                   colorFn: (_, __) =>
                       charts.MaterialPalette.purple.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
@@ -225,14 +225,14 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       value.numberConcentrationPM0_5,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Number Concentration PM1.0 (#/cm³)',
+                  id: 'PM1.0',
                   colorFn: (_, __) => charts.MaterialPalette.cyan.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
                       value.numberConcentrationPM1_0,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Number Concentration PM2.5 (#/cm³)',
+                  id: 'PM2.5',
                   colorFn: (_, __) =>
                       charts.MaterialPalette.deepOrange.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
@@ -240,14 +240,14 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       value.numberConcentrationPM2_5,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Number Concentration PM4.0 (#/cm³)',
+                  id: 'PM4.0',
                   colorFn: (_, __) => charts.MaterialPalette.lime.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
                       value.numberConcentrationPM4_0,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Number Concentration PM10 (#/cm³)',
+                  id: 'PM10',
                   colorFn: (_, __) =>
                       charts.MaterialPalette.indigo.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
@@ -259,7 +259,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
 }
 
 class TypicalParticleSizePage extends StatefulWidget {
-  final String title = 'Typical Particle Size';
+  final String title = 'Typical Particle Size (µm)';
 
   @override
   _TypicalParticleSizePageState createState() =>
@@ -289,7 +289,7 @@ class _TypicalParticleSizePageState extends State<TypicalParticleSizePage> {
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Typical Particle Size (µm)',
+                  id: 'Typical Particle Size',
                   colorFn: (_, __) => charts.MaterialPalette.pink.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
