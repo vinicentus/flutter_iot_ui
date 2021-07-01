@@ -10,19 +10,6 @@ class NavDrawer extends StatelessWidget {
     return Drawer(
         child: ListView(
       children: [
-        DrawerHeader(
-          child: Text(
-            'Select sensor',
-            style: TextStyle(color: Colors.white, fontSize: 25),
-          ),
-          decoration: BoxDecoration(
-            color: Colors.deepPurpleAccent,
-            //image: DecorationImage(
-            //    fit: BoxFit.fill,
-            //    image:
-            //        NetworkImage('https://picsum.photos/seed/picsum/200/300')),
-          ),
-        ),
         ListTile(
           leading: Icon(Icons.airplay),
           title: Text('SVM30'),
