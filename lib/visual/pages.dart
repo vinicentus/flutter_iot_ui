@@ -1,0 +1,224 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/data/sqlite.dart';
+import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
+import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter_iot_ui/visual/general_graph_page.dart';
+
+class CarbonDioxidePage extends StatefulWidget {
+  final String title = 'SCD30 Sensor Data';
+
+  @override
+  _CarbonDioxidePageState createState() => _CarbonDioxidePageState();
+}
+
+class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
+  //TODO: don't have many separate dbUpdates functions for the same type of data
+  Stream<List<SCD30SensorDataEntry>> dbUpdates() async* {
+    // Init
+    var today = DateTime.now();
+    var yesterday = today.subtract(Duration(days: 1));
+    var db = await getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    yield db;
+
+    while (this.mounted) {
+      today = DateTime.now();
+      yesterday = today.subtract(Duration(days: 1));
+      db = await Future.delayed(Duration(seconds: 5),
+          () => getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today));
+      yield db;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GeneralGraphPage(
+        seriesListStream: dbUpdates().map((event) => [
+              charts.Series<SCD30SensorDataEntry, DateTime>(
+                  id: 'Carbon Dioxide (ppm)',
+                  domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
+                  measureFn: (SCD30SensorDataEntry value, _) =>
+                      value.carbonDioxide,
+                  data: event),
+            ]));
+  }
+}
+
+class TemperaturePage extends StatefulWidget {
+  final String title = 'SCD30 Sensor Data';
+
+  @override
+  _TemperaturePageState createState() => _TemperaturePageState();
+}
+
+class _TemperaturePageState extends State<TemperaturePage> {
+  Stream<List<SCD30SensorDataEntry>> dbUpdates() async* {
+    // Init
+    var today = DateTime.now();
+    var yesterday = today.subtract(Duration(days: 1));
+    var db = await getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    yield db;
+
+    while (this.mounted) {
+      today = DateTime.now();
+      yesterday = today.subtract(Duration(days: 1));
+      db = await Future.delayed(Duration(seconds: 5),
+          () => getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today));
+      yield db;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GeneralGraphPage(
+        seriesListStream: dbUpdates().map((event) => [
+              charts.Series<SCD30SensorDataEntry, DateTime>(
+                  id: 'Temperature (°C)',
+                  domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
+                  measureFn: (SCD30SensorDataEntry value, _) =>
+                      value.temperature,
+                  data: event),
+            ]));
+  }
+}
+
+class HumidityPage extends StatefulWidget {
+  final String title = 'SCD30 Sensor Data';
+
+  @override
+  _HumidityPageState createState() => _HumidityPageState();
+}
+
+class _HumidityPageState extends State<HumidityPage> {
+  Stream<List<SCD30SensorDataEntry>> dbUpdates() async* {
+    // Init
+    var today = DateTime.now();
+    var yesterday = today.subtract(Duration(days: 1));
+    var db = await getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    yield db;
+
+    while (this.mounted) {
+      today = DateTime.now();
+      yesterday = today.subtract(Duration(days: 1));
+      db = await Future.delayed(Duration(seconds: 5),
+          () => getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today));
+      yield db;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GeneralGraphPage(
+        seriesListStream: dbUpdates().map((event) => [
+              charts.Series<SCD30SensorDataEntry, DateTime>(
+                  id: 'Humidity (%RH)',
+                  domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
+                  measureFn: (SCD30SensorDataEntry value, _) => value.humidity,
+                  data: event),
+            ]));
+  }
+}
+
+// [
+//                         if (_showMassConcentrationPM1_0)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Mass Concentration PM1.0 (µg/m³)',
+//                               colorFn: (_, __) =>
+//                                   charts.MaterialPalette.blue.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.massConcentrationPM1_0,
+//                               data: _dataList),
+//                         if (_showMassConcentrationPM2_5)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Mass Concentration PM2.5 (µg/m³)',
+//                               colorFn: (_, __) =>
+//                                   charts.MaterialPalette.red.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.massConcentrationPM2_5,
+//                               data: _dataList),
+//                         if (_showMassConcentrationPM4_0)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Mass Concentration PM4.0 (µg/m³)',
+//                               colorFn: (_, __) =>
+//                                   charts.MaterialPalette.yellow.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.massConcentrationPM4_0,
+//                               data: _dataList),
+//                         if (_showMassConcentrationPM10)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Mass Concentration PM10 (µg/m³)',
+//                               colorFn: (_, __) =>
+//                                   charts.MaterialPalette.green.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.massConcentrationPM10,
+//                               data: _dataList),
+//                         if (_showNumberConcentrationPM0_5)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Number Concentration PM0.5 (#/cm³)',
+//                               colorFn: (_, __) =>
+//                                   charts.MaterialPalette.purple.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.numberConcentrationPM0_5,
+//                               data: _dataList),
+//                         if (_showNumberConcentrationPM1_0)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Number Concentration PM1.0 (#/cm³)',
+//                               colorFn: (_, __) =>
+//                                   charts.MaterialPalette.cyan.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.numberConcentrationPM1_0,
+//                               data: _dataList),
+//                         if (_showNumberConcentrationPM2_5)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Number Concentration PM2.5 (#/cm³)',
+//                               colorFn: (_, __) => charts
+//                                   .MaterialPalette.deepOrange.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.numberConcentrationPM2_5,
+//                               data: _dataList),
+//                         if (_showNumberConcentrationPM4_0)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Number Concentration PM4.0 (#/cm³)',
+//                               colorFn: (_, __) =>
+//                                   charts.MaterialPalette.lime.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.numberConcentrationPM4_0,
+//                               data: _dataList),
+//                         if (_showNumberConcentrationPM10)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Number Concentration PM10 (#/cm³)',
+//                               colorFn: (_, __) =>
+//                                   charts.MaterialPalette.indigo.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.numberConcentrationPM10,
+//                               data: _dataList),
+//                         if (_showtypicalParticleSize)
+//                           charts.Series<SPS30SensorDataEntry, DateTime>(
+//                               id: 'Typical Particle Size (µm)',
+//                               colorFn: (_, __) =>
+//                                   charts.MaterialPalette.pink.shadeDefault,
+//                               domainFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.timeStamp,
+//                               measureFn: (SPS30SensorDataEntry value, _) =>
+//                                   value.typicalParticleSize,
+//                               data: _dataList),
+//                       ],

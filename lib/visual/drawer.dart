@@ -35,14 +35,27 @@ class NavDrawer extends StatelessWidget {
           onTap: () => Navigator.of(context).pushReplacementNamed('/scd_page'),
         ),
         ListTile(
-          leading: Icon(Icons.verified_user),
+          leading: Icon(Icons.airplay),
           title: Text('SVM30'),
           onTap: () => Navigator.of(context).pushReplacementNamed('/svm_page'),
         ),
         ListTile(
-          leading: Icon(Icons.border_color),
-          title: Text('Other'),
-          onTap: () => Navigator.of(context).pop(),
+          leading: Icon(Icons.air),
+          title: Text('Carbon Dioxide'),
+          onTap: () =>
+              Navigator.of(context).pushReplacementNamed('/carbondioxide_page'),
+        ),
+        ListTile(
+          leading: Icon(Icons.ac_unit),
+          title: Text('Temperature'),
+          onTap: () =>
+              Navigator.of(context).pushReplacementNamed('/temperature_page'),
+        ),
+        ListTile(
+          leading: Icon(Icons.add_road),
+          title: Text('Humidity'),
+          onTap: () =>
+              Navigator.of(context).pushReplacementNamed('/humidity_page'),
         ),
         ListTile(
           leading: Icon(Icons.settings),

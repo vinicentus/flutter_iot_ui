@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
+import 'package:flutter_iot_ui/visual/pages.dart';
 import 'package:flutter_iot_ui/visual/scd30_page.dart';
 import 'package:flutter_iot_ui/visual/sps30_page.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
@@ -32,6 +33,9 @@ class MyApp extends StatelessWidget {
         '/sps_page': (context) => SPS30Page(),
         '/scd_page': (context) => SCD30Page(),
         '/svm_page': (context) => SVM30Page(),
+        '/carbondioxide_page': (context) => CarbonDioxidePage(),
+        '/temperature_page': (context) => TemperaturePage(),
+        '/humidity_page': (context) => HumidityPage(),
       },
     );
   }
