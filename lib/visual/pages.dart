@@ -162,33 +162,36 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'PM1.0',
+                  id: '0.3-1.0μm:',
                   colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
                       value.massConcentrationPM1_0,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'PM2.5',
+                  id: '1.0-2.5μm:',
                   colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM2_5,
+                      value.massConcentrationPM2_5 -
+                      value.massConcentrationPM1_0,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'PM4.0',
+                  id: '2.5-4.0μm:',
                   colorFn: (_, __) =>
                       charts.MaterialPalette.yellow.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM4_0,
+                      value.massConcentrationPM4_0 -
+                      value.massConcentrationPM2_5,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'PM10',
+                  id: '4.0-10.0μm:',
                   colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM10,
+                      value.massConcentrationPM10 -
+                      value.massConcentrationPM4_0,
                   data: event),
             ]));
   }
@@ -227,7 +230,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'PM0.5',
+                  id: '0.3-0.5μm:',
                   colorFn: (_, __) =>
                       charts.MaterialPalette.purple.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
@@ -235,34 +238,38 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       value.numberConcentrationPM0_5,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'PM1.0',
+                  id: '0.5-1.0μm:',
                   colorFn: (_, __) => charts.MaterialPalette.cyan.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM1_0,
+                      value.numberConcentrationPM1_0 -
+                      value.numberConcentrationPM0_5,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'PM2.5',
+                  id: '1.0-2.5μm:',
                   colorFn: (_, __) =>
                       charts.MaterialPalette.deepOrange.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM2_5,
+                      value.numberConcentrationPM2_5 -
+                      value.numberConcentrationPM1_0,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'PM4.0',
+                  id: '2.5-4.0μm:',
                   colorFn: (_, __) => charts.MaterialPalette.lime.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM4_0,
+                      value.numberConcentrationPM4_0 -
+                      value.numberConcentrationPM2_5,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'PM10',
+                  id: '4.0-10.0μm: ',
                   colorFn: (_, __) =>
                       charts.MaterialPalette.indigo.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM10,
+                      value.numberConcentrationPM10 -
+                      value.numberConcentrationPM4_0,
                   data: event),
             ]));
   }
