@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
+import 'package:flutter_iot_ui/visual/settings.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
 
 class NavDrawer extends StatelessWidget {
@@ -74,10 +75,11 @@ class NavDrawer extends StatelessWidget {
           title: Text('Typical Particle Size'),
           routeName: TypicalParticleSizePage.route,
         ),
-        ListTile(
+        _buildMenuItem(
+          context: context,
           leading: Icon(Icons.settings),
           title: Text('Settings'),
-          onTap: () => Navigator.of(context).pop(),
+          routeName: SettingsPage.route,
         ),
       ],
     ));
