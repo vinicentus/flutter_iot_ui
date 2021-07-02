@@ -26,15 +26,15 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/carbondioxide_page',
+      initialRoute: CarbonDioxidePage.route,
       routes: {
-        '/svm_page': (context) => SVM30Page(),
-        '/carbondioxide_page': (context) => CarbonDioxidePage(),
-        '/temperature_page': (context) => TemperaturePage(),
-        '/humidity_page': (context) => HumidityPage(),
-        '/massconcentration_page': (context) => MassConcentrationPage(),
-        '/numberconcentration_page': (context) => NumberConcentrationPage(),
-        '/typicalparticlesize_page': (context) => TypicalParticleSizePage(),
+        SVM30Page.route: (context) => SVM30Page(),
+        CarbonDioxidePage.route: (context) => CarbonDioxidePage(),
+        TemperaturePage.route: (context) => TemperaturePage(),
+        HumidityPage.route: (context) => HumidityPage(),
+        MassConcentrationPage.route: (context) => MassConcentrationPage(),
+        NumberConcentrationPage.route: (context) => NumberConcentrationPage(),
+        TypicalParticleSizePage.route: (context) => TypicalParticleSizePage(),
       },
     );
   }

@@ -8,6 +8,7 @@ import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
 import 'package:charts_flutter/flutter.dart' as charts;
 
 class SVM30Page extends StatefulWidget {
+  static const String route = '/SVM30Page';
   final String title = 'SVM30 Sensor Data';
 
   @override
@@ -46,7 +47,7 @@ class _SVM30PageState extends State<SVM30Page> {
         title: Text(widget.title),
         actions: [AppbarTrailingInfo()],
       ),
-      drawer: NavDrawer(),
+      drawer: NavDrawer(SVM30Page.route),
       body: StreamBuilder(
         stream: dbUpdates(),
         builder: (context, snapshot) {

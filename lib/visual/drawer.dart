@@ -1,55 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/visual/pages.dart';
+import 'package:flutter_iot_ui/visual/svm30_page.dart';
 
 class NavDrawer extends StatelessWidget {
-  //final int selectedRoute;
+  final String selectedRoute;
+  NavDrawer(this.selectedRoute, {Key key}) : super(key: key);
 
-  //const NavDrawer({Key key, this.selectedRoute}) : super(key: key);
+  Widget _buildMenuItem(
+      {@required BuildContext context,
+      @required Widget leading,
+      @required Widget title,
+      @required String routeName}) {
+    var isSelected = routeName == selectedRoute;
+
+    return ListTile(
+      leading: leading,
+      title: title,
+      onTap: () {
+        if (isSelected) {
+          Navigator.of(context).pop();
+        } else {
+          Navigator.of(context).pushReplacementNamed(routeName);
+        }
+      },
+      selected: isSelected,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
         child: ListView(
       children: [
-        ListTile(
+        _buildMenuItem(
+          context: context,
           leading: Icon(Icons.airplay),
           title: Text('SVM30'),
-          onTap: () => Navigator.of(context).pushReplacementNamed('/svm_page'),
+          routeName: SVM30Page.route,
         ),
-        ListTile(
+        _buildMenuItem(
+          context: context,
           leading: Icon(Icons.air),
           title: Text('Carbon Dioxide'),
-          onTap: () =>
-              Navigator.of(context).pushReplacementNamed('/carbondioxide_page'),
+          routeName: CarbonDioxidePage.route,
         ),
-        ListTile(
+        _buildMenuItem(
+          context: context,
           leading: Icon(Icons.ac_unit),
           title: Text('Temperature'),
-          onTap: () =>
-              Navigator.of(context).pushReplacementNamed('/temperature_page'),
+          routeName: TemperaturePage.route,
         ),
-        ListTile(
+        _buildMenuItem(
+          context: context,
           leading: Icon(Icons.add_road),
           title: Text('Humidity'),
-          onTap: () =>
-              Navigator.of(context).pushReplacementNamed('/humidity_page'),
+          routeName: HumidityPage.route,
         ),
-        ListTile(
+        _buildMenuItem(
+          context: context,
           leading: Icon(Icons.air),
           title: Text('Mass Concentration'),
-          onTap: () => Navigator.of(context)
-              .pushReplacementNamed('/massconcentration_page'),
+          routeName: MassConcentrationPage.route,
         ),
-        ListTile(
+        _buildMenuItem(
+          context: context,
           leading: Icon(Icons.ac_unit),
           title: Text('Number Concentration'),
-          onTap: () => Navigator.of(context)
-              .pushReplacementNamed('/numberconcentration_page'),
+          routeName: NumberConcentrationPage.route,
         ),
-        ListTile(
+        _buildMenuItem(
+          context: context,
           leading: Icon(Icons.add_road),
           title: Text('Typical Particle Size'),
-          onTap: () => Navigator.of(context)
-              .pushReplacementNamed('/typicalparticlesize_page'),
+          routeName: TypicalParticleSizePage.route,
         ),
         ListTile(
           leading: Icon(Icons.settings),

@@ -8,6 +8,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_iot_ui/visual/general_graph_page.dart';
 
 class CarbonDioxidePage extends StatefulWidget {
+  static const String route = '/CarbonDioxidePage';
   final String title = 'Carbon Dioxide (ppm)';
 
   @override
@@ -35,6 +36,7 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        route: CarbonDioxidePage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SCD30SensorDataEntry, DateTime>(
@@ -48,6 +50,7 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
 }
 
 class TemperaturePage extends StatefulWidget {
+  static const String route = '/TemperaturePage';
   final String title = 'Temperature (°C)';
 
   @override
@@ -74,6 +77,7 @@ class _TemperaturePageState extends State<TemperaturePage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        route: TemperaturePage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SCD30SensorDataEntry, DateTime>(
@@ -87,6 +91,7 @@ class _TemperaturePageState extends State<TemperaturePage> {
 }
 
 class HumidityPage extends StatefulWidget {
+  static const String route = '/HumidityPage';
   final String title = 'Humidity (%RH)';
 
   @override
@@ -113,6 +118,7 @@ class _HumidityPageState extends State<HumidityPage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        route: HumidityPage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SCD30SensorDataEntry, DateTime>(
@@ -125,6 +131,7 @@ class _HumidityPageState extends State<HumidityPage> {
 }
 
 class MassConcentrationPage extends StatefulWidget {
+  static const String route = '/MassConcentrationPage';
   final String title = 'Mass Concentration (µg/m³)';
 
   @override
@@ -151,6 +158,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        route: MassConcentrationPage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
@@ -187,6 +195,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
 }
 
 class NumberConcentrationPage extends StatefulWidget {
+  static const String route = '/NumberConcentrationPage';
   final String title = 'Number concentration (#/cm³)';
 
   @override
@@ -214,6 +223,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        route: NumberConcentrationPage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(
@@ -259,6 +269,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
 }
 
 class TypicalParticleSizePage extends StatefulWidget {
+  static const String route = '/TypicalParticleSizePage';
   final String title = 'Typical Particle Size (µm)';
 
   @override
@@ -286,6 +297,7 @@ class _TypicalParticleSizePageState extends State<TypicalParticleSizePage> {
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
+        route: TypicalParticleSizePage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
               charts.Series<SPS30SensorDataEntry, DateTime>(

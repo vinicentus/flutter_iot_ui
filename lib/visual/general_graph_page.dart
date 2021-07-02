@@ -3,31 +3,28 @@ import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
-class GeneralGraphPage extends StatefulWidget {
+class GeneralGraphPage extends StatelessWidget {
   final String title;
   final Stream<List<charts.Series<dynamic, DateTime>>> seriesListStream;
+  final String route;
 
   GeneralGraphPage({
     Key key,
     @required this.title,
     @required this.seriesListStream,
+    @required this.route,
   }) : super(key: key);
 
-  @override
-  _GeneralGraphPageState createState() => _GeneralGraphPageState();
-}
-
-class _GeneralGraphPageState extends State<GeneralGraphPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(this.title),
         actions: [AppbarTrailingInfo()],
       ),
-      drawer: NavDrawer(),
+      drawer: NavDrawer(this.route),
       body: StreamBuilder(
-        stream: widget.seriesListStream,
+        stream: this.seriesListStream,
         builder: (context, snapshot) {
           if (snapshot.hasData && (snapshot.data as List).isNotEmpty) {
             return charts.TimeSeriesChart(
