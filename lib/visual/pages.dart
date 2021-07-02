@@ -173,8 +173,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                   colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM2_5 -
-                      value.massConcentrationPM1_0,
+                      value.massConcentrationPM2_5Subtracted,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
                   id: '2.5-4.0μm:',
@@ -182,16 +181,14 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       charts.MaterialPalette.yellow.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM4_0 -
-                      value.massConcentrationPM2_5,
+                      value.massConcentrationPM4_0Subtracted,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
                   id: '4.0-10.0μm:',
                   colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM10 -
-                      value.massConcentrationPM4_0,
+                      value.massConcentrationPM10Subtracted,
                   data: event),
             ]));
   }
@@ -242,8 +239,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                   colorFn: (_, __) => charts.MaterialPalette.cyan.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM1_0 -
-                      value.numberConcentrationPM0_5,
+                      value.numberConcentrationPM1_0Subtracted,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
                   id: '1.0-2.5μm:',
@@ -251,16 +247,14 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       charts.MaterialPalette.deepOrange.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM2_5 -
-                      value.numberConcentrationPM1_0,
+                      value.numberConcentrationPM2_5Subtracted,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
                   id: '2.5-4.0μm:',
                   colorFn: (_, __) => charts.MaterialPalette.lime.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM4_0 -
-                      value.numberConcentrationPM2_5,
+                      value.numberConcentrationPM4_0Subtracted,
                   data: event),
               charts.Series<SPS30SensorDataEntry, DateTime>(
                   id: '4.0-10.0μm: ',
@@ -268,8 +262,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       charts.MaterialPalette.indigo.shadeDefault,
                   domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
                   measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM10 -
-                      value.numberConcentrationPM4_0,
+                      value.numberConcentrationPM10Subtracted,
                   data: event),
             ]));
   }
