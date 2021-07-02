@@ -35,7 +35,7 @@ class GeneralGraphPage extends StatelessWidget {
                   position: charts.BehaviorPosition.bottom,
                   horizontalFirst: true,
                   showMeasures: true,
-                  // Using last doesn't work when we hide one of the lines
+                  // Using last doesn't work when we hide one of the lines (in charts_flutter 0.10.0)
                   legendDefaultMeasure: charts.LegendDefaultMeasure.lastValue,
                   measureFormatter: (num value) {
                     // Despite some initial confusion, it turns out that this actually rounds the numbers

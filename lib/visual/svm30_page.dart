@@ -90,9 +90,8 @@ class _SVM30PageState extends State<SVM30Page> {
                   // legend entries will grow as new rows first instead of a new column.
                   horizontalFirst: true,
                   showMeasures: true,
-                  // TODO: change to last
-                  // Using last doesn't work when we hide one of the lines
-                  legendDefaultMeasure: charts.LegendDefaultMeasure.none,
+                  // Using last doesn't work when we hide one of the lines (in charts_flutter 0.10.0)
+                  legendDefaultMeasure: charts.LegendDefaultMeasure.lastValue,
                   measureFormatter: (num value) {
                     // Despite some initial confusion, it turns out that this actually rounds the numbers
                     return value == null || value.isNaN
