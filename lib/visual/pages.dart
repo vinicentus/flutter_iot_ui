@@ -20,14 +20,14 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
     // Init
     var today = DateTime.now();
     var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    var db = await getSCD30EntriesBetweenDateTimes(yesterday, today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
       yesterday = today.subtract(Duration(days: 1));
       db = await Future.delayed(Duration(seconds: 5),
-          () => getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today));
+          () => getSCD30EntriesBetweenDateTimes(yesterday, today));
       yield db;
     }
   }
@@ -72,14 +72,14 @@ class _TemperaturePageState extends State<TemperaturePage> {
     // Init
     var today = DateTime.now();
     var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    var db = await getSCD30EntriesBetweenDateTimes(yesterday, today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
       yesterday = today.subtract(Duration(days: 1));
       db = await Future.delayed(Duration(seconds: 5),
-          () => getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today));
+          () => getSCD30EntriesBetweenDateTimes(yesterday, today));
       yield db;
     }
   }
@@ -130,14 +130,14 @@ class _HumidityPageState extends State<HumidityPage> {
     // Init
     var today = DateTime.now();
     var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    var db = await getSCD30EntriesBetweenDateTimes(yesterday, today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
       yesterday = today.subtract(Duration(days: 1));
       db = await Future.delayed(Duration(seconds: 5),
-          () => getSCD30EntriesBetweenDateTimes(dbPath, yesterday, today));
+          () => getSCD30EntriesBetweenDateTimes(yesterday, today));
       yield db;
     }
   }
@@ -181,14 +181,14 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
     // Init
     var today = DateTime.now();
     var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSPS30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    var db = await getSPS30EntriesBetweenDateTimes(yesterday, today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
       yesterday = today.subtract(Duration(days: 1));
       db = await Future.delayed(Duration(seconds: 5),
-          () => getSPS30EntriesBetweenDateTimes(dbPath, yesterday, today));
+          () => getSPS30EntriesBetweenDateTimes(yesterday, today));
       yield db;
     }
   }
@@ -285,14 +285,14 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
     // Init
     var today = DateTime.now();
     var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSPS30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    var db = await getSPS30EntriesBetweenDateTimes(yesterday, today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
       yesterday = today.subtract(Duration(days: 1));
       db = await Future.delayed(Duration(seconds: 5),
-          () => getSPS30EntriesBetweenDateTimes(dbPath, yesterday, today));
+          () => getSPS30EntriesBetweenDateTimes(yesterday, today));
       yield db;
     }
   }
@@ -406,14 +406,14 @@ class _TypicalParticleSizePageState extends State<TypicalParticleSizePage> {
     // Init
     var today = DateTime.now();
     var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSPS30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    var db = await getSPS30EntriesBetweenDateTimes(yesterday, today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
       yesterday = today.subtract(Duration(days: 1));
       db = await Future.delayed(Duration(seconds: 5),
-          () => getSPS30EntriesBetweenDateTimes(dbPath, yesterday, today));
+          () => getSPS30EntriesBetweenDateTimes(yesterday, today));
       yield db;
     }
   }

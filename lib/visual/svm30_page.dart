@@ -19,14 +19,14 @@ class _SVM30PageState extends State<SVM30Page> {
     // Init
     var today = DateTime.now();
     var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSVM30EntriesBetweenDateTimes(dbPath, yesterday, today);
+    var db = await getSVM30EntriesBetweenDateTimes(yesterday, today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
       yesterday = today.subtract(Duration(days: 1));
       db = await Future.delayed(Duration(seconds: 5),
-          () => getSVM30EntriesBetweenDateTimes(dbPath, yesterday, today));
+          () => getSVM30EntriesBetweenDateTimes(yesterday, today));
       yield db;
     }
   }

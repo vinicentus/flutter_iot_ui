@@ -8,6 +8,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 
+Database db;
+
 void initDBLib() {
   if (Platform.isLinux) {
     // Initialize FFI
@@ -26,13 +28,21 @@ void initDBLib() {
   }
 }
 
-Future<List<SVM30SensorDataEntry>> getAllSVM30Entries(
-    String databasePath) async {
+Future<Database> openDatabaseIfNotOpen() async {
+  if (db == null || db?.isOpen == false) {
+    db = await openDatabase(dbPath, readOnly: true);
+  }
+  return db;
+}
+
+// TODO: close the database on exit
+void closeDatabase() async => (await openDatabaseIfNotOpen()).close();
+
+Future<List<SVM30SensorDataEntry>> getAllSVM30Entries() async {
   print('opening db...');
-  var db = await openDatabase(databasePath, readOnly: true);
+  var db = await openDatabaseIfNotOpen();
   print('IsOpen: ${db.isOpen}');
   final List<Map<String, dynamic>> maps = await db.query('svm30_output');
-  await db.close();
 
   var returnList = List.generate(maps.length, (i) {
     return SVM30SensorDataEntry.createFromDB(
@@ -45,9 +55,9 @@ Future<List<SVM30SensorDataEntry>> getAllSVM30Entries(
 }
 
 Future<List<SVM30SensorDataEntry>> getSVM30EntriesBetweenDateTimes(
-    String databasePath, DateTime start, DateTime stop) async {
+    DateTime start, DateTime stop) async {
   print('opening db...');
-  var db = await openDatabase(databasePath, readOnly: true);
+  var db = await openDatabaseIfNotOpen();
   print('IsOpen: ${db.isOpen}');
   final List<Map<String, dynamic>> maps = await db.query('svm30_output',
       // The question marks are filled in with values from whereArgs
@@ -57,7 +67,6 @@ Future<List<SVM30SensorDataEntry>> getSVM30EntriesBetweenDateTimes(
         start.toUtc().toIso8601String().split('.')[0] + 'Z',
         stop.toUtc().toIso8601String().split('.')[0] + 'Z',
       ]);
-  await db.close();
 
   var returnList = List.generate(maps.length, (i) {
     return SVM30SensorDataEntry.createFromDB(
@@ -69,13 +78,11 @@ Future<List<SVM30SensorDataEntry>> getSVM30EntriesBetweenDateTimes(
   return returnList;
 }
 
-Future<List<SPS30SensorDataEntry>> getAllSPS30Entries(
-    String databasePath) async {
+Future<List<SPS30SensorDataEntry>> getAllSPS30Entries() async {
   print('opening db...');
-  var db = await openDatabase(databasePath, readOnly: true);
+  var db = await openDatabaseIfNotOpen();
   print('IsOpen: ${db.isOpen}');
   final List<Map<String, dynamic>> maps = await db.query('sps30_output');
-  await db.close();
 
   var returnList = List.generate(maps.length, (i) {
     return SPS30SensorDataEntry.createFromDB(
@@ -95,13 +102,11 @@ Future<List<SPS30SensorDataEntry>> getAllSPS30Entries(
   return returnList;
 }
 
-Future<List<SCD30SensorDataEntry>> getAllSCD30Entries(
-    String databasePath) async {
+Future<List<SCD30SensorDataEntry>> getAllSCD30Entries() async {
   print('opening db...');
-  var db = await openDatabase(databasePath, readOnly: true);
+  var db = await openDatabaseIfNotOpen();
   print('IsOpen: ${db.isOpen}');
   final List<Map<String, dynamic>> maps = await db.query('scd30_output');
-  await db.close();
 
   var returnList = List.generate(maps.length, (i) {
     return SCD30SensorDataEntry.createFromDB(
@@ -115,9 +120,9 @@ Future<List<SCD30SensorDataEntry>> getAllSCD30Entries(
 }
 
 Future<List<SCD30SensorDataEntry>> getSCD30EntriesBetweenDateTimes(
-    String databasePath, DateTime start, DateTime stop) async {
+    DateTime start, DateTime stop) async {
   print('opening db...');
-  var db = await openDatabase(databasePath, readOnly: true);
+  var db = await openDatabaseIfNotOpen();
   print('IsOpen: ${db.isOpen}');
   final List<Map<String, dynamic>> maps = await db.query('scd30_output',
       // The question marks are filled in with values from whereArgs
@@ -127,7 +132,6 @@ Future<List<SCD30SensorDataEntry>> getSCD30EntriesBetweenDateTimes(
         start.toUtc().toIso8601String().split('.')[0] + 'Z',
         stop.toUtc().toIso8601String().split('.')[0] + 'Z',
       ]);
-  await db.close();
 
   var returnList = List.generate(maps.length, (i) {
     return SCD30SensorDataEntry.createFromDB(
@@ -141,9 +145,9 @@ Future<List<SCD30SensorDataEntry>> getSCD30EntriesBetweenDateTimes(
 }
 
 Future<List<SPS30SensorDataEntry>> getSPS30EntriesBetweenDateTimes(
-    String databasePath, DateTime start, DateTime stop) async {
+    DateTime start, DateTime stop) async {
   print('opening db...');
-  var db = await openDatabase(databasePath, readOnly: true);
+  var db = await openDatabaseIfNotOpen();
   print('IsOpen: ${db.isOpen}');
   final List<Map<String, dynamic>> maps = await db.query('sps30_output',
       // The question marks are filled in with values from whereArgs
@@ -153,7 +157,6 @@ Future<List<SPS30SensorDataEntry>> getSPS30EntriesBetweenDateTimes(
         start.toUtc().toIso8601String().split('.')[0] + 'Z',
         stop.toUtc().toIso8601String().split('.')[0] + 'Z',
       ]);
-  await db.close();
 
   var returnList = List.generate(maps.length, (i) {
     return SPS30SensorDataEntry.createFromDB(
