@@ -44,7 +44,7 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
               spots: event
                   .map((e) => FlSpot(
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.temperature))
+                      e.carbonDioxide))
                   .toList(),
               isCurved: true,
               curveSmoothness: 0,
