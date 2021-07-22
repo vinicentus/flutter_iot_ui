@@ -7,6 +7,7 @@ class GeneralGraphPage extends StatelessWidget {
   final String title;
   final Stream<List<LineChartBarData>> seriesListStream;
   final String route;
+  final String unit;
 
   // TODO. add more params for unit etc
   GeneralGraphPage({
@@ -14,6 +15,7 @@ class GeneralGraphPage extends StatelessWidget {
     @required this.title,
     @required this.seriesListStream,
     @required this.route,
+    @required this.unit,
   }) : super(key: key);
 
   @override
@@ -51,8 +53,8 @@ class GeneralGraphPage extends StatelessWidget {
           enabled: true,
           touchTooltipData: LineTouchTooltipData(
             getTooltipItems: (List<LineBarSpot> spotList) => spotList
-                .map((e) => LineTooltipItem(
-                    '${e.y} x', Theme.of(context).textTheme.bodyText1))
+                .map((e) => LineTooltipItem('${e.y} ${this.unit}',
+                    Theme.of(context).textTheme.bodyText1))
                 .toList(),
           )),
       gridData: FlGridData(
@@ -75,7 +77,7 @@ class GeneralGraphPage extends StatelessWidget {
           showTitles: true,
           // TODO:
           // The x here represents a placeholder for a unit
-          getTitles: (value) => '${value.toStringAsFixed(2)} x',
+          getTitles: (value) => '${value.toStringAsFixed(0)} ${this.unit}',
           // interval: 1,
           margin: 10,
           reservedSize: 50,

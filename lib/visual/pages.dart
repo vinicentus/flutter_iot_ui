@@ -37,6 +37,7 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
     return GeneralGraphPage(
         route: CarbonDioxidePage.route,
         title: this.widget.title,
+        unit: 'ppm',
         seriesListStream: dbUpdates().map((event) {
           return [
             // TODO: id: 'Carbon Dioxide'
@@ -85,6 +86,7 @@ class _TemperaturePageState extends State<TemperaturePage> {
     return GeneralGraphPage(
         route: TemperaturePage.route,
         title: this.widget.title,
+        unit: '°C',
         seriesListStream: dbUpdates().map((event) {
           return [
             // id: 'Temperature',
@@ -133,6 +135,7 @@ class _HumidityPageState extends State<HumidityPage> {
     return GeneralGraphPage(
         route: HumidityPage.route,
         title: this.widget.title,
+        unit: '%RH',
         seriesListStream: dbUpdates().map((event) {
           return [
             // id: 'Humidity'
@@ -181,6 +184,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
     return GeneralGraphPage(
         route: MassConcentrationPage.route,
         title: this.widget.title,
+        unit: 'µg/m³',
         seriesListStream: dbUpdates().map((event) {
           return [
             LineChartBarData(
@@ -263,6 +267,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
     return GeneralGraphPage(
         route: NumberConcentrationPage.route,
         title: this.widget.title,
+        unit: '#/cm³',
         seriesListStream: dbUpdates().map((event) {
           return [
             LineChartBarData(
@@ -356,6 +361,7 @@ class _TypicalParticleSizePageState extends State<TypicalParticleSizePage> {
     return GeneralGraphPage(
         route: TypicalParticleSizePage.route,
         title: this.widget.title,
+        unit: 'µm',
         seriesListStream: dbUpdates().map((event) {
           return [
             LineChartBarData(
