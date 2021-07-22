@@ -8,6 +8,7 @@ class GeneralGraphPage extends StatelessWidget {
   final Stream<List<LineChartBarData>> seriesListStream;
   final String route;
 
+  // TODO. add more params for unit etc
   GeneralGraphPage({
     Key key,
     @required this.title,
@@ -27,7 +28,7 @@ class GeneralGraphPage extends StatelessWidget {
         stream: this.seriesListStream,
         builder: (context, snapshot) {
           if (snapshot.hasData && (snapshot.data as List).isNotEmpty) {
-            return LineChart(sampleData2(snapshot.data));
+            return LineChart(data(snapshot.data, context));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -43,45 +44,41 @@ class GeneralGraphPage extends StatelessWidget {
     );
   }
 
-  LineChartData sampleData2(List<LineChartBarData> seriesListStream) {
+  LineChartData data(
+      List<LineChartBarData> seriesListStream, BuildContext context) {
     return LineChartData(
       lineTouchData: LineTouchData(
-        enabled: true,
-      ),
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            getTooltipItems: (List<LineBarSpot> spotList) => spotList
+                .map((e) => LineTooltipItem(
+                    '${e.y} x', Theme.of(context).textTheme.bodyText1))
+                .toList(),
+          )),
       gridData: FlGridData(
         show: true,
       ),
       titlesData: FlTitlesData(
         bottomTitles: SideTitles(
           showTitles: true,
-          reservedSize: 22,
+          reservedSize: 20,
           margin: 10,
+          // An hour in milliseconds
+          interval: 3.6e6,
           // TODO:
-          getTitles: (value) {
-            return DateTime.fromMillisecondsSinceEpoch(value.toInt())
-                .toIso8601String();
-          },
+          getTitles: (value) =>
+              DateTime.fromMillisecondsSinceEpoch(value.toInt())
+                  .hour
+                  .toString(),
         ),
         leftTitles: SideTitles(
           showTitles: true,
           // TODO:
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 1:
-                return '1m';
-              case 2:
-                return '2m';
-              case 3:
-                return '3m';
-              case 4:
-                return '5m';
-              case 5:
-                return '6m';
-            }
-            return '';
-          },
-          margin: 8,
-          reservedSize: 30,
+          // The x here represents a placeholder for a unit
+          getTitles: (value) => '${value.toStringAsFixed(2)} x',
+          // interval: 1,
+          margin: 10,
+          reservedSize: 50,
         ),
       ),
       borderData: FlBorderData(
