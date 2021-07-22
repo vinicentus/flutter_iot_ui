@@ -46,17 +46,9 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.carbonDioxide))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries.first],
+              dotData: FlDotData(show: false),
             ),
           ];
         }));
@@ -102,17 +94,9 @@ class _TemperaturePageState extends State<TemperaturePage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.temperature))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries.first],
+              dotData: FlDotData(show: false),
             ),
           ];
         }));
@@ -158,17 +142,9 @@ class _HumidityPageState extends State<HumidityPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.humidity))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries.first],
+              dotData: FlDotData(show: false),
             ),
           ];
         }));
@@ -214,17 +190,9 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.massConcentrationPM1_0))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries.first],
+              dotData: FlDotData(show: false),
             ),
             LineChartBarData(
               // id: '1.0-2.5μm:',
@@ -233,17 +201,9 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.massConcentrationPM2_5Subtracted))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries[1]],
+              dotData: FlDotData(show: false),
             ),
             LineChartBarData(
               // id: '2.5-4.0μm:',
@@ -252,17 +212,9 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.massConcentrationPM4_0Subtracted))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries[2]],
+              dotData: FlDotData(show: false),
             ),
             LineChartBarData(
               // id: '4.0-10.0μm:',
@@ -271,17 +223,9 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.massConcentrationPM10Subtracted))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries[3]],
+              dotData: FlDotData(show: false),
             ),
           ];
         }));
@@ -328,17 +272,9 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.numberConcentrationPM0_5))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries.first],
+              dotData: FlDotData(show: false),
             ),
             LineChartBarData(
               // id: '0.5-1.0μm:',
@@ -347,17 +283,9 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.numberConcentrationPM1_0Subtracted))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries[1]],
+              dotData: FlDotData(show: false),
             ),
             LineChartBarData(
               // id: '1.0-2.5μm:',
@@ -366,17 +294,9 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.numberConcentrationPM2_5Subtracted))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries[2]],
+              dotData: FlDotData(show: false),
             ),
             LineChartBarData(
               // id: '2.5-4.0μm:',
@@ -385,17 +305,9 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.numberConcentrationPM4_0Subtracted))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries[3]],
+              dotData: FlDotData(show: false),
             ),
             LineChartBarData(
               // id: '4.0-10.0μm: ',
@@ -404,17 +316,9 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.numberConcentrationPM10Subtracted))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries[4]],
+              dotData: FlDotData(show: false),
             ),
           ];
         }));
@@ -461,17 +365,9 @@ class _TypicalParticleSizePageState extends State<TypicalParticleSizePage> {
                       e.timeStamp.millisecondsSinceEpoch.toDouble(),
                       e.typicalParticleSize))
                   .toList(),
-              isCurved: true,
-              curveSmoothness: 0,
-              colors: const [
-                Color(0x4427b6fc),
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(
-                show: false,
-              ),
+              isCurved: false,
+              colors: [Colors.primaries.first],
+              dotData: FlDotData(show: false),
             ),
           ];
         }));
