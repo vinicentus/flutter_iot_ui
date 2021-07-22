@@ -5,7 +5,6 @@ import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
-import 'package:charts_flutter/flutter.dart' as charts;
 
 class SVM30Page extends StatefulWidget {
   static const String route = '/SVM30Page';
@@ -52,7 +51,8 @@ class _SVM30PageState extends State<SVM30Page> {
         stream: dbUpdates(),
         builder: (context, snapshot) {
           if (snapshot.hasData && (snapshot.data as List).isNotEmpty) {
-            return charts.TimeSeriesChart(
+            return null;
+            /*charts.TimeSeriesChart(
               [
                 charts.Series<SVM30SensorDataEntry, DateTime>(
                     id: 'Carbon Dioxide equivalent (ppm)',
@@ -100,7 +100,7 @@ class _SVM30PageState extends State<SVM30Page> {
                   },
                 ),
               ],
-            );
+            );*/
           } else if (snapshot.hasError) {
             return Center(child: Text('Error.'));
           } else {

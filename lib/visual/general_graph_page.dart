@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:fl_chart/fl_chart.dart';
 
 class GeneralGraphPage extends StatelessWidget {
   final String title;
-  final Stream<List<charts.Series<dynamic, DateTime>>> seriesListStream;
+  final Stream<List<LineChartBarData>> seriesListStream;
   final String route;
 
   GeneralGraphPage({
@@ -27,27 +27,9 @@ class GeneralGraphPage extends StatelessWidget {
         stream: this.seriesListStream,
         builder: (context, snapshot) {
           if (snapshot.hasData && (snapshot.data as List).isNotEmpty) {
-            return charts.TimeSeriesChart(
-              snapshot.data,
-              animate: true,
-              behaviors: [
-                charts.SeriesLegend(
-                  position: charts.BehaviorPosition.bottom,
-                  horizontalFirst: true,
-                  showMeasures: true,
-                  // Using last doesn't work when we hide one of the lines (in charts_flutter 0.10.0)
-                  legendDefaultMeasure: charts.LegendDefaultMeasure.lastValue,
-                  measureFormatter: (num value) {
-                    // Despite some initial confusion, it turns out that this actually rounds the numbers
-                    return value == null || value.isNaN
-                        ? '-'
-                        : value.toStringAsFixed(1);
-                  },
-                ),
-              ],
-            );
+            return LineChart(sampleData2(snapshot.data));
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error.'));
+            return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             return Center(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -58,6 +40,62 @@ class GeneralGraphPage extends StatelessWidget {
           }
         },
       ),
+    );
+  }
+
+  LineChartData sampleData2(List<LineChartBarData> seriesListStream) {
+    return LineChartData(
+      lineTouchData: LineTouchData(
+        enabled: true,
+      ),
+      gridData: FlGridData(
+        show: true,
+      ),
+      titlesData: FlTitlesData(
+        bottomTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 22,
+          margin: 10,
+          // TODO:
+          getTitles: (value) {
+            return DateTime.fromMillisecondsSinceEpoch(value.toInt())
+                .toIso8601String();
+          },
+        ),
+        leftTitles: SideTitles(
+          showTitles: true,
+          // TODO:
+          getTitles: (value) {
+            switch (value.toInt()) {
+              case 1:
+                return '1m';
+              case 2:
+                return '2m';
+              case 3:
+                return '3m';
+              case 4:
+                return '5m';
+              case 5:
+                return '6m';
+            }
+            return '';
+          },
+          margin: 8,
+          reservedSize: 30,
+        ),
+      ),
+      borderData: FlBorderData(
+          show: true,
+          border: const Border(
+            bottom: BorderSide(),
+            left: BorderSide(),
+          )),
+      // TODO:
+      // minX: 0,
+      // maxX: 14,
+      // maxY: 6,
+      // minY: 0,
+      lineBarsData: seriesListStream,
     );
   }
 }

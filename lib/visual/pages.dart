@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
-import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_iot_ui/visual/general_graph_page.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class CarbonDioxidePage extends StatefulWidget {
   static const String route = '/CarbonDioxidePage';
@@ -39,12 +38,23 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
         route: CarbonDioxidePage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
-              charts.Series<SCD30SensorDataEntry, DateTime>(
-                  id: 'Carbon Dioxide',
-                  domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SCD30SensorDataEntry value, _) =>
-                      value.carbonDioxide,
-                  data: event),
+              // TODO: id: 'Carbon Dioxide'
+              LineChartBarData(
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.carbonDioxide)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
             ]));
   }
 }
@@ -79,14 +89,31 @@ class _TemperaturePageState extends State<TemperaturePage> {
     return GeneralGraphPage(
         route: TemperaturePage.route,
         title: this.widget.title,
-        seriesListStream: dbUpdates().map((event) => [
-              charts.Series<SCD30SensorDataEntry, DateTime>(
-                  id: 'Temperature',
-                  domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SCD30SensorDataEntry value, _) =>
-                      value.temperature,
-                  data: event),
-            ]));
+        seriesListStream: dbUpdates().map((event) {
+          var flSpotList = <FlSpot>[];
+          event.forEach((element) {
+            flSpotList.add(FlSpot(
+                element.timeStamp.millisecondsSinceEpoch.toDouble(),
+                element.temperature));
+          });
+          return [
+            // id: 'Temperature',
+            LineChartBarData(
+              spots: flSpotList,
+              isCurved: true,
+              curveSmoothness: 0,
+              colors: const [
+                Color(0x4427b6fc),
+              ],
+              barWidth: 2,
+              isStrokeCapRound: true,
+              dotData: FlDotData(show: true),
+              belowBarData: BarAreaData(
+                show: false,
+              ),
+            ),
+          ];
+        }));
   }
 }
 
@@ -121,11 +148,22 @@ class _HumidityPageState extends State<HumidityPage> {
         route: HumidityPage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
-              charts.Series<SCD30SensorDataEntry, DateTime>(
-                  id: 'Humidity',
-                  domainFn: (SCD30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SCD30SensorDataEntry value, _) => value.humidity,
-                  data: event),
+              LineChartBarData(
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(), e.humidity)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
+              // id: 'Humidity',
             ]));
   }
 }
@@ -161,35 +199,74 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
         route: MassConcentrationPage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: '0.3-1.0μm:',
-                  colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM1_0,
-                  data: event),
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: '1.0-2.5μm:',
-                  colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM2_5Subtracted,
-                  data: event),
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: '2.5-4.0μm:',
-                  colorFn: (_, __) =>
-                      charts.MaterialPalette.yellow.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM4_0Subtracted,
-                  data: event),
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: '4.0-10.0μm:',
-                  colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.massConcentrationPM10Subtracted,
-                  data: event),
+              LineChartBarData(
+                // id: '0.3-1.0μm:',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.massConcentrationPM1_0)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
+              LineChartBarData(
+                // id: '1.0-2.5μm:',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.massConcentrationPM2_5Subtracted)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
+              LineChartBarData(
+                // id: '2.5-4.0μm:',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.massConcentrationPM4_0Subtracted)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
+              LineChartBarData(
+                // id: '4.0-10.0μm:',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.massConcentrationPM10Subtracted)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
             ]));
   }
 }
@@ -226,44 +303,91 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
         route: NumberConcentrationPage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: '0.3-0.5μm:',
-                  colorFn: (_, __) =>
-                      charts.MaterialPalette.purple.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM0_5,
-                  data: event),
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: '0.5-1.0μm:',
-                  colorFn: (_, __) => charts.MaterialPalette.cyan.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM1_0Subtracted,
-                  data: event),
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: '1.0-2.5μm:',
-                  colorFn: (_, __) =>
-                      charts.MaterialPalette.deepOrange.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM2_5Subtracted,
-                  data: event),
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: '2.5-4.0μm:',
-                  colorFn: (_, __) => charts.MaterialPalette.lime.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM4_0Subtracted,
-                  data: event),
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: '4.0-10.0μm: ',
-                  colorFn: (_, __) =>
-                      charts.MaterialPalette.indigo.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.numberConcentrationPM10Subtracted,
-                  data: event),
+              LineChartBarData(
+                // id: '0.3-0.5μm:',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.numberConcentrationPM0_5)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
+              LineChartBarData(
+                // id: '0.5-1.0μm:',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.numberConcentrationPM1_0Subtracted)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
+              LineChartBarData(
+                // id: '1.0-2.5μm:',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.numberConcentrationPM2_5Subtracted)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
+              LineChartBarData(
+                // id: '2.5-4.0μm:',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.numberConcentrationPM4_0Subtracted)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
+              LineChartBarData(
+                // id: '4.0-10.0μm: ',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.numberConcentrationPM10Subtracted)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
             ]));
   }
 }
@@ -300,13 +424,23 @@ class _TypicalParticleSizePageState extends State<TypicalParticleSizePage> {
         route: TypicalParticleSizePage.route,
         title: this.widget.title,
         seriesListStream: dbUpdates().map((event) => [
-              charts.Series<SPS30SensorDataEntry, DateTime>(
-                  id: 'Typical Particle Size',
-                  colorFn: (_, __) => charts.MaterialPalette.pink.shadeDefault,
-                  domainFn: (SPS30SensorDataEntry value, _) => value.timeStamp,
-                  measureFn: (SPS30SensorDataEntry value, _) =>
-                      value.typicalParticleSize,
-                  data: event),
+              LineChartBarData(
+                // id: 'Typical Particle Size',
+                spots: event.map((e) => FlSpot(
+                    e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                    e.typicalParticleSize)),
+                isCurved: true,
+                curveSmoothness: 0,
+                colors: const [
+                  Color(0x4427b6fc),
+                ],
+                barWidth: 2,
+                isStrokeCapRound: true,
+                dotData: FlDotData(show: true),
+                belowBarData: BarAreaData(
+                  show: false,
+                ),
+              ),
             ]));
   }
 }
