@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
-import 'package:flutter_iot_ui/data/constants.dart' show dbPath;
 
 class SVM30Page extends StatefulWidget {
   static const String route = '/SVM30Page';
@@ -48,59 +48,78 @@ class _SVM30PageState extends State<SVM30Page> {
       ),
       drawer: NavDrawer(SVM30Page.route),
       body: StreamBuilder(
-        stream: dbUpdates(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && (snapshot.data as List).isNotEmpty) {
-            return null;
-            /*charts.TimeSeriesChart(
-              [
-                charts.Series<SVM30SensorDataEntry, DateTime>(
-                    id: 'Carbon Dioxide equivalent (ppm)',
-                    colorFn: (_, __) =>
-                        charts.MaterialPalette.blue.shadeDefault,
-                    domainFn: (SVM30SensorDataEntry value, _) =>
-                        value.timeStamp,
-                    measureFn: (SVM30SensorDataEntry value, _) =>
-                        value.carbonDioxide,
-                    data: snapshot.data),
-                charts.Series<SVM30SensorDataEntry, DateTime>(
-                    id: 'Total Volatile Organic Compounds (ppb)',
-                    colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-                    domainFn: (SVM30SensorDataEntry value, _) =>
-                        value.timeStamp,
-                    measureFn: (SVM30SensorDataEntry value, _) =>
-                        value.totalVolatileOrganicCompounds,
-                    data: snapshot.data),
-              ],
-              animate: true,
-              // Optionally pass in a [DateTimeFactory] used by the chart. The factory
-              // should create the same type of [DateTime] as the data provided. If none
-              // specified, the default creates local date time.
-              dateTimeFactory: const charts.LocalDateTimeFactory(),
-              behaviors: [
-                charts.SeriesLegend(
-                  // Positions for "start" and "end" will be left and right respectively
-                  // for widgets with a build context that has directionality ltr.
-                  // For rtl, "start" and "end" will be right and left respectively.
-                  // Since this example has directionality of ltr, the legend is
-                  // positioned on the right side of the chart.
-                  position: charts.BehaviorPosition.bottom,
-                  // By default, if the position of the chart is on the left or right of
-                  // the chart, [horizontalFirst] is set to false. This means that the
-                  // legend entries will grow as new rows first instead of a new column.
-                  horizontalFirst: true,
-                  showMeasures: true,
-                  // Using last doesn't work when we hide one of the lines (in charts_flutter 0.10.0)
-                  legendDefaultMeasure: charts.LegendDefaultMeasure.lastValue,
-                  measureFormatter: (num value) {
-                    // Despite some initial confusion, it turns out that this actually rounds the numbers
-                    return value == null || value.isNaN
-                        ? '-'
-                        : value.toStringAsFixed(1);
-                  },
+        stream: dbUpdates().map(
+          (List<SVM30SensorDataEntry> event) => [
+            LineChartBarData(
+              //id: 'Carbon Dioxide equivalent (ppm)',
+              spots: event
+                  .map((e) => FlSpot(
+                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                      e.carbonDioxide))
+                  .toList(),
+              isCurved: false,
+              colors: [Colors.primaries.first],
+              dotData: FlDotData(show: false),
+            ),
+            LineChartBarData(
+              //id: 'Total Volatile Organic Compounds (ppb)',
+              spots: event
+                  .map((e) => FlSpot(
+                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                      e.totalVolatileOrganicCompounds))
+                  .toList(),
+              isCurved: false,
+              colors: [Colors.primaries[5]],
+              dotData: FlDotData(show: false),
+            ),
+          ],
+        ),
+        builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
+          if (snapshot.hasData && snapshot.data.isNotEmpty) {
+            return LineChart(
+              LineChartData(
+                lineTouchData: LineTouchData(
+                    enabled: true,
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipItems: (List<LineBarSpot> spotList) => spotList
+                          .map((e) => LineTooltipItem('${e.y} x',
+                              Theme.of(context).textTheme.bodyText1))
+                          .toList(),
+                    )),
+                gridData: FlGridData(
+                  show: true,
                 ),
-              ],
-            );*/
+                titlesData: FlTitlesData(
+                  bottomTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 20,
+                    margin: 10,
+                    // An hour in milliseconds
+                    interval: 3.6e6,
+                    // TODO:
+                    getTitles: (value) =>
+                        DateTime.fromMillisecondsSinceEpoch(value.toInt())
+                            .hour
+                            .toString(),
+                  ),
+                  leftTitles: SideTitles(
+                    showTitles: true,
+                    // TODO:
+                    getTitles: (value) => '${value.toStringAsFixed(2)} x',
+                    interval: 50,
+                    margin: 10,
+                    reservedSize: 50,
+                  ),
+                ),
+                borderData: FlBorderData(
+                    show: true,
+                    border: const Border(
+                      bottom: BorderSide(),
+                      left: BorderSide(),
+                    )),
+                lineBarsData: snapshot.data,
+              ),
+            );
           } else if (snapshot.hasError) {
             return Center(child: Text('Error.'));
           } else {
