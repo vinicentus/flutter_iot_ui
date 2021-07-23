@@ -134,9 +134,9 @@ class MockDatabase implements Database {
       int limit,
       int offset}) async {
     if (table == 'sps30_output' || table == 'scd30_output') {
-      var prevDateTime = DateTime.tryParse((data.isEmpty
+      var prevDateTime = DateTime.parse((data.isEmpty
           ? DateTime.now().toIso8601String()
-          : '${data.elementAt(data.length - 1)['date']} ${data.elementAt(data.length - 1)['time']}'));
+          : data.elementAt(data.length - 1)['datetime']));
       var nextDateTime = prevDateTime.add(Duration(minutes: 5));
       data.add({
         'datetime': nextDateTime.toIso8601String().split('.').first,

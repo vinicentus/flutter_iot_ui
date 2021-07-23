@@ -10,8 +10,11 @@ import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 
 Database db;
 
-void initDBLib() {
-  if (Platform.isLinux) {
+void initDBLib({bool mock = false}) {
+  if (mock) {
+    print('Using mock DB');
+    databaseFactory = databaseFactoryMock;
+  } else if (Platform.isLinux) {
     // Initialize FFI
     sqfliteFfiInit();
     // Change the default factory
