@@ -52,8 +52,12 @@ class GeneralGraphPage extends StatelessWidget {
       lineTouchData: LineTouchData(
           enabled: true,
           touchTooltipData: LineTouchTooltipData(
+            fitInsideHorizontally: true,
+            fitInsideVertically: true,
+            showOnTopOfTheChartBoxArea: true,
             getTooltipItems: (List<LineBarSpot> spotList) => spotList
-                .map((e) => LineTooltipItem('${e.y} ${this.unit}',
+                .map((e) => LineTooltipItem(
+                    '${e.y.toStringAsFixed(2)} ${this.unit}',
                     Theme.of(context).textTheme.bodyText1))
                 .toList(),
           )),
