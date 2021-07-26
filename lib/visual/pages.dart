@@ -9,39 +9,60 @@ import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/visual/general_graph_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class CarbonDioxidePage extends StatefulWidget {
-  static const String route = '/CarbonDioxidePage';
-  final String title = 'Carbon Dioxide (ppm)';
+Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
+  // Init
+  var today = DateTime.now();
+  var yesterday = today.subtract(Duration(days: 1));
+  // Just creating an instance of this singleton class will initialize it and the database.
+  var db = await SQLiteDatabaseManager()
+      .getSCD30Entries(start: yesterday, stop: today);
+  yield db;
 
-  @override
-  _CarbonDioxidePageState createState() => _CarbonDioxidePageState();
+  // This stream will be automatically cancelled by dart when no longer needed.
+  // Furhtermore this loop will automatically stop running when the stream is canceled.
+  while (true) {
+    today = DateTime.now();
+    yesterday = today.subtract(Duration(days: 1));
+    db = await Future.delayed(
+        Duration(seconds: 5),
+        () => SQLiteDatabaseManager()
+            .getSCD30Entries(start: yesterday, stop: today));
+    yield db;
+  }
 }
 
-class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
-  //TODO: don't have many separate dbUpdates functions for the same type of data
-  Stream<List<SCD30SensorDataEntry>> dbUpdates() async* {
-    // Init
-    var today = DateTime.now();
-    var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSCD30EntriesBetweenDateTimes(yesterday, today);
-    yield db;
+Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30() async* {
+  // Init
+  var today = DateTime.now();
+  var yesterday = today.subtract(Duration(days: 1));
+  var db = await SQLiteDatabaseManager()
+      .getSPS30Entries(start: yesterday, stop: today);
+  yield db;
 
-    while (this.mounted) {
-      today = DateTime.now();
-      yesterday = today.subtract(Duration(days: 1));
-      db = await Future.delayed(Duration(seconds: 5),
-          () => getSCD30EntriesBetweenDateTimes(yesterday, today));
-      yield db;
-    }
+  // This stream will be automatically cancelled by dart when no longer needed.
+  // Furhtermore this loop will automatically stop running when the stream is canceled.
+  while (true) {
+    today = DateTime.now();
+    yesterday = today.subtract(Duration(days: 1));
+    db = await Future.delayed(
+        Duration(seconds: 5),
+        () => SQLiteDatabaseManager()
+            .getSPS30Entries(start: yesterday, stop: today));
+    yield db;
   }
+}
+
+class CarbonDioxidePage extends StatelessWidget {
+  static const String route = '/CarbonDioxidePage';
+  final String title = 'Carbon Dioxide (ppm)';
 
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
         route: CarbonDioxidePage.route,
-        title: this.widget.title,
+        title: this.title,
         unit: 'ppm',
-        seriesListStream: dbUpdates().map((event) {
+        seriesListStream: dbUpdatesSCD30().map((event) {
           return [
             // TODO: id: 'Carbon Dioxide'
             LineChartBarData(
@@ -59,38 +80,17 @@ class _CarbonDioxidePageState extends State<CarbonDioxidePage> {
   }
 }
 
-class TemperaturePage extends StatefulWidget {
+class TemperaturePage extends StatelessWidget {
   static const String route = '/TemperaturePage';
   final String title = 'Temperature (°C)';
-
-  @override
-  _TemperaturePageState createState() => _TemperaturePageState();
-}
-
-class _TemperaturePageState extends State<TemperaturePage> {
-  Stream<List<SCD30SensorDataEntry>> dbUpdates() async* {
-    // Init
-    var today = DateTime.now();
-    var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSCD30EntriesBetweenDateTimes(yesterday, today);
-    yield db;
-
-    while (this.mounted) {
-      today = DateTime.now();
-      yesterday = today.subtract(Duration(days: 1));
-      db = await Future.delayed(Duration(seconds: 5),
-          () => getSCD30EntriesBetweenDateTimes(yesterday, today));
-      yield db;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
         route: TemperaturePage.route,
-        title: this.widget.title,
+        title: this.title,
         unit: '°C',
-        seriesListStream: dbUpdates().map((event) {
+        seriesListStream: dbUpdatesSCD30().map((event) {
           return [
             // id: 'Temperature',
             LineChartBarData(
@@ -108,38 +108,17 @@ class _TemperaturePageState extends State<TemperaturePage> {
   }
 }
 
-class HumidityPage extends StatefulWidget {
+class HumidityPage extends StatelessWidget {
   static const String route = '/HumidityPage';
   final String title = 'Humidity (%RH)';
-
-  @override
-  _HumidityPageState createState() => _HumidityPageState();
-}
-
-class _HumidityPageState extends State<HumidityPage> {
-  Stream<List<SCD30SensorDataEntry>> dbUpdates() async* {
-    // Init
-    var today = DateTime.now();
-    var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSCD30EntriesBetweenDateTimes(yesterday, today);
-    yield db;
-
-    while (this.mounted) {
-      today = DateTime.now();
-      yesterday = today.subtract(Duration(days: 1));
-      db = await Future.delayed(Duration(seconds: 5),
-          () => getSCD30EntriesBetweenDateTimes(yesterday, today));
-      yield db;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
         route: HumidityPage.route,
-        title: this.widget.title,
+        title: this.title,
         unit: '%RH',
-        seriesListStream: dbUpdates().map((event) {
+        seriesListStream: dbUpdatesSCD30().map((event) {
           return [
             // id: 'Humidity'
             LineChartBarData(
@@ -167,22 +146,6 @@ class MassConcentrationPage extends StatefulWidget {
 }
 
 class _MassConcentrationPageState extends State<MassConcentrationPage> {
-  Stream<List<SPS30SensorDataEntry>> dbUpdates() async* {
-    // Init
-    var today = DateTime.now();
-    var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSPS30EntriesBetweenDateTimes(yesterday, today);
-    yield db;
-
-    while (this.mounted) {
-      today = DateTime.now();
-      yesterday = today.subtract(Duration(days: 1));
-      db = await Future.delayed(Duration(seconds: 5),
-          () => getSPS30EntriesBetweenDateTimes(yesterday, today));
-      yield db;
-    }
-  }
-
   List<bool> _checkboxesToShow = List.filled(4, true);
 
   @override
@@ -194,7 +157,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
       ),
       drawer: NavDrawer(MassConcentrationPage.route),
       body: StreamBuilder(
-        stream: this.dbUpdates().map((event) {
+        stream: dbUpdatesSPS30().map((event) {
           return [
             LineChartBarData(
               // id: '0.3-1.0μm:',
@@ -374,39 +337,17 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
   }
 }
 
-class NumberConcentrationPage extends StatefulWidget {
+class NumberConcentrationPage extends StatelessWidget {
   static const String route = '/NumberConcentrationPage';
   final String title = 'Number concentration (#/cm³)';
-
-  @override
-  _NumberConcentrationPageState createState() =>
-      _NumberConcentrationPageState();
-}
-
-class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
-  Stream<List<SPS30SensorDataEntry>> dbUpdates() async* {
-    // Init
-    var today = DateTime.now();
-    var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSPS30EntriesBetweenDateTimes(yesterday, today);
-    yield db;
-
-    while (this.mounted) {
-      today = DateTime.now();
-      yesterday = today.subtract(Duration(days: 1));
-      db = await Future.delayed(Duration(seconds: 5),
-          () => getSPS30EntriesBetweenDateTimes(yesterday, today));
-      yield db;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
         route: NumberConcentrationPage.route,
-        title: this.widget.title,
+        title: this.title,
         unit: '#/cm³',
-        seriesListStream: dbUpdates().map((event) {
+        seriesListStream: dbUpdatesSPS30().map((event) {
           return [
             LineChartBarData(
               // id: '0.3-0.5μm:',
@@ -468,39 +409,17 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
   }
 }
 
-class TypicalParticleSizePage extends StatefulWidget {
+class TypicalParticleSizePage extends StatelessWidget {
   static const String route = '/TypicalParticleSizePage';
   final String title = 'Typical Particle Size (µm)';
-
-  @override
-  _TypicalParticleSizePageState createState() =>
-      _TypicalParticleSizePageState();
-}
-
-class _TypicalParticleSizePageState extends State<TypicalParticleSizePage> {
-  Stream<List<SPS30SensorDataEntry>> dbUpdates() async* {
-    // Init
-    var today = DateTime.now();
-    var yesterday = today.subtract(Duration(days: 1));
-    var db = await getSPS30EntriesBetweenDateTimes(yesterday, today);
-    yield db;
-
-    while (this.mounted) {
-      today = DateTime.now();
-      yesterday = today.subtract(Duration(days: 1));
-      db = await Future.delayed(Duration(seconds: 5),
-          () => getSPS30EntriesBetweenDateTimes(yesterday, today));
-      yield db;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return GeneralGraphPage(
         route: TypicalParticleSizePage.route,
-        title: this.widget.title,
+        title: this.title,
         unit: 'µm',
-        seriesListStream: dbUpdates().map((event) {
+        seriesListStream: dbUpdatesSPS30().map((event) {
           return [
             LineChartBarData(
               // id: 'Typical Particle Size',

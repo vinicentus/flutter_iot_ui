@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
 import 'package:flutter_iot_ui/visual/settings.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
 
 void main() {
-  initDBLib();
   runApp(MyApp());
 }
 
