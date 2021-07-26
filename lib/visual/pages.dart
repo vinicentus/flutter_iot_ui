@@ -136,6 +136,7 @@ class HumidityPage extends StatelessWidget {
   }
 }
 
+// This has to be a StatefulWidget since we need to be able to tick the checkboxes
 class MassConcentrationPage extends StatefulWidget {
   final String title = 'Mass Concentration (µg/m³)';
   static const String route = '/MassConcentrationPage';
@@ -337,6 +338,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
   }
 }
 
+// TODO: add checkboxes
 class NumberConcentrationPage extends StatelessWidget {
   static const String route = '/NumberConcentrationPage';
   final String title = 'Number concentration (#/cm³)';
