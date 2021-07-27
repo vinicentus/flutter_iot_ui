@@ -211,12 +211,12 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
           ];
         }),
         builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
-          if (snapshot.hasData && snapshot.data.isNotEmpty) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return Column(
               children: [
                 Expanded(
                   flex: 9,
-                  child: LineChart(data(snapshot.data, context)),
+                  child: LineChart(data(snapshot.data!, context)),
                 ),
                 Flexible(
                   flex: 1,
@@ -292,7 +292,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
             getTooltipItems: (List<LineBarSpot> spotList) => spotList
                 .map((e) => LineTooltipItem(
                     '${e.y.toStringAsFixed(2)} ${this.widget.unit}',
-                    Theme.of(context).textTheme.bodyText1))
+                    Theme.of(context).textTheme.bodyText1!))
                 .toList(),
           )),
       gridData: FlGridData(

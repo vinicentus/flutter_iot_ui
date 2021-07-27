@@ -15,19 +15,19 @@ abstract class DatabaseManager {
   /// Optionally provide a [start] and [stop] time,
   /// to get only the entries between those timestamps.
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
-      {DateTime start, DateTime stop});
+      {DateTime? start, DateTime? stop});
 
   /// Get all database entries for SCD30.
   /// Optionally provide a [start] and [stop] time,
   /// to get only the entries between those timestamps.
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime start, DateTime stop});
+      {DateTime? start, DateTime? stop});
 
   /// Get all database entries for SVM30.
   /// Optionally provide a [start] and [stop] time,
   /// to get only the entries between those timestamps.
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
-      {DateTime start, DateTime stop});
+      {DateTime? start, DateTime? stop});
 }
 
 /// Singleton SQLite Databse Manager, implementing the common functions from [DatabaseManager].
@@ -60,25 +60,23 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
   String dbPath = '/home/pi/IoT-Microservice/app/oracle/sensor_data.db';
 
-  Database _db;
+  Database? _db;
 
-  Future<Database> get openedDatabaseFuture async {
-    if (_db == null || _db?.isOpen == false) {
-      _db = await openDatabase(dbPath, readOnly: true);
-    }
+  Future<Database?> get openedDatabaseFuture async {
+    _db ??= await openDatabase(dbPath, readOnly: true);
     return _db;
   }
 
   // TODO: close the database on exit
-  void closeDatabase() async => (await openedDatabaseFuture).close();
+  void closeDatabase() async => (await openedDatabaseFuture)!.close();
 
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
-      {DateTime start, DateTime stop}) async {
-    List<Map<String, dynamic>> maps;
+      {DateTime? start, DateTime? stop}) async {
+    final List<Map<String, dynamic>> maps;
 
     // If no date limitations are provided, we fetch all entries.
     if (start == null && stop == null) {
-      maps = await (await openedDatabaseFuture).query('sps30_output');
+      maps = await (await openedDatabaseFuture)!.query('sps30_output');
     } else {
       // The question marks are filled in with values from whereArgs
       var where = '';
@@ -93,35 +91,35 @@ class SQLiteDatabaseManager extends DatabaseManager {
       if (stop != null)
         whereArgs.add(stop.toUtc().toIso8601String().split('.')[0] + 'Z');
 
-      maps = await (await openedDatabaseFuture)
+      maps = await (await openedDatabaseFuture)!
           .query('sps30_output', where: where, whereArgs: whereArgs);
     }
 
     var returnList = List.generate(maps.length, (i) {
       return SPS30SensorDataEntry.createFromDB(
-        maps[i]['datetime'],
-        maps[i]['d1'],
-        maps[i]['d2'],
-        maps[i]['d3'],
-        maps[i]['d4'],
-        maps[i]['d5'],
-        maps[i]['d6'],
-        maps[i]['d7'],
-        maps[i]['d8'],
-        maps[i]['d9'],
-        maps[i]['d10'],
+        maps[i]['datetime']!,
+        maps[i]['d1']!,
+        maps[i]['d2']!,
+        maps[i]['d3']!,
+        maps[i]['d4']!,
+        maps[i]['d5']!,
+        maps[i]['d6']!,
+        maps[i]['d7']!,
+        maps[i]['d8']!,
+        maps[i]['d9']!,
+        maps[i]['d10']!,
       );
     });
     return returnList;
   }
 
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime start, DateTime stop}) async {
-    List<Map<String, dynamic>> maps;
+      {DateTime? start, DateTime? stop}) async {
+    final List<Map<String, dynamic>> maps;
 
     // If no date limitations are provided, we fetch all entries.
     if (start == null && stop == null) {
-      maps = await (await openedDatabaseFuture).query('scd30_output');
+      maps = await (await openedDatabaseFuture)!.query('scd30_output');
     } else {
       // The question marks are filled in with values from whereArgs
       var where = '';
@@ -136,28 +134,28 @@ class SQLiteDatabaseManager extends DatabaseManager {
       if (stop != null)
         whereArgs.add(stop.toUtc().toIso8601String().split('.')[0] + 'Z');
 
-      maps = await (await openedDatabaseFuture)
+      maps = await (await openedDatabaseFuture)!
           .query('scd30_output', where: where, whereArgs: whereArgs);
     }
 
     var returnList = List.generate(maps.length, (i) {
       return SCD30SensorDataEntry.createFromDB(
-        maps[i]['datetime'],
-        maps[i]['d1'],
-        maps[i]['d2'],
-        maps[i]['d3'],
+        maps[i]['datetime']!,
+        maps[i]['d1']!,
+        maps[i]['d2']!,
+        maps[i]['d3']!,
       );
     });
     return returnList;
   }
 
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
-      {DateTime start, DateTime stop}) async {
-    List<Map<String, dynamic>> maps;
+      {DateTime? start, DateTime? stop}) async {
+    final List<Map<String, dynamic>> maps;
 
     // If no date limitations are provided, we fetch all entries.
     if (start == null && stop == null) {
-      maps = await (await openedDatabaseFuture).query('svm30_output');
+      maps = await (await openedDatabaseFuture)!.query('svm30_output');
     } else {
       // The question marks are filled in with values from whereArgs
       var where = '';
@@ -172,15 +170,15 @@ class SQLiteDatabaseManager extends DatabaseManager {
       if (stop != null)
         whereArgs.add(stop.toUtc().toIso8601String().split('.')[0] + 'Z');
 
-      maps = await (await openedDatabaseFuture)
+      maps = await (await openedDatabaseFuture)!
           .query('svm30_output', where: where, whereArgs: whereArgs);
     }
 
     var returnList = List.generate(maps.length, (i) {
       return SVM30SensorDataEntry.createFromDB(
-        maps[i]['datetime'],
-        maps[i]['co2'],
-        maps[i]['tvoc'],
+        maps[i]['datetime']!,
+        maps[i]['co2']!,
+        maps[i]['tvoc']!,
       );
     });
     return returnList;

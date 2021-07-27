@@ -78,7 +78,7 @@ class _SVM30PageState extends State<SVM30Page> {
           ],
         ),
         builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
-          if (snapshot.hasData && snapshot.data.isNotEmpty) {
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return LineChart(
               LineChartData(
                 lineTouchData: LineTouchData(
@@ -86,7 +86,7 @@ class _SVM30PageState extends State<SVM30Page> {
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipItems: (List<LineBarSpot> spotList) => spotList
                           .map((e) => LineTooltipItem('${e.y} x',
-                              Theme.of(context).textTheme.bodyText1))
+                              Theme.of(context).textTheme.bodyText1!))
                           .toList(),
                     )),
                 gridData: FlGridData(

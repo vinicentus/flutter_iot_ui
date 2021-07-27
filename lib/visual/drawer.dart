@@ -5,13 +5,13 @@ import 'package:flutter_iot_ui/visual/svm30_page.dart';
 
 class NavDrawer extends StatelessWidget {
   final String selectedRoute;
-  NavDrawer(this.selectedRoute, {Key key}) : super(key: key);
+  NavDrawer(this.selectedRoute, {Key? key}) : super(key: key);
 
   Widget _buildMenuItem(
-      {@required BuildContext context,
-      @required Widget leading,
-      @required Widget title,
-      @required String routeName}) {
+      {required BuildContext context,
+      required Widget leading,
+      required Widget title,
+      required String routeName}) {
     var isSelected = routeName == selectedRoute;
 
     return ListTile(

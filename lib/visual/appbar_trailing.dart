@@ -24,7 +24,7 @@ class AppbarTrailingInfoState extends State<AppbarTrailingInfo> {
             return Text(
               DateFormat('MM/dd/yyyy hh:mm').format(DateTime.now()),
               // This is the default text size for the AppBar title, so we use it here as well
-              style: theme.textTheme.headline6
+              style: theme.textTheme.headline6!
                   .copyWith(color: colorScheme.onPrimary),
             );
           },

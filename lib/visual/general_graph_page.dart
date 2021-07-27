@@ -11,11 +11,11 @@ class GeneralGraphPage extends StatelessWidget {
 
   // TODO. add more params for unit etc
   GeneralGraphPage({
-    Key key,
-    @required this.title,
-    @required this.seriesListStream,
-    @required this.route,
-    @required this.unit,
+    Key? key,
+    required this.title,
+    required this.seriesListStream,
+    required this.route,
+    required this.unit,
   }) : super(key: key);
 
   @override
@@ -29,8 +29,11 @@ class GeneralGraphPage extends StatelessWidget {
       body: StreamBuilder(
         stream: this.seriesListStream,
         builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
-          if (snapshot.hasData && snapshot.data.isNotEmpty) {
-            return LineChart(data(snapshot.data, context));
+          // We already check if it has data (a non-null value).
+          // That means we can use the !. operator throughout safely,
+          // since we know (unlike the dart compiler) that the value won't ever be null.
+          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+            return LineChart(data(snapshot.data!, context));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -58,7 +61,7 @@ class GeneralGraphPage extends StatelessWidget {
             getTooltipItems: (List<LineBarSpot> spotList) => spotList
                 .map((e) => LineTooltipItem(
                     '${e.y.toStringAsFixed(2)} ${this.unit}',
-                    Theme.of(context).textTheme.bodyText1))
+                    Theme.of(context).textTheme.bodyText1!))
                 .toList(),
           )),
       gridData: FlGridData(

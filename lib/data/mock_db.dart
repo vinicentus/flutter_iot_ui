@@ -10,7 +10,7 @@ import 'package:synchronized/synchronized.dart';
 // I'm by no means proud of the following code, but it works for now...
 
 class DatabaseFactoryMock implements SqfliteDatabaseFactory {
-  var db;
+  MockDatabase? _db;
 
   @override
   Future<bool> databaseExists(String path) async {
@@ -29,9 +29,9 @@ class DatabaseFactoryMock implements SqfliteDatabaseFactory {
 
   @override
   Future<Database> openDatabase(String path,
-      {OpenDatabaseOptions options}) async {
-    db ??= MockDatabase();
-    return db;
+      {OpenDatabaseOptions? options}) async {
+    _db ??= MockDatabase();
+    return _db!;
   }
 
   @override
@@ -85,7 +85,7 @@ class MockDatabase implements Database {
   }
 
   @override
-  Future<int> delete(String table, {String where, List<Object> whereArgs}) {
+  Future<int> delete(String table, {String? where, List<Object?>? whereArgs}) {
     throw UnimplementedError();
   }
 
@@ -96,12 +96,12 @@ class MockDatabase implements Database {
 
   @override
   Future<T> devInvokeSqlMethod<T>(String method, String sql,
-      [List<Object> arguments]) {
+      [List<Object?>? arguments]) {
     throw UnimplementedError();
   }
 
   @override
-  Future<void> execute(String sql, [List<Object> arguments]) {
+  Future<void> execute(String sql, [List<Object?>? arguments]) {
     throw UnimplementedError();
   }
 
@@ -111,8 +111,8 @@ class MockDatabase implements Database {
   }
 
   @override
-  Future<int> insert(String table, Map<String, Object> values,
-      {String nullColumnHack, ConflictAlgorithm conflictAlgorithm}) {
+  Future<int> insert(String table, Map<String, Object?> values,
+      {String? nullColumnHack, ConflictAlgorithm? conflictAlgorithm}) {
     throw UnimplementedError();
   }
 
@@ -124,19 +124,19 @@ class MockDatabase implements Database {
 
   @override
   Future<List<Map<String, Object>>> query(String table,
-      {bool distinct,
-      List<String> columns,
-      String where,
-      List<Object> whereArgs,
-      String groupBy,
-      String having,
-      String orderBy,
-      int limit,
-      int offset}) async {
+      {bool? distinct,
+      List<String>? columns,
+      String? where,
+      List<Object?>? whereArgs,
+      String? groupBy,
+      String? having,
+      String? orderBy,
+      int? limit,
+      int? offset}) async {
     if (table == 'sps30_output' || table == 'scd30_output') {
       var prevDateTime = DateTime.parse((data.isEmpty
           ? DateTime.now().toIso8601String()
-          : data.elementAt(data.length - 1)['datetime']));
+          : data.elementAt(data.length - 1)['datetime'] as String));
       var nextDateTime = prevDateTime.add(Duration(minutes: 5));
       data.add({
         'datetime': nextDateTime.toIso8601String().split('.').first,
@@ -158,23 +158,23 @@ class MockDatabase implements Database {
   }
 
   @override
-  Future<int> rawDelete(String sql, [List<Object> arguments]) {
+  Future<int> rawDelete(String sql, [List<Object?>? arguments]) {
     throw UnimplementedError();
   }
 
   @override
-  Future<int> rawInsert(String sql, [List<Object> arguments]) {
+  Future<int> rawInsert(String sql, [List<Object?>? arguments]) {
     throw UnimplementedError();
   }
 
   @override
   Future<List<Map<String, Object>>> rawQuery(String sql,
-      [List<Object> arguments]) {
+      [List<Object?>? arguments]) {
     throw UnimplementedError();
   }
 
   @override
-  Future<int> rawUpdate(String sql, [List<Object> arguments]) {
+  Future<int> rawUpdate(String sql, [List<Object?>? arguments]) {
     throw UnimplementedError();
   }
 
@@ -184,15 +184,15 @@ class MockDatabase implements Database {
   }
 
   @override
-  Future<T> transaction<T>(transaction, {bool exclusive}) {
+  Future<T> transaction<T>(transaction, {bool? exclusive}) {
     throw UnimplementedError();
   }
 
   @override
-  Future<int> update(String table, Map<String, Object> values,
-      {String where,
-      List<Object> whereArgs,
-      ConflictAlgorithm conflictAlgorithm}) {
+  Future<int> update(String table, Map<String, Object?> values,
+      {String? where,
+      List<Object?>? whereArgs,
+      ConflictAlgorithm? conflictAlgorithm}) {
     throw UnimplementedError();
   }
 }
