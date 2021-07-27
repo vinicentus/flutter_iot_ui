@@ -28,8 +28,8 @@ class GeneralGraphPage extends StatelessWidget {
       drawer: NavDrawer(this.route),
       body: StreamBuilder(
         stream: this.seriesListStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasData && (snapshot.data as List).isNotEmpty) {
+        builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
+          if (snapshot.hasData && snapshot.data.isNotEmpty) {
             return LineChart(data(snapshot.data, context));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));

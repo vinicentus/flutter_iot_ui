@@ -210,8 +210,8 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
             ),
           ];
         }),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && (snapshot.data as List).isNotEmpty) {
+        builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
+          if (snapshot.hasData && snapshot.data.isNotEmpty) {
             return Column(
               children: [
                 Expanded(
