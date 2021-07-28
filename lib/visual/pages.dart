@@ -63,19 +63,21 @@ class CarbonDioxidePage extends StatelessWidget {
         title: this.title,
         unit: 'ppm',
         seriesListStream: dbUpdatesSCD30().map((event) {
-          return [
-            // TODO: id: 'Carbon Dioxide'
-            LineChartBarData(
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.carbonDioxide))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries.first],
-              dotData: FlDotData(show: false),
-            ),
-          ];
+          return (event.isNotEmpty)
+              ? [
+                  // TODO: id: 'Carbon Dioxide'
+                  LineChartBarData(
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.carbonDioxide))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries.first],
+                    dotData: FlDotData(show: false),
+                  ),
+                ]
+              : <LineChartBarData>[];
         }));
   }
 }
@@ -91,19 +93,21 @@ class TemperaturePage extends StatelessWidget {
         title: this.title,
         unit: '°C',
         seriesListStream: dbUpdatesSCD30().map((event) {
-          return [
-            // id: 'Temperature',
-            LineChartBarData(
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.temperature))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries.first],
-              dotData: FlDotData(show: false),
-            ),
-          ];
+          return (event.isNotEmpty)
+              ? [
+                  // id: 'Temperature',
+                  LineChartBarData(
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.temperature))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries.first],
+                    dotData: FlDotData(show: false),
+                  ),
+                ]
+              : <LineChartBarData>[];
         }));
   }
 }
@@ -119,19 +123,21 @@ class HumidityPage extends StatelessWidget {
         title: this.title,
         unit: '%RH',
         seriesListStream: dbUpdatesSCD30().map((event) {
-          return [
-            // id: 'Humidity'
-            LineChartBarData(
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.humidity))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries.first],
-              dotData: FlDotData(show: false),
-            ),
-          ];
+          return (event.isNotEmpty)
+              ? [
+                  // id: 'Humidity'
+                  LineChartBarData(
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.humidity))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries.first],
+                    dotData: FlDotData(show: false),
+                  ),
+                ]
+              : <LineChartBarData>[];
         }));
   }
 }
@@ -159,56 +165,58 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
       drawer: NavDrawer(MassConcentrationPage.route),
       body: StreamBuilder(
         stream: dbUpdatesSPS30().map((event) {
-          return [
-            LineChartBarData(
-              // id: '0.3-1.0μm:',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.massConcentrationPM1_0))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries.first],
-              dotData: FlDotData(show: false),
-              show: _checkboxesToShow[0],
-            ),
-            LineChartBarData(
-              // id: '1.0-2.5μm:',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.massConcentrationPM2_5Subtracted))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries[1]],
-              dotData: FlDotData(show: false),
-              show: _checkboxesToShow[1],
-            ),
-            LineChartBarData(
-              // id: '2.5-4.0μm:',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.massConcentrationPM4_0Subtracted))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries[2]],
-              dotData: FlDotData(show: false),
-              show: _checkboxesToShow[2],
-            ),
-            LineChartBarData(
-              // id: '4.0-10.0μm:',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.massConcentrationPM10Subtracted))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries[3]],
-              dotData: FlDotData(show: false),
-              show: _checkboxesToShow[3],
-            ),
-          ];
+          return (event.isNotEmpty)
+              ? [
+                  LineChartBarData(
+                    // id: '0.3-1.0μm:',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.massConcentrationPM1_0))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries.first],
+                    dotData: FlDotData(show: false),
+                    show: _checkboxesToShow[0],
+                  ),
+                  LineChartBarData(
+                    // id: '1.0-2.5μm:',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.massConcentrationPM2_5Subtracted))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries[1]],
+                    dotData: FlDotData(show: false),
+                    show: _checkboxesToShow[1],
+                  ),
+                  LineChartBarData(
+                    // id: '2.5-4.0μm:',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.massConcentrationPM4_0Subtracted))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries[2]],
+                    dotData: FlDotData(show: false),
+                    show: _checkboxesToShow[2],
+                  ),
+                  LineChartBarData(
+                    // id: '4.0-10.0μm:',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.massConcentrationPM10Subtracted))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries[3]],
+                    dotData: FlDotData(show: false),
+                    show: _checkboxesToShow[3],
+                  ),
+                ]
+              : <LineChartBarData>[];
         }),
         builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -333,7 +341,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
       // maxX: 14,
       // maxY: 6,
       // minY: 0,
-      lineBarsData: seriesListStream,
+      lineBarsData: (seriesListStream.isNotEmpty) ? seriesListStream : [],
     );
   }
 }
@@ -350,63 +358,65 @@ class NumberConcentrationPage extends StatelessWidget {
         title: this.title,
         unit: '#/cm³',
         seriesListStream: dbUpdatesSPS30().map((event) {
-          return [
-            LineChartBarData(
-              // id: '0.3-0.5μm:',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.numberConcentrationPM0_5))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries.first],
-              dotData: FlDotData(show: false),
-            ),
-            LineChartBarData(
-              // id: '0.5-1.0μm:',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.numberConcentrationPM1_0Subtracted))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries[1]],
-              dotData: FlDotData(show: false),
-            ),
-            LineChartBarData(
-              // id: '1.0-2.5μm:',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.numberConcentrationPM2_5Subtracted))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries[2]],
-              dotData: FlDotData(show: false),
-            ),
-            LineChartBarData(
-              // id: '2.5-4.0μm:',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.numberConcentrationPM4_0Subtracted))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries[3]],
-              dotData: FlDotData(show: false),
-            ),
-            LineChartBarData(
-              // id: '4.0-10.0μm: ',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.numberConcentrationPM10Subtracted))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries[4]],
-              dotData: FlDotData(show: false),
-            ),
-          ];
+          return (event.isNotEmpty)
+              ? [
+                  LineChartBarData(
+                    // id: '0.3-0.5μm:',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.numberConcentrationPM0_5))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries.first],
+                    dotData: FlDotData(show: false),
+                  ),
+                  LineChartBarData(
+                    // id: '0.5-1.0μm:',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.numberConcentrationPM1_0Subtracted))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries[1]],
+                    dotData: FlDotData(show: false),
+                  ),
+                  LineChartBarData(
+                    // id: '1.0-2.5μm:',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.numberConcentrationPM2_5Subtracted))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries[2]],
+                    dotData: FlDotData(show: false),
+                  ),
+                  LineChartBarData(
+                    // id: '2.5-4.0μm:',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.numberConcentrationPM4_0Subtracted))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries[3]],
+                    dotData: FlDotData(show: false),
+                  ),
+                  LineChartBarData(
+                    // id: '4.0-10.0μm: ',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.numberConcentrationPM10Subtracted))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries[4]],
+                    dotData: FlDotData(show: false),
+                  ),
+                ]
+              : <LineChartBarData>[];
         }));
   }
 }
@@ -422,19 +432,21 @@ class TypicalParticleSizePage extends StatelessWidget {
         title: this.title,
         unit: 'µm',
         seriesListStream: dbUpdatesSPS30().map((event) {
-          return [
-            LineChartBarData(
-              // id: 'Typical Particle Size',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.typicalParticleSize))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries.first],
-              dotData: FlDotData(show: false),
-            ),
-          ];
+          return (event.isNotEmpty)
+              ? [
+                  LineChartBarData(
+                    // id: 'Typical Particle Size',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.typicalParticleSize))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries.first],
+                    dotData: FlDotData(show: false),
+                  ),
+                ]
+              : <LineChartBarData>[];
         }));
   }
 }

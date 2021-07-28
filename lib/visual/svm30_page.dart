@@ -51,32 +51,36 @@ class _SVM30PageState extends State<SVM30Page> {
       ),
       drawer: NavDrawer(SVM30Page.route),
       body: StreamBuilder(
-        stream: dbUpdates().map(
-          (List<SVM30SensorDataEntry> event) => [
-            LineChartBarData(
-              //id: 'Carbon Dioxide equivalent (ppm)',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.carbonDioxide))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries.first],
-              dotData: FlDotData(show: false),
-            ),
-            LineChartBarData(
-              //id: 'Total Volatile Organic Compounds (ppb)',
-              spots: event
-                  .map((e) => FlSpot(
-                      e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                      e.totalVolatileOrganicCompounds))
-                  .toList(),
-              isCurved: false,
-              colors: [Colors.primaries[5]],
-              dotData: FlDotData(show: false),
-            ),
-          ],
-        ),
+        stream: dbUpdates().map((List<SVM30SensorDataEntry> event) {
+          // The chart library throws if it receives a LineChartBarData without any FlSpots.
+          // We need to return an empty list without any "empty" LineChartBarData objects instead.
+          return (event.isNotEmpty)
+              ? [
+                  LineChartBarData(
+                    //id: 'Carbon Dioxide equivalent (ppm)',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.carbonDioxide))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries.first],
+                    dotData: FlDotData(show: false),
+                  ),
+                  LineChartBarData(
+                    //id: 'Total Volatile Organic Compounds (ppb)',
+                    spots: event
+                        .map((e) => FlSpot(
+                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                            e.totalVolatileOrganicCompounds))
+                        .toList(),
+                    isCurved: false,
+                    colors: [Colors.primaries[5]],
+                    dotData: FlDotData(show: false),
+                  ),
+                ]
+              : <LineChartBarData>[];
+        }),
         builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
           if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return LineChart(
