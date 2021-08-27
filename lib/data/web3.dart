@@ -49,29 +49,32 @@ class Web3Manager extends DatabaseManager {
     print(balance.getValueInUnit(EtherUnit.ether));
   }
 
-  // Gets the correct contract ABI from the json file containg all the ABis
-  String _chooseContract(String contractName, String data) {
+  // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
+  DeployedContract _getDeployedContract(String contractName, String data) {
     var decoded = json.decode(data);
-    return json.encode(decoded[contractName]['abi']);
+    var abi = json.encode(decoded[contractName]['abi']);
+    var address = decoded[contractName]['address'];
+
+    return DeployedContract(ContractAbi.fromJson(abi, contractName),
+        EthereumAddress.fromHex(address));
   }
 
   loadContracts() async {
     String jsonData = await rootBundle.loadString('resources/latest.json');
 
     // TODO: check how to get the correct address where each contract is delpyed
-    userManager = ContractAbi.fromJson(
-        _chooseContract('usermanager', jsonData), 'usermanager');
-    oracleManager = ContractAbi.fromJson(
-        _chooseContract('oraclemanager', jsonData), 'oraclemanager');
-    taskManager = ContractAbi.fromJson(
-        _chooseContract('taskmanager', jsonData), 'taskmanager');
-    tokenManager = ContractAbi.fromJson(
-        _chooseContract('tokenmanager', jsonData), 'tokenmanager');
+    userManager = _getDeployedContract('usermanager', jsonData);
+    oracleManager = _getDeployedContract('oraclemanager', jsonData);
+    taskManager = _getDeployedContract('taskmanager', jsonData);
+    tokenManager = _getDeployedContract('tokenmanager', jsonData);
 
-    user = ContractAbi.fromJson(_chooseContract('user', jsonData), 'user');
-    oracle =
-        ContractAbi.fromJson(_chooseContract('oracle', jsonData), 'oracle');
-    task = ContractAbi.fromJson(_chooseContract('task', jsonData), 'task');
+    // We can't load these as deployed contracts yet,
+    // since we don't know what address htey have been deployed to
+    // before querying info from the manager contracts...
+
+    // user = _getDeployedContract('user', jsonData);
+    // oracle = _getDeployedContract('oracle', jsonData);
+    // task = _getDeployedContract('task', jsonData);
   }
 
   @override
