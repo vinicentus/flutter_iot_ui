@@ -39,7 +39,8 @@ class Web3Manager extends DatabaseManager {
   var task;
 
   // This is a temporary test key! ( TODO: remove )
-  var _privateKey = '';
+  var _privateKey =
+      '0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1';
 
   getBalance() async {
     var credentials = await ethClient.credentialsFromPrivateKey(_privateKey);
