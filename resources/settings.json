@@ -1,0 +1,14 @@
+{
+    "gateway": {
+        "host": "127.0.0.1",
+        "port": "8545"
+    },
+    "keys": {
+        "public": "",
+        "private": ""
+    },
+    "whisper": {
+        "topic": "arca",
+        "symkey": "23e92ca5c0f73e07291c628395f4e7ad6ebddb1ed567214962cb368be8c19442"
+    }
+}
