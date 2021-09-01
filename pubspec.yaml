@@ -33,6 +33,7 @@ dependencies:
   sqflite_common_ffi: ^2.0.0+1
   intl: ^0.17.0
   web3dart: ^2.2.0
+  moving_average: ^0.3.0
 
 dev_dependencies:
   flutter_test:

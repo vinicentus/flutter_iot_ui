@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/data/settings_constants.dart';
 import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
+import 'package:flutter_iot_ui/visual/pages.dart';
 
 class SVM30Page extends StatefulWidget {
   static const String route = '/SVM30Page';
@@ -58,22 +60,28 @@ class _SVM30PageState extends State<SVM30Page> {
               ? [
                   LineChartBarData(
                     //id: 'Carbon Dioxide equivalent (ppm)',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.carbonDioxide))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.carbonDioxide))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
                     dotData: FlDotData(show: false),
                   ),
                   LineChartBarData(
                     //id: 'Total Volatile Organic Compounds (ppb)',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.totalVolatileOrganicCompounds))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.totalVolatileOrganicCompounds))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries[5]],
                     dotData: FlDotData(show: false),

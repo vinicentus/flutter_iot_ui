@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/data/settings_constants.dart';
 import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_iot_ui/visual/checkbox_widget.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/visual/general_graph_page.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:moving_average/moving_average.dart';
 
 Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
   // Init
@@ -52,6 +54,30 @@ Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30() async* {
   }
 }
 
+List<FlSpot> transformIntoMovingAverage(
+    List<FlSpot> flspotList, bool transform) {
+  // Don't do anything with the data unless instructed to
+  if (!transform) {
+    return flspotList;
+  }
+
+  var simpleMovingAverage = MovingAverage<FlSpot>(
+    // The window size is the number of samples per average sample returned
+    // (not specified in units of time).
+    // We currently get samples roughly every minute, so a value of 5
+    // would mean that the averages are calculated over 5 minute periods.
+    windowSize: numberOfSamplesPerMovingAverageWindow,
+    getValue: (FlSpot spot) => spot.y,
+    add: (List<FlSpot> data, num value) {
+      var middleTimestamp = data[data.length ~/ 2].x;
+      // We know the y coordinate will be a double, since we only return doubles in getValue
+      return FlSpot(middleTimestamp, (value as double));
+    },
+  );
+
+  return simpleMovingAverage(flspotList);
+}
+
 class CarbonDioxidePage extends StatelessWidget {
   static const String route = '/CarbonDioxidePage';
   final String title = 'Carbon Dioxide (ppm)';
@@ -67,11 +93,14 @@ class CarbonDioxidePage extends StatelessWidget {
               ? [
                   // TODO: id: 'Carbon Dioxide'
                   LineChartBarData(
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.carbonDioxide))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.carbonDioxide))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
                     dotData: FlDotData(show: false),
@@ -97,11 +126,13 @@ class TemperaturePage extends StatelessWidget {
               ? [
                   // id: 'Temperature',
                   LineChartBarData(
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.temperature))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                        event
+                            .map((e) => FlSpot(
+                                e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                                e.temperature))
+                            .toList(),
+                        useMovingAverage),
                     isCurved: false,
                     colors: [Colors.primaries.first],
                     dotData: FlDotData(show: false),
@@ -127,11 +158,13 @@ class HumidityPage extends StatelessWidget {
               ? [
                   // id: 'Humidity'
                   LineChartBarData(
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.humidity))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                        event
+                            .map((e) => FlSpot(
+                                e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                                e.humidity))
+                            .toList(),
+                        useMovingAverage),
                     isCurved: false,
                     colors: [Colors.primaries.first],
                     dotData: FlDotData(show: false),
@@ -169,11 +202,14 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
               ? [
                   LineChartBarData(
                     // id: '0.3-1.0μm:',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.massConcentrationPM1_0))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.massConcentrationPM1_0))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
                     dotData: FlDotData(show: false),
@@ -181,11 +217,14 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                   ),
                   LineChartBarData(
                     // id: '1.0-2.5μm:',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.massConcentrationPM2_5Subtracted))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.massConcentrationPM2_5Subtracted))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries[1]],
                     dotData: FlDotData(show: false),
@@ -193,11 +232,14 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                   ),
                   LineChartBarData(
                     // id: '2.5-4.0μm:',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.massConcentrationPM4_0Subtracted))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.massConcentrationPM4_0Subtracted))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries[2]],
                     dotData: FlDotData(show: false),
@@ -205,11 +247,14 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                   ),
                   LineChartBarData(
                     // id: '4.0-10.0μm:',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.massConcentrationPM10Subtracted))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.massConcentrationPM10Subtracted))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries[3]],
                     dotData: FlDotData(show: false),
@@ -362,55 +407,70 @@ class NumberConcentrationPage extends StatelessWidget {
               ? [
                   LineChartBarData(
                     // id: '0.3-0.5μm:',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.numberConcentrationPM0_5))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.numberConcentrationPM0_5))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
                     dotData: FlDotData(show: false),
                   ),
                   LineChartBarData(
                     // id: '0.5-1.0μm:',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.numberConcentrationPM1_0Subtracted))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.numberConcentrationPM1_0Subtracted))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries[1]],
                     dotData: FlDotData(show: false),
                   ),
                   LineChartBarData(
                     // id: '1.0-2.5μm:',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.numberConcentrationPM2_5Subtracted))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.numberConcentrationPM2_5Subtracted))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries[2]],
                     dotData: FlDotData(show: false),
                   ),
                   LineChartBarData(
                     // id: '2.5-4.0μm:',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.numberConcentrationPM4_0Subtracted))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.numberConcentrationPM4_0Subtracted))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries[3]],
                     dotData: FlDotData(show: false),
                   ),
                   LineChartBarData(
                     // id: '4.0-10.0μm: ',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.numberConcentrationPM10Subtracted))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.numberConcentrationPM10Subtracted))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries[4]],
                     dotData: FlDotData(show: false),
@@ -436,11 +496,14 @@ class TypicalParticleSizePage extends StatelessWidget {
               ? [
                   LineChartBarData(
                     // id: 'Typical Particle Size',
-                    spots: event
-                        .map((e) => FlSpot(
-                            e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                            e.typicalParticleSize))
-                        .toList(),
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.typicalParticleSize))
+                          .toList(),
+                      useMovingAverage,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
                     dotData: FlDotData(show: false),
