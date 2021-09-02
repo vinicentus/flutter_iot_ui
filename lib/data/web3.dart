@@ -41,6 +41,12 @@ class Web3Manager extends DatabaseManager {
   late DeployedContract deployedOracle;
   late DeployedContract deployedTask;
 
+  // This should be the address of the user that created the user contract
+  // TODO: remove hardcoded param
+  late EthereumAddress userAddress = EthereumAddress.fromHex(
+      '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0',
+      enforceEip55: true);
+
   // This is a temporary test key! ( TODO: load from file )
   var _privateKey =
       '0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1';
@@ -92,7 +98,6 @@ class Web3Manager extends DatabaseManager {
     var returnList = await ethClient.call(
       contract: userManager,
       function: userManager.function('exists'),
-      // TODO: remove hardcoded param
       params: [userAddress],
     );
     bool exists = returnList.first;
@@ -114,8 +119,27 @@ class Web3Manager extends DatabaseManager {
     }
   }
 
+  /// This needs to be called after loadUser, because it fetches the first oracle registered to the current user
   Future<DeployedContract> loadOracle() async {
-    throw UnimplementedError();
+    // Fetch all the oracles (devices) that are registered to our user
+    var result = await ethClient.call(
+      contract: oracleManager,
+      function: oracleManager.function('fetch_collection'),
+      params: [userAddress],
+    );
+
+    // This is the id String of the oracle (device)
+    String deviceId = result.first.first;
+
+    var result2 = await ethClient.call(
+      contract: oracleManager,
+      function: oracleManager.function('fetch_oracle'),
+      params: [deviceId],
+    );
+
+    deployedOracle = DeployedContract(oracle, result2.first);
+
+    return deployedOracle;
   }
 
   Future<DeployedContract> addTask() async {
@@ -125,10 +149,7 @@ class Web3Manager extends DatabaseManager {
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
       {DateTime? start, DateTime? stop}) async {
-    // This should be the address of the user that created the user contract
-    await loadUser(EthereumAddress.fromHex(
-        '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0',
-        enforceEip55: true));
+    await loadUser(userAddress);
     await loadOracle();
     await addTask();
 

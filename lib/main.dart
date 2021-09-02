@@ -8,9 +8,8 @@ import 'package:web3dart/credentials.dart';
 void main() async {
   runApp(MyApp());
   await Web3Manager().loadContracts();
-  print(await Web3Manager().loadUser(EthereumAddress.fromHex(
-      '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0',
-      enforceEip55: true)));
+  print(await Web3Manager().loadUser(Web3Manager().userAddress));
+  print(await Web3Manager().loadOracle());
 }
 
 class MyApp extends StatelessWidget {
