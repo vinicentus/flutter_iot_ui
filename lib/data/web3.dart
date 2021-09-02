@@ -46,6 +46,7 @@ class Web3Manager extends DatabaseManager {
   late EthereumAddress userAddress = EthereumAddress.fromHex(
       '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0',
       enforceEip55: true);
+  late String oracleDeviceID;
 
   // This is a temporary test key! ( TODO: load from file )
   var _privateKey =
@@ -115,7 +116,7 @@ class Web3Manager extends DatabaseManager {
       deployedUser = DeployedContract(user, address);
       return deployedUser;
     } else {
-      throw Exception('The user you are trying to laod does not exist.');
+      throw Exception('The user you are trying to load does not exist.');
     }
   }
 
@@ -129,12 +130,12 @@ class Web3Manager extends DatabaseManager {
     );
 
     // This is the id String of the oracle (device)
-    String deviceId = result.first.first;
+    oracleDeviceID = result.first.first;
 
     var result2 = await ethClient.call(
       contract: oracleManager,
       function: oracleManager.function('fetch_oracle'),
-      params: [deviceId],
+      params: [oracleDeviceID],
     );
 
     deployedOracle = DeployedContract(oracle, result2.first);
@@ -142,8 +143,37 @@ class Web3Manager extends DatabaseManager {
     return deployedOracle;
   }
 
-  Future<DeployedContract> addTask() async {
-    throw UnimplementedError();
+  // Map<String, dynamic> taskMap
+  Future<dynamic> addTask() async {
+    Credentials creds = await ethClient.credentialsFromPrivateKey(_privateKey);
+
+    var result1 = ethClient.sendTransaction(
+        creds,
+        Transaction.callContract(
+          contract: taskManager,
+          function: taskManager.function('create'),
+          parameters: [
+            // TODO: use function parameter to define these
+            oracleDeviceID,
+            BigInt.from(2),
+            BigInt.from(2),
+            convertToBase64({
+              '_start_time': '2021-08-23T00:00:00+00:00',
+              '_stop_time': '2021-08-23T01:00:00+00:00',
+              'public_key': null,
+              'tableName': 'scd30_output'
+            }),
+          ],
+        ));
+
+    return result1;
+  }
+
+  String convertToBase64(Map<String, dynamic> input) {
+    // I'm honestly surprised and impressed by how neat this looks in pure dart!
+    var jsonString = json.encode(input);
+    var utf8List = utf8.encode(jsonString);
+    return base64.encode(utf8List);
   }
 
   @override

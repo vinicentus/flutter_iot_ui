@@ -10,6 +10,7 @@ void main() async {
   await Web3Manager().loadContracts();
   print(await Web3Manager().loadUser(Web3Manager().userAddress));
   print(await Web3Manager().loadOracle());
+  print(await Web3Manager().addTask());
 }
 
 class MyApp extends StatelessWidget {
