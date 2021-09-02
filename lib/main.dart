@@ -3,14 +3,16 @@ import 'package:flutter_iot_ui/visual/pages.dart';
 import 'package:flutter_iot_ui/visual/settings.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
 import 'package:flutter_iot_ui/data/web3.dart';
-import 'package:web3dart/credentials.dart';
 
 void main() async {
   runApp(MyApp());
   await Web3Manager().loadContracts();
   print(await Web3Manager().loadUser(Web3Manager().userAddress));
   print(await Web3Manager().loadOracle());
-  print(await Web3Manager().addTask());
+  //print(await Web3Manager().addTask());
+  var completedTaskList = await Web3Manager().fetchCompletedTasks();
+  print(completedTaskList);
+  print(Web3Manager().getResultOfCompletedTask(completedTaskList.first));
 }
 
 class MyApp extends StatelessWidget {

@@ -169,11 +169,42 @@ class Web3Manager extends DatabaseManager {
     return result1;
   }
 
+  fetchCompletedTasks() async {
+    var result = await ethClient.call(
+        contract: taskManager,
+        function: taskManager.function('fetch_lists'),
+        params: [userAddress]);
+    List pendingList = result.first;
+    print(pendingList);
+    List completedList = result.last;
+
+    return completedList;
+  }
+
+  dynamic getResultOfCompletedTask(List singleCompletedTask) {
+    // Ok, here goes...
+    var taskAddress = singleCompletedTask.first;
+    var base64Result = singleCompletedTask.last;
+
+    var decodedResult = convertFromBase64(base64Result);
+
+    return decodedResult;
+  }
+
+  // Used to retire COMPLETED tasks
+  retireTask() {}
+
   String convertToBase64(Map<String, dynamic> input) {
     // I'm honestly surprised and impressed by how neat this looks in pure dart!
     var jsonString = json.encode(input);
     var utf8List = utf8.encode(jsonString);
     return base64.encode(utf8List);
+  }
+
+  dynamic convertFromBase64(String base64Task) {
+    var utf8List = base64.decode(base64Task);
+    var jsonString = utf8.decode(utf8List);
+    return json.decode(jsonString);
   }
 
   @override
