@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
@@ -143,11 +144,13 @@ class Web3Manager extends DatabaseManager {
     return deployedOracle;
   }
 
-  // Map<String, dynamic> taskMap
-  Future<dynamic> addTask() async {
+  /// Adds a task and returns the address of that created task.
+  /// This needs to be processed on-chain, and that takes a while.
+  Future<EthereumAddress> addTask() async {
     Credentials creds = await ethClient.credentialsFromPrivateKey(_privateKey);
 
-    var result1 = ethClient.sendTransaction(
+    // The result will be a transaction hash
+    var result1 = await ethClient.sendTransaction(
         creds,
         Transaction.callContract(
           contract: taskManager,
@@ -166,7 +169,29 @@ class Web3Manager extends DatabaseManager {
           ],
         ));
 
-    return result1;
+    // This receipt doesn't seem useful, since the events emitted don't include the address of the created task
+    // One has to manually check the list of tasks on the contract after adding one, and hoping that they get the correct address
+    // One gets the correct task contract address as long as there is only one client adding tasks for a specific user,
+    // One can then simply get the latest task created by that user.
+    // If this isn't the case, it might get more complicated...
+    // var receipt = await ethClient.getTransactionReceipt(result1);
+    // print(receipt);
+
+    // var result2 = await ethClient
+    //     .call(contract: taskManager, function: taskManager.function('pending'),
+    //         // This apparently gets the first value in the list
+    //         params: [userAddress, BigInt.from(0)]);
+    // print(result2);
+
+    var result3 = await ethClient.call(
+        contract: taskManager,
+        function: taskManager.function('fetch_lists'),
+        params: [userAddress]);
+    List pendingList = result3.first;
+    // List completedList = result3.last;
+
+    // This should be the latest, not yet completed task contract
+    return pendingList.last;
   }
 
   fetchCompletedTasks() async {
