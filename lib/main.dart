@@ -6,8 +6,6 @@ import 'package:flutter_iot_ui/data/web3.dart';
 
 void main() async {
   runApp(MyApp());
-  // TODO: do this automatically when deemed necessary (for example when getting first data entries)
-  await Web3Manager().loadContracts();
 }
 
 class MyApp extends StatelessWidget {

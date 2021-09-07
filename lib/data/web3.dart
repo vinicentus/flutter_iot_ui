@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
@@ -51,14 +50,6 @@ class Web3Manager extends DatabaseManager {
   var _privateKey =
       '0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1';
 
-  // TODO: remove
-  getBalance() async {
-    var credentials = await ethClient.credentialsFromPrivateKey(_privateKey);
-
-    EtherAmount balance = await ethClient.getBalance(credentials.address);
-    print(balance.getValueInUnit(EtherUnit.ether));
-  }
-
   // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
   DeployedContract _getDeployedContract(String contractName, String data) {
     var decoded = json.decode(data);
@@ -76,7 +67,7 @@ class Web3Manager extends DatabaseManager {
     return ContractAbi.fromJson(abi, contractName);
   }
 
-  loadContracts() async {
+  _loadContracts() async {
     String jsonData = await rootBundle.loadString('resources/latest.json');
 
     userManager = _getDeployedContract('usermanager', jsonData);
@@ -92,7 +83,7 @@ class Web3Manager extends DatabaseManager {
     task = _getContractABI('task', jsonData);
   }
 
-  Future<DeployedContract> loadUser(EthereumAddress userAddress) async {
+  Future<DeployedContract> _loadUser(EthereumAddress userAddress) async {
     _userAddress = userAddress;
 
     // Requires the address of the user that has been created...
@@ -121,7 +112,7 @@ class Web3Manager extends DatabaseManager {
   }
 
   /// This needs to be called after loadUser, because it fetches the first oracle registered to the current user
-  Future<DeployedContract> loadOracle() async {
+  Future<DeployedContract> _loadOracle() async {
     // Fetch all the oracles (devices) that are registered to our user
     var result = await ethClient.call(
       contract: oracleManager,
@@ -145,7 +136,7 @@ class Web3Manager extends DatabaseManager {
 
   /// Adds a task and returns the address of that created task.
   /// This needs to be processed on-chain, and that takes a while.
-  Future<EthereumAddress> addTask() async {
+  Future<EthereumAddress> _addTask() async {
     Credentials creds = await ethClient.credentialsFromPrivateKey(_privateKey);
 
     // The result will be a transaction hash
@@ -193,7 +184,7 @@ class Web3Manager extends DatabaseManager {
     return pendingList.last;
   }
 
-  Future<Map<EthereumAddress, String>> fetchCompletedTasks() async {
+  Future<Map<EthereumAddress, String>> _fetchCompletedTasks() async {
     var result = await ethClient.call(
         contract: taskManager,
         function: taskManager.function('fetch_lists'),
@@ -228,17 +219,21 @@ class Web3Manager extends DatabaseManager {
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
       {DateTime? start, DateTime? stop, int numberOfRetrySeconds = 10}) async {
+    // TODO: don't load all contracts (also loaduser and loadoracle) every time
+    print('loading contracts');
+    await _loadContracts();
+
     // TODO: remove hardcoded param
     var address = EthereumAddress.fromHex(
         '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0',
         enforceEip55: true);
-    // TODO: don't load user and oracle every time
+
     print('loading user');
-    await loadUser(address);
+    await _loadUser(address);
     print('loading oracle');
-    await loadOracle();
+    await _loadOracle();
     print('adding task:');
-    var taskAddress = await addTask();
+    var taskAddress = await _addTask();
     if (taskAddress is! EthereumAddress) {
       throw Exception('Got back invalid task address: $taskAddress');
     }
@@ -250,7 +245,7 @@ class Web3Manager extends DatabaseManager {
         .first;
     print('waited for event $firstEvent');
 
-    var completedTasks = await fetchCompletedTasks();
+    var completedTasks = await _fetchCompletedTasks();
     print('fetched completed tasks');
 
     // Check if completed now
