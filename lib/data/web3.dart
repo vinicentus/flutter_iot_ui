@@ -233,29 +233,29 @@ class Web3Manager extends DatabaseManager {
         '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0',
         enforceEip55: true);
     // TODO: don't load user and oracle every time
+    print('loading user');
     await loadUser(address);
+    print('loading oracle');
     await loadOracle();
     print('adding task:');
     var taskAddress = await addTask();
     if (taskAddress is! EthereumAddress) {
       throw Exception('Got back invalid task address: $taskAddress');
     }
+    print('added task');
+
+    // This is assumed (for now) to be the correct event
+    var firstEvent = await ethClient
+        .events(FilterOptions(address: taskManager.address))
+        .first;
+    print('waited for event $firstEvent');
 
     var completedTasks = await fetchCompletedTasks();
-
-    //TODO: listen for events here instead
-    var retries = 0;
-    while (!completedTasks.containsKey(taskAddress) &&
-        retries < numberOfRetrySeconds) {
-      // TODO: don't sleep, instead just reschedule the future
-      sleep(Duration(seconds: 1));
-      retries += 1;
-      completedTasks = await fetchCompletedTasks();
-    }
+    print('fetched completed tasks');
 
     // Check if completed now
     if (!completedTasks.containsKey(taskAddress)) {
-      throw Exception('Failed to get back completed task after 10 tries');
+      throw Exception('Failed to get back completed task');
     }
 
     // We have already asserted that the taskAddress is an EthereumAddress so we can safely use it here
