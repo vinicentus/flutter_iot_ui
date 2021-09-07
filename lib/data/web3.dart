@@ -16,12 +16,12 @@ class Web3Manager extends DatabaseManager {
   }
 
   Web3Manager._internal() {
-    // TODO: Initialize
+    // TODO: use websockets
     httpClient = new Client();
     ethClient = new Web3Client(apiUrl, httpClient);
   }
 
-  // TODO: use websockets
+  // TODO: load from config file
   // var apiUrl = 'http://${settings["gateway"]["host"]}:${settings["gateway"]["port"]}';
   var apiUrl = "http://localhost:8545";
 
@@ -43,11 +43,9 @@ class Web3Manager extends DatabaseManager {
   late DeployedContract deployedTask;
 
   // This should be the address of the user that created the user contract
-  // TODO: remove hardcoded param
-  late EthereumAddress userAddress = EthereumAddress.fromHex(
-      '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0',
-      enforceEip55: true);
-  late String oracleDeviceID;
+  // This is nullable
+  EthereumAddress? _userAddress;
+  String? _oracleDeviceID;
 
   // This is a temporary test key! ( TODO: load from file )
   var _privateKey =
@@ -66,7 +64,6 @@ class Web3Manager extends DatabaseManager {
     var decoded = json.decode(data);
     var abi = json.encode(decoded[contractName]['abi']);
     var address = decoded[contractName]['address'];
-    print(address);
 
     return DeployedContract(ContractAbi.fromJson(abi, contractName),
         EthereumAddress.fromHex(address));
@@ -96,11 +93,13 @@ class Web3Manager extends DatabaseManager {
   }
 
   Future<DeployedContract> loadUser(EthereumAddress userAddress) async {
+    _userAddress = userAddress;
+
     // Requires the address of the user that has been created...
     var returnList = await ethClient.call(
       contract: userManager,
       function: userManager.function('exists'),
-      params: [userAddress],
+      params: [_userAddress],
     );
     bool exists = returnList.first;
 
@@ -109,7 +108,7 @@ class Web3Manager extends DatabaseManager {
         contract: userManager,
         function: userManager.function('fetch'),
         // TODO: remove hardcoded param
-        params: [userAddress],
+        params: [_userAddress],
       );
       // The returned value should be the address of the User contract
       var address = result.first;
@@ -127,16 +126,16 @@ class Web3Manager extends DatabaseManager {
     var result = await ethClient.call(
       contract: oracleManager,
       function: oracleManager.function('fetch_collection'),
-      params: [userAddress],
+      params: [_userAddress],
     );
 
     // This is the id String of the oracle (device)
-    oracleDeviceID = result.first.first;
+    _oracleDeviceID = result.first.first;
 
     var result2 = await ethClient.call(
       contract: oracleManager,
       function: oracleManager.function('fetch_oracle'),
-      params: [oracleDeviceID],
+      params: [_oracleDeviceID],
     );
 
     deployedOracle = DeployedContract(oracle, result2.first);
@@ -157,7 +156,7 @@ class Web3Manager extends DatabaseManager {
           function: taskManager.function('create'),
           parameters: [
             // TODO: use function parameter to define these
-            oracleDeviceID,
+            _oracleDeviceID,
             BigInt.from(2),
             BigInt.from(2),
             convertToBase64({
@@ -186,7 +185,7 @@ class Web3Manager extends DatabaseManager {
     var result3 = await ethClient.call(
         contract: taskManager,
         function: taskManager.function('fetch_lists'),
-        params: [userAddress]);
+        params: [_userAddress]);
     List pendingList = result3.first;
     // List completedList = result3.last;
 
@@ -194,26 +193,20 @@ class Web3Manager extends DatabaseManager {
     return pendingList.last;
   }
 
-  fetchCompletedTasks() async {
+  Future<Map<EthereumAddress, String>> fetchCompletedTasks() async {
     var result = await ethClient.call(
         contract: taskManager,
         function: taskManager.function('fetch_lists'),
-        params: [userAddress]);
-    List pendingList = result.first;
-    print(pendingList);
+        params: [_userAddress]);
+    // List pendingList = result.first;
     List completedList = result.last;
 
-    return completedList;
-  }
-
-  dynamic getResultOfCompletedTask(List singleCompletedTask) {
-    // Ok, here goes...
-    var taskAddress = singleCompletedTask.first;
-    var base64Result = singleCompletedTask.last;
-
-    var decodedResult = convertFromBase64(base64Result);
-
-    return decodedResult;
+    var mapped = <EthereumAddress, String>{};
+    completedList.forEach((element) {
+      var list = element as List;
+      mapped[list.first] = list.last;
+    });
+    return mapped;
   }
 
   // Used to retire COMPLETED tasks
@@ -234,13 +227,50 @@ class Web3Manager extends DatabaseManager {
 
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime? start, DateTime? stop}) async {
-    await loadUser(userAddress);
+      {DateTime? start, DateTime? stop, int numberOfRetrySeconds = 10}) async {
+    // TODO: remove hardcoded param
+    var address = EthereumAddress.fromHex(
+        '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0',
+        enforceEip55: true);
+    // TODO: don't load user and oracle every time
+    await loadUser(address);
     await loadOracle();
-    await addTask();
+    print('adding task:');
+    var taskAddress = await addTask();
+    if (taskAddress is! EthereumAddress) {
+      throw Exception('Got back invalid task address: $taskAddress');
+    }
 
-    // TODO: implement getSCD30Entries
-    throw UnimplementedError();
+    var completedTasks = await fetchCompletedTasks();
+
+    //TODO: listen for events here instead
+    var retries = 0;
+    while (!completedTasks.containsKey(taskAddress) &&
+        retries < numberOfRetrySeconds) {
+      // TODO: don't sleep, instead just reschedule the future
+      sleep(Duration(seconds: 1));
+      retries += 1;
+      completedTasks = await fetchCompletedTasks();
+    }
+
+    // Check if completed now
+    if (!completedTasks.containsKey(taskAddress)) {
+      throw Exception('Failed to get back completed task after 10 tries');
+    }
+
+    // We have already asserted that the taskAddress is an EthereumAddress so we can safely use it here
+    // The exclamation mark here is important!
+    // It tells dart to convert the String? to a String
+    List taskResult = convertFromBase64(completedTasks[taskAddress]!);
+
+    // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
+    var returnList = <SCD30SensorDataEntry>[];
+    taskResult.forEach((element) {
+      returnList.add(SCD30SensorDataEntry.createFromDB(
+          element[0], element[1], element[2], element[3]));
+    });
+
+    return returnList;
   }
 
   @override
