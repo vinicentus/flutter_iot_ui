@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/data/settings_constants.dart';
 import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
-import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/checkbox_widget.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
@@ -16,8 +15,7 @@ Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
   var today = DateTime.now();
   var yesterday = today.subtract(Duration(days: 1));
   // Just creating an instance of this singleton class will initialize it and the database.
-  var db = await SQLiteDatabaseManager()
-      .getSCD30Entries(start: yesterday, stop: today);
+  var db = await globalDBManager.getSCD30Entries(start: yesterday, stop: today);
   yield db;
 
   // This stream will be automatically cancelled by dart when no longer needed.
@@ -26,9 +24,8 @@ Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
     today = DateTime.now();
     yesterday = today.subtract(Duration(days: 1));
     db = await Future.delayed(
-        Duration(seconds: 5),
-        () => SQLiteDatabaseManager()
-            .getSCD30Entries(start: yesterday, stop: today));
+        Duration(seconds: numberOfSecondsBetweenGraphRefresh),
+        () => globalDBManager.getSCD30Entries(start: yesterday, stop: today));
     yield db;
   }
 }
@@ -37,8 +34,7 @@ Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30() async* {
   // Init
   var today = DateTime.now();
   var yesterday = today.subtract(Duration(days: 1));
-  var db = await SQLiteDatabaseManager()
-      .getSPS30Entries(start: yesterday, stop: today);
+  var db = await globalDBManager.getSPS30Entries(start: yesterday, stop: today);
   yield db;
 
   // This stream will be automatically cancelled by dart when no longer needed.
@@ -47,9 +43,8 @@ Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30() async* {
     today = DateTime.now();
     yesterday = today.subtract(Duration(days: 1));
     db = await Future.delayed(
-        Duration(seconds: 5),
-        () => SQLiteDatabaseManager()
-            .getSPS30Entries(start: yesterday, stop: today));
+        Duration(seconds: numberOfSecondsBetweenGraphRefresh),
+        () => globalDBManager.getSPS30Entries(start: yesterday, stop: today));
     yield db;
   }
 }

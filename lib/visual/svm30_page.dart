@@ -5,7 +5,6 @@ import 'package:flutter_iot_ui/data/settings_constants.dart';
 import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
-import 'package:flutter_iot_ui/data/sqlite.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
 
 class SVM30Page extends StatefulWidget {
@@ -21,17 +20,16 @@ class _SVM30PageState extends State<SVM30Page> {
     // Init
     var today = DateTime.now();
     var yesterday = today.subtract(Duration(days: 1));
-    var db = await SQLiteDatabaseManager()
-        .getSVM30Entries(start: yesterday, stop: today);
+    var db =
+        await globalDBManager.getSVM30Entries(start: yesterday, stop: today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
       yesterday = today.subtract(Duration(days: 1));
       db = await Future.delayed(
-          Duration(seconds: 5),
-          () => SQLiteDatabaseManager()
-              .getSVM30Entries(start: yesterday, stop: today));
+          Duration(seconds: numberOfSecondsBetweenGraphRefresh),
+          () => globalDBManager.getSVM30Entries(start: yesterday, stop: today));
       yield db;
     }
   }
