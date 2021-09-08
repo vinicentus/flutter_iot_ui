@@ -6,6 +6,7 @@ import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:flutter_iot_ui/data/database_manager.dart';
+import 'sqlite.dart' show convertDateTimeToString;
 
 class Web3Manager extends DatabaseManager {
   static final Web3Manager _singleton = Web3Manager._internal();
@@ -136,7 +137,11 @@ class Web3Manager extends DatabaseManager {
 
   /// Adds a task and returns the address of that created task.
   /// This needs to be processed on-chain, and that takes a while.
-  Future<EthereumAddress> _addTask() async {
+  Future<EthereumAddress> _addTask(
+      {required String startTime,
+      required String stopTime,
+      String? publicKey,
+      required String tableName}) async {
     Credentials creds = await ethClient.credentialsFromPrivateKey(_privateKey);
 
     // The result will be a transaction hash
@@ -151,10 +156,10 @@ class Web3Manager extends DatabaseManager {
             BigInt.from(2),
             BigInt.from(2),
             convertToBase64({
-              '_start_time': '2021-08-23T00:00:00+00:00',
-              '_stop_time': '2021-08-23T01:00:00+00:00',
-              'public_key': null,
-              'tableName': 'scd30_output'
+              '_start_time': startTime,
+              '_stop_time': stopTime,
+              'public_key': publicKey,
+              'tableName': tableName
             }),
           ],
         ));
@@ -218,7 +223,11 @@ class Web3Manager extends DatabaseManager {
 
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime? start, DateTime? stop, int numberOfRetrySeconds = 10}) async {
+      {DateTime? start, DateTime? stop}) async {
+    // TODO: remove:
+    start = DateTime.parse('2021-08-23T00:00:00+00:00');
+    stop = DateTime.parse('2021-08-23T01:00:00+00:00');
+
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
     print('loading contracts');
     await _loadContracts();
@@ -233,7 +242,12 @@ class Web3Manager extends DatabaseManager {
     print('loading oracle');
     await _loadOracle();
     print('adding task:');
-    var taskAddress = await _addTask();
+    var taskAddress = await _addTask(
+        // TODO: bad non-null assertion
+        startTime: convertDateTimeToString(start!),
+        stopTime: convertDateTimeToString(stop!),
+        publicKey: null, // TODO
+        tableName: 'scd30_output');
     if (taskAddress is! EthereumAddress) {
       throw Exception('Got back invalid task address: $taskAddress');
     }

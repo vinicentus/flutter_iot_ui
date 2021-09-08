@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
 import 'package:flutter_iot_ui/visual/settings.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
-import 'package:flutter_iot_ui/data/web3.dart';
 
 void main() async {
   runApp(MyApp());

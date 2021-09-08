@@ -64,10 +64,8 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
       var whereArgs = <String>[];
       // We use UTC in the database
-      if (start != null)
-        whereArgs.add(start.toUtc().toIso8601String().split('.')[0] + 'Z');
-      if (stop != null)
-        whereArgs.add(stop.toUtc().toIso8601String().split('.')[0] + 'Z');
+      if (start != null) whereArgs.add(convertDateTimeToString(start));
+      if (stop != null) whereArgs.add(convertDateTimeToString(stop));
 
       maps = await (await openedDatabaseFuture)!
           .query('sps30_output', where: where, whereArgs: whereArgs);
@@ -107,10 +105,8 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
       var whereArgs = <String>[];
       // We use UTC in the database
-      if (start != null)
-        whereArgs.add(start.toUtc().toIso8601String().split('.')[0] + 'Z');
-      if (stop != null)
-        whereArgs.add(stop.toUtc().toIso8601String().split('.')[0] + 'Z');
+      if (start != null) whereArgs.add(convertDateTimeToString(start));
+      if (stop != null) whereArgs.add(convertDateTimeToString(stop));
 
       maps = await (await openedDatabaseFuture)!
           .query('scd30_output', where: where, whereArgs: whereArgs);
@@ -143,10 +139,8 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
       var whereArgs = <String>[];
       // We use UTC in the database
-      if (start != null)
-        whereArgs.add(start.toUtc().toIso8601String().split('.')[0] + 'Z');
-      if (stop != null)
-        whereArgs.add(stop.toUtc().toIso8601String().split('.')[0] + 'Z');
+      if (start != null) whereArgs.add(convertDateTimeToString(start));
+      if (stop != null) whereArgs.add(convertDateTimeToString(stop));
 
       maps = await (await openedDatabaseFuture)!
           .query('svm30_output', where: where, whereArgs: whereArgs);
@@ -162,3 +156,6 @@ class SQLiteDatabaseManager extends DatabaseManager {
     return returnList;
   }
 }
+
+String convertDateTimeToString(DateTime datetime) =>
+    datetime.toUtc().toIso8601String().split('.')[0] + 'Z';
