@@ -221,13 +221,11 @@ class Web3Manager extends DatabaseManager {
     return json.decode(jsonString);
   }
 
-  @override
-  Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime? start, DateTime? stop}) async {
-    // TODO: remove:
-    start = DateTime.parse('2021-08-23T00:00:00+00:00');
-    stop = DateTime.parse('2021-08-23T01:00:00+00:00');
-
+  Future<List> geteGenericEntries(
+      {required String tableName,
+      String? publicKey,
+      DateTime? start,
+      DateTime? stop}) async {
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
     print('loading contracts');
     await _loadContracts();
@@ -246,8 +244,8 @@ class Web3Manager extends DatabaseManager {
         // TODO: bad non-null assertion
         startTime: convertDateTimeToString(start!),
         stopTime: convertDateTimeToString(stop!),
-        publicKey: null, // TODO
-        tableName: 'scd30_output');
+        publicKey: publicKey, // TODO
+        tableName: tableName);
     if (taskAddress is! EthereumAddress) {
       throw Exception('Got back invalid task address: $taskAddress');
     }
@@ -273,26 +271,71 @@ class Web3Manager extends DatabaseManager {
     List taskResult = convertFromBase64(completedTasks[taskAddress]!);
 
     // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
+    return taskResult;
+  }
+
+  @override
+  Future<List<SCD30SensorDataEntry>> getSCD30Entries(
+      {DateTime? start, DateTime? stop}) async {
+    // TODO: remove:
+    start = DateTime.parse('2021-08-23T00:00:00+00:00');
+    stop = DateTime.parse('2021-08-23T01:00:00+00:00');
+
+    List taskResult = await geteGenericEntries(
+        tableName: 'scd30_output', publicKey: null, start: start, stop: stop);
+
+    // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
     var returnList = <SCD30SensorDataEntry>[];
     taskResult.forEach((element) {
       returnList.add(SCD30SensorDataEntry.createFromDB(
           element[0], element[1], element[2], element[3]));
     });
-
     return returnList;
   }
 
   @override
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
-    // TODO: implement getSPS30Entries
-    throw UnimplementedError();
+    // TODO: remove:
+    start = DateTime.parse('2021-08-23T00:00:00+00:00');
+    stop = DateTime.parse('2021-08-23T01:00:00+00:00');
+
+    List taskResult = await geteGenericEntries(
+        tableName: 'sps30_output', publicKey: null, start: start, stop: stop);
+
+    var returnList = <SPS30SensorDataEntry>[];
+    taskResult.forEach((element) {
+      returnList.add(SPS30SensorDataEntry.createFromDB(
+          element[0],
+          element[1],
+          element[2],
+          element[3],
+          element[4],
+          element[5],
+          element[6],
+          element[7],
+          element[8],
+          element[9],
+          element[10]));
+    });
+    return returnList;
   }
 
   @override
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop}) async {
-    // TODO: implement getSVM30Entries
-    throw UnimplementedError();
+    // TODO: remove:
+    start = DateTime.parse('2021-08-23T00:00:00+00:00');
+    stop = DateTime.parse('2021-08-23T01:00:00+00:00');
+
+    List taskResult = await geteGenericEntries(
+        tableName: 'svm30_output', publicKey: null, start: start, stop: stop);
+
+    var returnList = <SVM30SensorDataEntry>[];
+    taskResult.forEach((element) {
+      returnList.add(SVM30SensorDataEntry.createFromDB(
+          element[0], element[1], element[2]));
+    });
+    return returnList;
   }
 }
