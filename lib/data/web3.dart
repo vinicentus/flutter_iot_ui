@@ -256,6 +256,7 @@ class Web3Manager extends DatabaseManager {
     print('added task');
 
     // This is assumed (for now) to be the correct event
+    // TODO: add timeout after whic we consider it a failed attempt
     var firstEvent = await ethClient
         .events(FilterOptions(address: taskManager.address))
         .first;
@@ -281,10 +282,6 @@ class Web3Manager extends DatabaseManager {
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
       {DateTime? start, DateTime? stop}) async {
-    // TODO: remove:
-    start = DateTime.parse('2021-08-23T00:00:00+00:00');
-    stop = DateTime.parse('2021-08-23T01:00:00+00:00');
-
     List taskResult = await geteGenericEntries(
         tableName: 'scd30_output', publicKey: null, start: start, stop: stop);
 
@@ -300,10 +297,6 @@ class Web3Manager extends DatabaseManager {
   @override
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
-    // TODO: remove:
-    start = DateTime.parse('2021-08-23T00:00:00+00:00');
-    stop = DateTime.parse('2021-08-23T01:00:00+00:00');
-
     List taskResult = await geteGenericEntries(
         tableName: 'sps30_output', publicKey: null, start: start, stop: stop);
 
@@ -328,10 +321,6 @@ class Web3Manager extends DatabaseManager {
   @override
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop}) async {
-    // TODO: remove:
-    start = DateTime.parse('2021-08-23T00:00:00+00:00');
-    stop = DateTime.parse('2021-08-23T01:00:00+00:00');
-
     List taskResult = await geteGenericEntries(
         tableName: 'svm30_output', publicKey: null, start: start, stop: stop);
 
