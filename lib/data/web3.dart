@@ -53,9 +53,8 @@ class Web3Manager extends DatabaseManager {
   late DeployedContract deployedTask;
 
   // This should be the address of the user that created the user contract
-  // This is nullable
-  EthereumAddress? _userAddress;
-  String? _oracleDeviceID;
+  late EthereumAddress _userAddress;
+  late String _oracleDeviceID;
 
   late String _privateKey;
   late String _publicKey;
@@ -108,7 +107,6 @@ class Web3Manager extends DatabaseManager {
       var result = await ethClient.call(
         contract: userManager,
         function: userManager.function('fetch'),
-        // TODO: remove hardcoded param
         params: [_userAddress],
       );
       // The returned value should be the address of the User contract
@@ -160,7 +158,6 @@ class Web3Manager extends DatabaseManager {
           contract: taskManager,
           function: taskManager.function('create'),
           parameters: [
-            // TODO: use function parameter to define these
             _oracleDeviceID,
             BigInt.from(2),
             BigInt.from(2),
@@ -242,13 +239,8 @@ class Web3Manager extends DatabaseManager {
     print('loading contracts');
     await _loadContracts();
 
-    // TODO: remove hardcoded param
-    var address = EthereumAddress.fromHex(
-        '0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0',
-        enforceEip55: true);
-
     print('loading user');
-    await _loadUser(address);
+    await _loadUser(EthereumAddress.fromHex(_publicKey));
     print('loading oracle');
     await _loadOracle();
     print('adding task:');
