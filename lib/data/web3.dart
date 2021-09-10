@@ -18,12 +18,22 @@ class Web3Manager extends DatabaseManager {
   Web3Manager._internal() {
     // TODO: use websockets
     httpClient = new Client();
-    ethClient = new Web3Client(apiUrl, httpClient);
   }
 
-  // TODO: load from config file
-  // var apiUrl = 'http://${settings["gateway"]["host"]}:${settings["gateway"]["port"]}';
-  var apiUrl = "http://localhost:8545";
+  Future<void> init() async {
+    String jsonData = await rootBundle.loadString('resources/settings.json');
+    Map settings = json.decode(jsonData);
+
+    apiUrl =
+        'http://${settings["gateway"]["host"]}:${settings["gateway"]["port"]}';
+
+    ethClient = new Web3Client(apiUrl, httpClient);
+
+    _privateKey = settings['keys']['private'];
+    _publicKey = settings['keys']['public'];
+  }
+
+  late String apiUrl;
 
   // TODO: check late keyword
   late Client httpClient;
@@ -47,9 +57,8 @@ class Web3Manager extends DatabaseManager {
   EthereumAddress? _userAddress;
   String? _oracleDeviceID;
 
-  // This is a temporary test key! ( TODO: load from file )
-  var _privateKey =
-      '0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1';
+  late String _privateKey;
+  late String _publicKey;
 
   // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
   DeployedContract _getDeployedContract(String contractName, String data) {
@@ -227,6 +236,9 @@ class Web3Manager extends DatabaseManager {
       DateTime? start,
       DateTime? stop}) async {
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
+    print('init');
+    await init();
+
     print('loading contracts');
     await _loadContracts();
 
