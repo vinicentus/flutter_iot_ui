@@ -24,3 +24,32 @@ abstract class DatabaseManager {
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop});
 }
+
+abstract class CachedDatabaseManager extends DatabaseManager {
+  /// This cache shouldn't have a public setter.
+  /// Instead one should use [getCachedSCD30Entries],
+  /// which should populate the cache as necessary.
+  Set<SCD30SensorDataEntry> get SCD30cache;
+
+  /// This cache shouldn't have a public setter.
+  /// Instead one should use [getCachedSPS30Entries],
+  /// which should populate the cache as necessary.
+  Set<SPS30SensorDataEntry> get SPS30cache;
+
+  /// This cache shouldn't have a public setter.
+  /// Instead one should use [getCachedSVM30Entries],
+  /// which should populate the cache as necessary.
+  Set<SVM30SensorDataEntry> get SVM30cache;
+
+  /// Same as [getSCD30Entries], but caches received values.
+  Future<List<SCD30SensorDataEntry>> getCachedSCD30Entries(
+      {DateTime? start, DateTime? stop});
+
+  /// Same as [getSPS30Entries], but caches received values.
+  Future<List<SPS30SensorDataEntry>> getCachedSPS30Entries(
+      {DateTime? start, DateTime? stop});
+
+  /// Same as [getSVM30Entries], but caches received values.
+  Future<List<SVM30SensorDataEntry>> getCachedSVM30Entries(
+      {DateTime? start, DateTime? stop});
+}
