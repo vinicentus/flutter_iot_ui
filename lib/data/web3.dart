@@ -8,7 +8,7 @@ import 'package:web3dart/web3dart.dart';
 import 'package:flutter_iot_ui/data/database_manager.dart';
 import 'sqlite.dart' show convertDateTimeToString;
 
-class Web3Manager extends DatabaseManager {
+class Web3Manager extends CachedDatabaseManager {
   static final Web3Manager _singleton = Web3Manager._internal();
 
   factory Web3Manager() {
@@ -279,10 +279,52 @@ class Web3Manager extends DatabaseManager {
     return taskResult;
   }
 
+  // TODO: add tests:
+  /// Split interval into smaller chunks that are a maximum of 1 hour long
+  List<DateTime> splitIntoSmallTimeIntervals(DateTime start, DateTime stop) {
+    var hourDifference = stop.difference(start).inHours;
+    if (hourDifference >= 1) {
+      var returnList = <DateTime>[];
+      for (int i = 0; i <= hourDifference; i++) {
+        returnList.add(start.add(Duration(hours: i)));
+      }
+      returnList.add(stop);
+      return returnList;
+    } else {
+      return [start, stop];
+    }
+  }
+
+  // TODO: don't wait for previous task to complete before submitting new one
+  Future<List> getMultipleGenericEntries(
+      {required String tableName,
+      String? publicKey,
+      DateTime? start,
+      DateTime? stop}) async {
+    // TODO: bad null check
+    var timeChunkList = splitIntoSmallTimeIntervals(start!, stop!);
+
+    var futuresList = <Future<List>>[];
+
+    for (int i = 0; i < timeChunkList.length - 1; i++) {
+      futuresList.add(geteGenericEntries(
+        tableName: tableName,
+        publicKey: publicKey,
+        start: timeChunkList[i],
+        stop: timeChunkList[i + 1],
+      ));
+    }
+
+    var bigReturnList = await Future.wait(futuresList, eagerError: true);
+
+    print('returning');
+    return bigReturnList;
+  }
+
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
       {DateTime? start, DateTime? stop}) async {
-    List taskResult = await geteGenericEntries(
+    List taskResult = await getMultipleGenericEntries(
         tableName: 'scd30_output', publicKey: null, start: start, stop: stop);
 
     // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
@@ -297,7 +339,7 @@ class Web3Manager extends DatabaseManager {
   @override
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
-    List taskResult = await geteGenericEntries(
+    List taskResult = await getMultipleGenericEntries(
         tableName: 'sps30_output', publicKey: null, start: start, stop: stop);
 
     var returnList = <SPS30SensorDataEntry>[];
@@ -321,7 +363,7 @@ class Web3Manager extends DatabaseManager {
   @override
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop}) async {
-    List taskResult = await geteGenericEntries(
+    List taskResult = await getMultipleGenericEntries(
         tableName: 'svm30_output', publicKey: null, start: start, stop: stop);
 
     var returnList = <SVM30SensorDataEntry>[];
