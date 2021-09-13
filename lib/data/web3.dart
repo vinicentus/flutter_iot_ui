@@ -373,4 +373,43 @@ class Web3Manager extends CachedDatabaseManager {
     });
     return returnList;
   }
+
+  // Lazy init achieved with late keyword
+  // TODO: actively manage what is tored here
+  late Set<SCD30SensorDataEntry> _cachedSCD30 = Set<SCD30SensorDataEntry>();
+  late Set<SPS30SensorDataEntry> _cachedSPS30 = Set<SPS30SensorDataEntry>();
+  late Set<SVM30SensorDataEntry> _cachedSVM30 = Set<SVM30SensorDataEntry>();
+
+  @override
+  Set<SCD30SensorDataEntry> get cachedSCD30Entries => _cachedSCD30;
+
+  @override
+  Set<SPS30SensorDataEntry> get cachedSPS30Entries => _cachedSPS30;
+
+  @override
+  Set<SVM30SensorDataEntry> get cachedSVM30Entries => _cachedSVM30;
+
+  @override
+  Future<List<SCD30SensorDataEntry>> getCachedSCD30Entries(
+      {DateTime? start, DateTime? stop}) async {
+    var entries = await getSCD30Entries();
+    _cachedSCD30.addAll(entries);
+    return entries;
+  }
+
+  @override
+  Future<List<SPS30SensorDataEntry>> getCachedSPS30Entries(
+      {DateTime? start, DateTime? stop}) async {
+    var entries = await getSPS30Entries();
+    _cachedSPS30.addAll(entries);
+    return entries;
+  }
+
+  @override
+  Future<List<SVM30SensorDataEntry>> getCachedSVM30Entries(
+      {DateTime? start, DateTime? stop}) async {
+    var entries = await getSVM30Entries();
+    _cachedSVM30.addAll(entries);
+    return entries;
+  }
 }
