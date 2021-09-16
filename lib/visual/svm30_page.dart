@@ -116,8 +116,11 @@ class _SVM30PageState extends State<SVM30Page> {
                   ),
                   leftTitles: SideTitles(
                     showTitles: true,
-                    // TODO: show correct unit depending on which line is displayed
-                    getTitles: (value) => '${value.toStringAsFixed(2)} x',
+                    // We show all the units of the different lines here.
+                    getTitles: (value) {
+                      var rounded = value.toStringAsFixed(2);
+                      return 'CO2eq: $rounded ppm / VOC: $rounded ppb';
+                    },
                     interval: 50,
                     margin: 10,
                     reservedSize: 50,
