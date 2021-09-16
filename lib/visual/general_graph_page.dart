@@ -74,7 +74,6 @@ class GeneralGraphPage extends StatelessWidget {
           margin: 10,
           // An hour in milliseconds
           interval: 3.6e6,
-          // TODO:
           getTitles: (value) =>
               DateTime.fromMillisecondsSinceEpoch(value.toInt())
                   .hour
@@ -82,8 +81,7 @@ class GeneralGraphPage extends StatelessWidget {
         ),
         leftTitles: SideTitles(
           showTitles: true,
-          // TODO:
-          // The x here represents a placeholder for a unit
+          // TODO: show decimal values if the value range is small enough
           getTitles: (value) => '${value.toStringAsFixed(0)} ${this.unit}',
           // interval: 1,
           margin: 10,

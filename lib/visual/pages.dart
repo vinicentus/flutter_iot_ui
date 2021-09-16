@@ -86,7 +86,7 @@ class CarbonDioxidePage extends StatelessWidget {
         seriesListStream: dbUpdatesSCD30().map((event) {
           return (event.isNotEmpty)
               ? [
-                  // TODO: id: 'Carbon Dioxide'
+                  // id: 'Carbon Dioxide'
                   LineChartBarData(
                     spots: transformIntoMovingAverage(
                       event
@@ -363,7 +363,6 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
           margin: 10,
           // An hour in milliseconds
           interval: 3.6e6,
-          // TODO:
           getTitles: (value) =>
               DateTime.fromMillisecondsSinceEpoch(value.toInt())
                   .hour
@@ -371,8 +370,6 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
         ),
         leftTitles: SideTitles(
           showTitles: true,
-          // TODO:
-          // The x here represents a placeholder for a unit
           getTitles: (value) =>
               '${value.toStringAsFixed(0)} ${this.widget.unit}',
           // interval: 1,
@@ -386,11 +383,6 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
             bottom: BorderSide(),
             left: BorderSide(),
           )),
-      // TODO:
-      // minX: 0,
-      // maxX: 14,
-      // maxY: 6,
-      // minY: 0,
       lineBarsData: (seriesListStream.isNotEmpty) ? seriesListStream : [],
     );
   }
@@ -618,7 +610,6 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
           margin: 10,
           // An hour in milliseconds
           interval: 3.6e6,
-          // TODO:
           getTitles: (value) =>
               DateTime.fromMillisecondsSinceEpoch(value.toInt())
                   .hour
@@ -626,8 +617,6 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
         ),
         leftTitles: SideTitles(
           showTitles: true,
-          // TODO:
-          // The x here represents a placeholder for a unit
           getTitles: (value) =>
               '${value.toStringAsFixed(0)} ${this.widget.unit}',
           // interval: 1,
@@ -641,11 +630,6 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
             bottom: BorderSide(),
             left: BorderSide(),
           )),
-      // TODO:
-      // minX: 0,
-      // maxX: 14,
-      // maxY: 6,
-      // minY: 0,
       lineBarsData: (seriesListStream.isNotEmpty) ? seriesListStream : [],
     );
   }

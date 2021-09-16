@@ -109,7 +109,6 @@ class _SVM30PageState extends State<SVM30Page> {
                     margin: 10,
                     // An hour in milliseconds
                     interval: 3.6e6,
-                    // TODO:
                     getTitles: (value) =>
                         DateTime.fromMillisecondsSinceEpoch(value.toInt())
                             .hour
@@ -117,7 +116,7 @@ class _SVM30PageState extends State<SVM30Page> {
                   ),
                   leftTitles: SideTitles(
                     showTitles: true,
-                    // TODO:
+                    // TODO: show correct unit depending on which line is displayed
                     getTitles: (value) => '${value.toStringAsFixed(2)} x',
                     interval: 50,
                     margin: 10,
