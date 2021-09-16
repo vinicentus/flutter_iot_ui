@@ -201,6 +201,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       event
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              // No need to subtract values here
                               e.massConcentrationPM1_0))
                           .toList(),
                       useMovingAverage,
@@ -216,7 +217,10 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       event
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                              e.massConcentrationPM2_5Subtracted))
+                              // Check if we should use subtracted values
+                              subtractParticleSizes
+                                  ? e.massConcentrationPM2_5Subtracted
+                                  : e.massConcentrationPM2_5))
                           .toList(),
                       useMovingAverage,
                     ),
@@ -231,7 +235,10 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       event
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                              e.massConcentrationPM4_0Subtracted))
+                              // Check if we should use subtracted values
+                              subtractParticleSizes
+                                  ? e.massConcentrationPM4_0Subtracted
+                                  : e.massConcentrationPM4_0))
                           .toList(),
                       useMovingAverage,
                     ),
@@ -246,7 +253,10 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                       event
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                              e.massConcentrationPM10Subtracted))
+                              // Check if we should use subtracted values
+                              subtractParticleSizes
+                                  ? e.massConcentrationPM10Subtracted
+                                  : e.massConcentrationPM10))
                           .toList(),
                       useMovingAverage,
                     ),
@@ -406,6 +416,7 @@ class NumberConcentrationPage extends StatelessWidget {
                       event
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              // No need to subtract values here
                               e.numberConcentrationPM0_5))
                           .toList(),
                       useMovingAverage,
@@ -420,7 +431,10 @@ class NumberConcentrationPage extends StatelessWidget {
                       event
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                              e.numberConcentrationPM1_0Subtracted))
+                              // Check if we should use subtracted values
+                              subtractParticleSizes
+                                  ? e.numberConcentrationPM1_0Subtracted
+                                  : e.numberConcentrationPM1_0))
                           .toList(),
                       useMovingAverage,
                     ),
@@ -434,7 +448,10 @@ class NumberConcentrationPage extends StatelessWidget {
                       event
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                              e.numberConcentrationPM2_5Subtracted))
+                              // Check if we should use subtracted values
+                              subtractParticleSizes
+                                  ? e.numberConcentrationPM2_5Subtracted
+                                  : e.numberConcentrationPM2_5))
                           .toList(),
                       useMovingAverage,
                     ),
@@ -448,7 +465,10 @@ class NumberConcentrationPage extends StatelessWidget {
                       event
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                              e.numberConcentrationPM4_0Subtracted))
+                              // Check if we should use subtracted values
+                              subtractParticleSizes
+                                  ? e.numberConcentrationPM4_0Subtracted
+                                  : e.numberConcentrationPM4_0))
                           .toList(),
                       useMovingAverage,
                     ),
@@ -462,7 +482,10 @@ class NumberConcentrationPage extends StatelessWidget {
                       event
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                              e.numberConcentrationPM10Subtracted))
+                              // Check if we should use subtracted values
+                              subtractParticleSizes
+                                  ? e.numberConcentrationPM10Subtracted
+                                  : e.numberConcentrationPM10))
                           .toList(),
                       useMovingAverage,
                     ),
