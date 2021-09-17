@@ -273,54 +273,50 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
             return Column(
               children: [
                 Expanded(
-                  flex: 9,
                   child: LineChart(data(snapshot.data!, context)),
                 ),
-                Flexible(
-                  flex: 1,
-                  child: Wrap(children: [
-                    CheckboxWidget(
-                      text: '0.3-1.0µm',
-                      color: Colors.primaries.first,
-                      value: _checkboxesToShow[0],
-                      callbackFunction: (bool value) {
-                        setState(() {
-                          _checkboxesToShow[0] = value;
-                        });
-                      },
-                    ),
-                    CheckboxWidget(
-                      text: '1.0-2.5µm',
-                      color: Colors.primaries[1],
-                      value: _checkboxesToShow[1],
-                      callbackFunction: (bool value) {
-                        setState(() {
-                          _checkboxesToShow[1] = value;
-                        });
-                      },
-                    ),
-                    CheckboxWidget(
-                      text: '2.5-4.0µm',
-                      color: Colors.primaries[2],
-                      value: _checkboxesToShow[2],
-                      callbackFunction: (bool value) {
-                        setState(() {
-                          _checkboxesToShow[2] = value;
-                        });
-                      },
-                    ),
-                    CheckboxWidget(
-                      text: '4.0-10.0µm',
-                      color: Colors.primaries[3],
-                      value: _checkboxesToShow[3],
-                      callbackFunction: (bool value) {
-                        setState(() {
-                          _checkboxesToShow[3] = value;
-                        });
-                      },
-                    ),
-                  ]),
-                ),
+                Wrap(children: [
+                  CheckboxWidget(
+                    text: '0.3-1.0µm',
+                    color: Colors.primaries.first,
+                    value: _checkboxesToShow[0],
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _checkboxesToShow[0] = value;
+                      });
+                    },
+                  ),
+                  CheckboxWidget(
+                    text: '1.0-2.5µm',
+                    color: Colors.primaries[1],
+                    value: _checkboxesToShow[1],
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _checkboxesToShow[1] = value;
+                      });
+                    },
+                  ),
+                  CheckboxWidget(
+                    text: '2.5-4.0µm',
+                    color: Colors.primaries[2],
+                    value: _checkboxesToShow[2],
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _checkboxesToShow[2] = value;
+                      });
+                    },
+                  ),
+                  CheckboxWidget(
+                    text: '4.0-10.0µm',
+                    color: Colors.primaries[3],
+                    value: _checkboxesToShow[3],
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _checkboxesToShow[3] = value;
+                      });
+                    },
+                  ),
+                ]),
               ],
             );
           } else if (snapshot.hasError) {
@@ -510,64 +506,60 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
             return Column(
               children: [
                 Expanded(
-                  flex: 9,
                   child: LineChart(data(snapshot.data!, context)),
                 ),
-                Flexible(
-                  flex: 1,
-                  child: Wrap(children: [
-                    CheckboxWidget(
-                      text: '0.3-0.5μm',
-                      color: Colors.primaries.first,
-                      value: _checkboxesToShow[0],
-                      callbackFunction: (bool value) {
-                        setState(() {
-                          _checkboxesToShow[0] = value;
-                        });
-                      },
-                    ),
-                    CheckboxWidget(
-                      text: '0.5-1.0μm',
-                      color: Colors.primaries[1],
-                      value: _checkboxesToShow[1],
-                      callbackFunction: (bool value) {
-                        setState(() {
-                          _checkboxesToShow[1] = value;
-                        });
-                      },
-                    ),
-                    CheckboxWidget(
-                      text: '1.0-2.5μm',
-                      color: Colors.primaries[2],
-                      value: _checkboxesToShow[2],
-                      callbackFunction: (bool value) {
-                        setState(() {
-                          _checkboxesToShow[2] = value;
-                        });
-                      },
-                    ),
-                    CheckboxWidget(
-                      text: '2.5-4.0μm',
-                      color: Colors.primaries[3],
-                      value: _checkboxesToShow[3],
-                      callbackFunction: (bool value) {
-                        setState(() {
-                          _checkboxesToShow[3] = value;
-                        });
-                      },
-                    ),
-                    CheckboxWidget(
-                      text: '4.0-10.0μm',
-                      color: Colors.primaries[3],
-                      value: _checkboxesToShow[3],
-                      callbackFunction: (bool value) {
-                        setState(() {
-                          _checkboxesToShow[3] = value;
-                        });
-                      },
-                    ),
-                  ]),
-                ),
+                Wrap(children: [
+                  CheckboxWidget(
+                    text: '0.3-0.5μm',
+                    color: Colors.primaries.first,
+                    value: _checkboxesToShow[0],
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _checkboxesToShow[0] = value;
+                      });
+                    },
+                  ),
+                  CheckboxWidget(
+                    text: '0.5-1.0μm',
+                    color: Colors.primaries[1],
+                    value: _checkboxesToShow[1],
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _checkboxesToShow[1] = value;
+                      });
+                    },
+                  ),
+                  CheckboxWidget(
+                    text: '1.0-2.5μm',
+                    color: Colors.primaries[2],
+                    value: _checkboxesToShow[2],
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _checkboxesToShow[2] = value;
+                      });
+                    },
+                  ),
+                  CheckboxWidget(
+                    text: '2.5-4.0μm',
+                    color: Colors.primaries[3],
+                    value: _checkboxesToShow[3],
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _checkboxesToShow[3] = value;
+                      });
+                    },
+                  ),
+                  CheckboxWidget(
+                    text: '4.0-10.0μm',
+                    color: Colors.primaries[3],
+                    value: _checkboxesToShow[3],
+                    callbackFunction: (bool value) {
+                      setState(() {
+                        _checkboxesToShow[3] = value;
+                      });
+                    },
+                  ),
+                ]),
               ],
             );
           } else if (snapshot.hasError) {
