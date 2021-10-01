@@ -30,7 +30,7 @@ class Web3Manager extends CachedDatabaseManager {
     ethClient = new Web3Client(apiUrl, httpClient);
 
     _privateKey = settings['keys']['private'];
-    _publicKey = settings['keys']['public'];
+    _publicAddress = settings['keys']['public'];
     _chainId = settings['chainId'];
   }
 
@@ -58,7 +58,7 @@ class Web3Manager extends CachedDatabaseManager {
   late String _oracleDeviceID;
 
   late String _privateKey;
-  late String _publicKey;
+  late String _publicAddress;
   late int _chainId;
 
   // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
@@ -243,7 +243,7 @@ class Web3Manager extends CachedDatabaseManager {
     await _loadContracts();
 
     print('loading user');
-    await _loadUser(EthereumAddress.fromHex(_publicKey));
+    await _loadUser(EthereumAddress.fromHex(_publicAddress));
     print('loading oracle');
     await _loadOracle();
     print('adding task:');
