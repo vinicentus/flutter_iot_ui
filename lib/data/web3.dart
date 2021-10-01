@@ -31,6 +31,7 @@ class Web3Manager extends CachedDatabaseManager {
 
     _privateKey = settings['keys']['private'];
     _publicKey = settings['keys']['public'];
+    _chainId = settings['chainId'];
   }
 
   late String apiUrl;
@@ -58,6 +59,7 @@ class Web3Manager extends CachedDatabaseManager {
 
   late String _privateKey;
   late String _publicKey;
+  late int _chainId;
 
   // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
   DeployedContract _getDeployedContract(String contractName, String data) {
@@ -168,7 +170,8 @@ class Web3Manager extends CachedDatabaseManager {
               'tableName': tableName
             }),
           ],
-        ));
+        ),
+        chainId: _chainId);
 
     // This receipt doesn't seem useful, since the events emitted don't include the address of the created task
     // One has to manually check the list of tasks on the contract after adding one, and hoping that they get the correct address
