@@ -270,6 +270,7 @@ class Web3Manager extends CachedDatabaseManager {
 
     // Check if completed now
     if (!completedTasks.containsKey(taskAddress)) {
+      print('Failed to get back completed task');
       throw Exception('Failed to get back completed task');
     }
 
@@ -307,18 +308,16 @@ class Web3Manager extends CachedDatabaseManager {
     // TODO: bad null check
     var timeChunkList = splitIntoSmallTimeIntervals(start!, stop!);
 
-    var futuresList = <Future<List>>[];
+    var bigReturnList = <List>[];
 
     for (int i = 0; i < timeChunkList.length - 1; i++) {
-      futuresList.add(geteGenericEntries(
+      bigReturnList.add(await geteGenericEntries(
         tableName: tableName,
         publicKey: publicKey,
         start: timeChunkList[i],
         stop: timeChunkList[i + 1],
       ));
     }
-
-    var bigReturnList = await Future.wait(futuresList, eagerError: true);
 
     print('returning');
     return bigReturnList;
