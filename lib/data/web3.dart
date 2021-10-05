@@ -187,6 +187,8 @@ class Web3Manager extends CachedDatabaseManager {
     //         params: [userAddress, BigInt.from(0)]);
     // print(result2);
 
+    // TODO: We can't assume that the transaction has been executed yet, so this might actually return the address for the previous contract
+    // TODO: check logs and see if the transaction is completed OR use events
     var result3 = await ethClient.call(
         contract: taskManager,
         function: taskManager.function('fetch_lists'),
@@ -258,33 +260,37 @@ class Web3Manager extends CachedDatabaseManager {
     }
     print('added task');
 
-    // This is assumed (for now) to be the correct event
-    // TODO: add timeout after whic we consider it a failed attempt
-    var firstEvent = await ethClient
-        .events(FilterOptions(address: taskManager.address))
-        .first;
-    print('waited for event $firstEvent');
+    int i = 0;
+    // Check if the task is completed 10 times, 0.5 seconds apart
+    while (i < 20) {
+      i++;
+      print('run #$i');
 
-    var completedTasks = await _fetchCompletedTasks();
-    print('fetched completed tasks');
+      var completedTasks = await _fetchCompletedTasks();
+      print('fetched completed tasks');
 
-    // Check if completed now
-    if (!completedTasks.containsKey(taskAddress)) {
-      print('Failed to get back completed task');
-      throw Exception('Failed to get back completed task');
+      // Check if completed now
+      if (completedTasks.containsKey(taskAddress)) {
+        // We have already asserted that the taskAddress is an EthereumAddress so we can safely use it here
+        // The exclamation mark here is important!
+        // It tells dart to convert the String? to a String
+        List taskResult = convertFromBase64(completedTasks[taskAddress]!);
+
+        // Example of valid task in list [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
+        print('complete');
+        // This breaks the while loop
+        return taskResult;
+      } else {
+        // Wait 1 second and then try again
+        await Future.delayed(Duration(milliseconds: 500));
+      }
     }
-
-    // We have already asserted that the taskAddress is an EthereumAddress so we can safely use it here
-    // The exclamation mark here is important!
-    // It tells dart to convert the String? to a String
-    List taskResult = convertFromBase64(completedTasks[taskAddress]!);
-
-    // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
-    return taskResult;
+    print('Failed to get back completed task');
+    throw Exception('Failed to get back completed task');
   }
 
-  // TODO: add tests:
   /// Split interval into smaller chunks that are a maximum of 1 hour long
+  // TODO: add tests:
   List<DateTime> splitIntoSmallTimeIntervals(DateTime start, DateTime stop) {
     var hourDifference = stop.difference(start).inHours;
     if (hourDifference >= 1) {
