@@ -153,8 +153,19 @@ class Web3Manager extends CachedDatabaseManager {
       required String tableName}) async {
     Credentials creds = await ethClient.credentialsFromPrivateKey(_privateKey);
 
+    var taskCreatedEvent = taskManager.event('task_created');
+
+    var theOneEvent = ethClient
+        .events(FilterOptions.events(
+            contract: taskManager, event: taskCreatedEvent))
+        .first
+      ..then((value) => print('got event'));
+
+    print('starting tx');
+
     // The result will be a transaction hash
-    var result1 = await ethClient.sendTransaction(
+    // TODO: add await
+    var txHash = ethClient.sendTransaction(
         creds,
         Transaction.callContract(
           contract: taskManager,
@@ -173,27 +184,16 @@ class Web3Manager extends CachedDatabaseManager {
         ),
         chainId: _chainId);
 
-    // This receipt doesn't seem useful, since the events emitted don't include the address of the created task
-    // One has to manually check the list of tasks on the contract after adding one, and hoping that they get the correct address
-    // One gets the correct task contract address as long as there is only one client adding tasks for a specific user,
-    // One can then simply get the latest task created by that user.
-    // If this isn't the case, it might get more complicated...
-    // var receipt = await ethClient.getTransactionReceipt(result1);
-    // print(receipt);
+    print('completed tx');
+    await theOneEvent;
+    print('waited for event');
 
-    // var result2 = await ethClient
-    //     .call(contract: taskManager, function: taskManager.function('pending'),
-    //         // This apparently gets the first value in the list
-    //         params: [userAddress, BigInt.from(0)]);
-    // print(result2);
-
-    // TODO: We can't assume that the transaction has been executed yet, so this might actually return the address for the previous contract
-    // TODO: check logs and see if the transaction is completed OR use events
     var result3 = await ethClient.call(
         contract: taskManager,
         function: taskManager.function('fetch_lists'),
         params: [_userAddress]);
     List pendingList = result3.first;
+    print('got lists');
     // List completedList = result3.last;
 
     // This should be the latest, not yet completed task contract
@@ -258,6 +258,7 @@ class Web3Manager extends CachedDatabaseManager {
     if (taskAddress is! EthereumAddress) {
       throw Exception('Got back invalid task address: $taskAddress');
     }
+    print(taskAddress);
     print('added task');
 
     int i = 0;
