@@ -315,10 +315,10 @@ class Web3Manager extends CachedDatabaseManager {
     // TODO: bad null check
     var timeChunkList = splitIntoSmallTimeIntervals(start!, stop!);
 
-    var bigReturnList = <List>[];
+    var bigReturnList = [];
 
     for (int i = 0; i < timeChunkList.length - 1; i++) {
-      bigReturnList.add(await geteGenericEntries(
+      bigReturnList.addAll(await geteGenericEntries(
         tableName: tableName,
         publicKey: publicKey,
         start: timeChunkList[i],
