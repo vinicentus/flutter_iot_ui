@@ -6,6 +6,7 @@ import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:flutter_iot_ui/data/database_manager.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'sqlite.dart' show convertDateTimeToString;
 
 class Web3Manager extends CachedDatabaseManager {
@@ -24,17 +25,30 @@ class Web3Manager extends CachedDatabaseManager {
     String jsonData = await rootBundle.loadString('resources/settings.json');
     Map settings = json.decode(jsonData);
 
-    apiUrl =
-        'http://${settings["gateway"]["host"]}:${settings["gateway"]["port"]}';
+    httpUrl = Uri(
+        scheme: 'http',
+        host: settings["gateway"]["host"],
+        port: settings["gateway"]["port"]);
 
-    ethClient = new Web3Client(apiUrl, httpClient);
+    wsUrl = Uri(
+        scheme: 'ws',
+        host: settings["gateway"]["host"],
+        port: settings["gateway"]["wsPort"]);
+
+    ethClient = new Web3Client(
+      httpUrl.toString(),
+      httpClient,
+      // Experimental websocket support
+      socketConnector: () => WebSocketChannel.connect(wsUrl).cast<String>(),
+    );
 
     _privateKey = EthPrivateKey.fromHex(settings['keys']['private']);
     _publicAddress = EthereumAddress.fromHex(settings['keys']['public']);
     _chainId = settings['chainId'];
   }
 
-  late String apiUrl;
+  late Uri httpUrl;
+  late Uri wsUrl;
 
   // TODO: check late keyword
   late Client httpClient;
