@@ -158,13 +158,13 @@ class Web3Manager extends CachedDatabaseManager {
     var theOneEvent = ethClient
         .events(FilterOptions.events(
             contract: taskManager, event: taskCreatedEvent))
-        .first
-      ..then((value) => print('got event'));
+        // TODO: don't use first, add retry possibility
+        .first;
 
     print('starting tx');
 
     // The result will be a transaction hash
-    // TODO: add await
+    // We don't need to wait for this since we catch the result in the event listener and wait on that
     var txHash = ethClient.sendTransaction(
         creds,
         Transaction.callContract(
@@ -185,35 +185,17 @@ class Web3Manager extends CachedDatabaseManager {
         chainId: _chainId);
 
     print('completed tx');
-    await theOneEvent;
+    var awaitedEvent = await theOneEvent;
+    var taskAddress = taskCreatedEvent
+        .decodeResults(awaitedEvent.topics!, awaitedEvent.data!)
+        .first;
     print('waited for event');
 
     var result3 = await ethClient.call(
         contract: taskManager,
-        function: taskManager.function('fetch_lists'),
-        params: [_userAddress]);
-    List pendingList = result3.first;
-    print('got lists');
-    // List completedList = result3.last;
-
-    // This should be the latest, not yet completed task contract
-    return pendingList.last;
-  }
-
-  Future<Map<EthereumAddress, String>> _fetchCompletedTasks() async {
-    var result = await ethClient.call(
-        contract: taskManager,
-        function: taskManager.function('fetch_lists'),
-        params: [_userAddress]);
-    // List pendingList = result.first;
-    List completedList = result.last;
-
-    var mapped = <EthereumAddress, String>{};
-    completedList.forEach((element) {
-      var list = element as List;
-      mapped[list.first] = list.last;
-    });
-    return mapped;
+        function: taskManager.function('fetch_task'),
+        params: [taskAddress]);
+    return result3.first;
   }
 
   // Used to retire COMPLETED tasks
@@ -261,33 +243,40 @@ class Web3Manager extends CachedDatabaseManager {
     print(taskAddress);
     print('added task');
 
-    int i = 0;
-    // Check if the task is completed 10 times, 0.5 seconds apart
-    while (i < 20) {
-      i++;
-      print('run #$i');
+    var taskCompletedEvent = taskManager.event('task_completed');
 
-      var completedTasks = await _fetchCompletedTasks();
-      print('fetched completed tasks');
+    var event = ethClient
+        .events(FilterOptions.events(
+            contract: taskManager, event: taskCompletedEvent))
+        // 10 retries
+        .take(10)
+        .firstWhere((event) {
+      // TODO: bad null check
+      var decoded =
+          taskCompletedEvent.decodeResults(event.topics!, event.data!);
+      print(decoded);
+      // Check that it is the right task that was completed!
+      return (decoded.first as EthereumAddress) == taskAddress;
+    }, orElse: () {
+      // TODO: add orelse that return custom error
+      throw Exception('Failed to get back completed task');
+    });
 
-      // Check if completed now
-      if (completedTasks.containsKey(taskAddress)) {
-        // We have already asserted that the taskAddress is an EthereumAddress so we can safely use it here
-        // The exclamation mark here is important!
-        // It tells dart to convert the String? to a String
-        List taskResult = convertFromBase64(completedTasks[taskAddress]!);
+    var awaitedEvent = await event;
 
-        // Example of valid task in list [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
-        print('complete');
-        // This breaks the while loop
-        return taskResult;
-      } else {
-        // Wait 1 second and then try again
-        await Future.delayed(Duration(milliseconds: 500));
-      }
-    }
-    print('Failed to get back completed task');
-    throw Exception('Failed to get back completed task');
+    print('got completed task event');
+
+    // TODO: bad null check
+    var result = taskCompletedEvent.decodeResults(
+        awaitedEvent.topics!, awaitedEvent.data!);
+    print('got completed task');
+
+    List taskResult = convertFromBase64(result.last);
+
+    // Example of valid task in list [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
+    print('complete');
+    // This breaks the while loop
+    return taskResult;
   }
 
   /// Split interval into smaller chunks that are a maximum of 1 hour long
