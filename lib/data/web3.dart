@@ -161,8 +161,6 @@ class Web3Manager extends CachedDatabaseManager {
         // TODO: don't use first, add retry possibility
         .first;
 
-    print('starting tx');
-
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that
     var txHash = ethClient.sendTransaction(
@@ -184,7 +182,6 @@ class Web3Manager extends CachedDatabaseManager {
         ),
         chainId: _chainId);
 
-    print('completed tx');
     var awaitedEvent = await theOneEvent;
     await txHash;
 
@@ -195,7 +192,6 @@ class Web3Manager extends CachedDatabaseManager {
     var taskAddress = taskCreatedEvent
         .decodeResults(awaitedEvent.topics!, awaitedEvent.data!)
         .first;
-    print('waited for event');
 
     var result3 = await ethClient.call(
         contract: taskManager,
@@ -226,17 +222,11 @@ class Web3Manager extends CachedDatabaseManager {
       DateTime? start,
       DateTime? stop}) async {
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
-    print('init');
     await init();
-
-    print('loading contracts');
     await _loadContracts();
-
-    print('loading user');
     await _loadUser(EthereumAddress.fromHex(_publicAddress));
-    print('loading oracle');
     await _loadOracle();
-    print('adding task:');
+
     var taskAddress = await _addTask(
         // TODO: bad non-null assertion
         startTime: convertDateTimeToString(start!),
@@ -246,8 +236,6 @@ class Web3Manager extends CachedDatabaseManager {
     if (taskAddress is! EthereumAddress) {
       throw Exception('Got back invalid task address: $taskAddress');
     }
-    print(taskAddress);
-    print('added task');
 
     var taskCompletedEvent = taskManager.event('task_completed');
 
@@ -260,7 +248,6 @@ class Web3Manager extends CachedDatabaseManager {
       // TODO: bad null check
       var decoded =
           taskCompletedEvent.decodeResults(event.topics!, event.data!);
-      print(decoded);
       // Check that it is the right task that was completed!
       return (decoded.first as EthereumAddress) == taskAddress;
     }, orElse: () {
@@ -270,17 +257,13 @@ class Web3Manager extends CachedDatabaseManager {
 
     var awaitedEvent = await event;
 
-    print('got completed task event');
-
     // TODO: bad null check
     var result = taskCompletedEvent.decodeResults(
         awaitedEvent.topics!, awaitedEvent.data!);
-    print('got completed task');
 
     List taskResult = convertFromBase64(result.last);
 
     // Example of valid task in list [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
-    print('complete');
     // This breaks the while loop
     return taskResult;
   }
