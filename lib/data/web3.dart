@@ -29,8 +29,8 @@ class Web3Manager extends CachedDatabaseManager {
 
     ethClient = new Web3Client(apiUrl, httpClient);
 
-    _privateKey = settings['keys']['private'];
-    _publicAddress = settings['keys']['public'];
+    _privateKey = EthPrivateKey.fromHex(settings['keys']['private']);
+    _publicAddress = EthereumAddress.fromHex(settings['keys']['public']);
     _chainId = settings['chainId'];
   }
 
@@ -57,8 +57,8 @@ class Web3Manager extends CachedDatabaseManager {
   late EthereumAddress _userAddress;
   late String _oracleDeviceID;
 
-  late String _privateKey;
-  late String _publicAddress;
+  late EthPrivateKey _privateKey;
+  late EthereumAddress _publicAddress;
   late int _chainId;
 
   // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
@@ -151,8 +151,6 @@ class Web3Manager extends CachedDatabaseManager {
       required String stopTime,
       String? publicKey,
       required String tableName}) async {
-    Credentials creds = await ethClient.credentialsFromPrivateKey(_privateKey);
-
     var taskCreatedEvent = taskManager.event('task_created');
 
     var theOneEvent = ethClient
@@ -164,7 +162,7 @@ class Web3Manager extends CachedDatabaseManager {
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that
     var txHash = ethClient.sendTransaction(
-        creds,
+        _privateKey,
         Transaction.callContract(
           contract: taskManager,
           function: taskManager.function('create'),
@@ -224,7 +222,7 @@ class Web3Manager extends CachedDatabaseManager {
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
     await init();
     await _loadContracts();
-    await _loadUser(EthereumAddress.fromHex(_publicAddress));
+    await _loadUser(_publicAddress);
     await _loadOracle();
 
     var taskAddress = await _addTask(
