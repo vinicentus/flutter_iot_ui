@@ -186,6 +186,12 @@ class Web3Manager extends CachedDatabaseManager {
 
     print('completed tx');
     var awaitedEvent = await theOneEvent;
+    await txHash;
+
+    if (awaitedEvent.transactionHash != await txHash) {
+      throw Exception('Got the incorrect event');
+    }
+
     var taskAddress = taskCreatedEvent
         .decodeResults(awaitedEvent.topics!, awaitedEvent.data!)
         .first;
