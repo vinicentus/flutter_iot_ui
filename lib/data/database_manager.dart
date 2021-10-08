@@ -53,3 +53,20 @@ abstract class CachedDatabaseManager extends DatabaseManager {
   Future<List<SVM30SensorDataEntry>> getCachedSVM30Entries(
       {DateTime? start, DateTime? stop});
 }
+
+abstract class StreamedDatabaseManager extends DatabaseManager {
+  /// Same as [getSCD30Entries], but as a stream,
+  /// that returns values as they become available.
+  Stream<List<SCD30SensorDataEntry>> getStreamedSCD30Entries(
+      {DateTime? start, DateTime? stop});
+
+  /// Same as [getSPS30Entries], but as a stream,
+  /// that returns values as they become available.
+  Stream<List<SPS30SensorDataEntry>> getStreamedSPS30Entries(
+      {DateTime? start, DateTime? stop});
+
+  /// Same as [getSVM30Entries], but as a stream,
+  /// that returns values as they become available.
+  Stream<List<SVM30SensorDataEntry>> getStreamedSVM30Entries(
+      {DateTime? start, DateTime? stop});
+}
