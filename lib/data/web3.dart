@@ -291,7 +291,7 @@ class Web3Manager extends CachedDatabaseManager
   // TODO: add tests:
   List<DateTime> splitIntoSmallTimeIntervals(DateTime start, DateTime stop) {
     var hourDifference = stop.difference(start).inHours;
-    if (hourDifference >= 1) {
+    if (hourDifference > 1) {
       var returnList = <DateTime>[];
       for (int i = 0; i <= hourDifference; i++) {
         returnList.add(start.add(Duration(hours: i)));
