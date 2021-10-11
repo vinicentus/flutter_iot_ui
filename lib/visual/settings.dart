@@ -111,8 +111,8 @@ Higher values mean smoother lines on the graph.'''),
               Slider(
                 value: numberOfSecondsBetweenGraphRefresh.toDouble(),
                 min: 10,
-                max: 60,
-                divisions: 5,
+                max: 120,
+                divisions: 11,
                 label: '${numberOfSecondsBetweenGraphRefresh.round()}s',
                 onChanged: (double value) {
                   setState(() {
