@@ -33,6 +33,8 @@ class Web3Manager extends CachedDatabaseManager
     _privateKey = EthPrivateKey.fromHex(settings['keys']['private']);
     publicAddress = EthereumAddress.fromHex(settings['keys']['public']);
     chainId = settings['chainId'];
+
+    await _loadContracts();
   }
 
   late String apiUrl;
@@ -51,7 +53,7 @@ class Web3Manager extends CachedDatabaseManager
   late ContractAbi task;
 
   late DeployedContract deployedUser;
-  late DeployedContract deployedOracle;
+  late Map<String, DeployedContract> deployedOracles;
   late DeployedContract deployedTask;
 
   late String _oracleDeviceID;
@@ -78,7 +80,7 @@ class Web3Manager extends CachedDatabaseManager
     return ContractAbi.fromJson(abi, contractName);
   }
 
-  _loadContracts() async {
+  Future<void> _loadContracts() async {
     String jsonData = await rootBundle.loadString('resources/latest.json');
 
     userManager = _getDeployedContract('usermanager', jsonData);
@@ -143,26 +145,31 @@ class Web3Manager extends CachedDatabaseManager
   }
 
   /// This needs to be called after loadUser, because it fetches the first oracle registered to the current user
-  Future<DeployedContract> _loadOracle() async {
+  Future<Map<String, DeployedContract>> loadOracles() async {
     // Fetch all the oracles (devices) that are registered to our user
     var result = await ethClient.call(
       contract: oracleManager,
       function: oracleManager.function('fetch_collection'),
       params: [publicAddress],
     );
+    var oracleIds = result.first;
 
     // This is the id String of the oracle (device)
-    _oracleDeviceID = result.first.first;
+    _oracleDeviceID = oracleIds.first;
 
-    var result2 = await ethClient.call(
-      contract: oracleManager,
-      function: oracleManager.function('fetch_oracle'),
-      params: [_oracleDeviceID],
-    );
+    deployedOracles = Map<String, DeployedContract>();
 
-    deployedOracle = DeployedContract(oracle, result2.first);
+    oracleIds.forEach((id) async {
+      var result = await ethClient.call(
+        contract: oracleManager,
+        function: oracleManager.function('fetch_oracle'),
+        params: [_oracleDeviceID],
+      );
+      var address = result.first;
+      deployedOracles[id] = DeployedContract(oracle, address);
+    });
 
-    return deployedOracle;
+    return deployedOracles;
   }
 
   /// Adds a task and returns the address of that created task.
@@ -242,9 +249,8 @@ class Web3Manager extends CachedDatabaseManager
       DateTime? stop}) async {
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
     await init();
-    await _loadContracts();
     await loadUser();
-    await _loadOracle();
+    await loadOracles();
 
     var taskAddress = await _addTask(
         // TODO: bad non-null assertion
