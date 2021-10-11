@@ -140,7 +140,6 @@ class Web3Manager extends CachedDatabaseManager
             parameters: [],
           ),
           chainId: chainId);
-      print(result);
     }
   }
 
