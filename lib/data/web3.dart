@@ -54,11 +54,10 @@ class Web3Manager extends CachedDatabaseManager
   late DeployedContract deployedOracle;
   late DeployedContract deployedTask;
 
-  // This should be the address of the user that created the user contract
-  late EthereumAddress _userAddress;
   late String _oracleDeviceID;
 
   late EthPrivateKey _privateKey;
+  // This should be the address of the user that created the user contract
   late EthereumAddress _publicAddress;
   late int _chainId;
 
@@ -95,22 +94,25 @@ class Web3Manager extends CachedDatabaseManager
     task = _getContractABI('task', jsonData);
   }
 
-  Future<DeployedContract> _loadUser(EthereumAddress userAddress) async {
-    _userAddress = userAddress;
-
+  Future<bool> checkUserExists() async {
     // Requires the address of the user that has been created...
     var returnList = await ethClient.call(
       contract: userManager,
       function: userManager.function('exists'),
-      params: [_userAddress],
+      params: [_publicAddress],
     );
-    bool exists = returnList.first;
+
+    return returnList.first;
+  }
+
+  Future<DeployedContract> loadUser() async {
+    bool exists = await checkUserExists();
 
     if (exists) {
       var result = await ethClient.call(
         contract: userManager,
         function: userManager.function('fetch'),
-        params: [_userAddress],
+        params: [_publicAddress],
       );
       // The returned value should be the address of the User contract
       var address = result.first;
@@ -122,13 +124,27 @@ class Web3Manager extends CachedDatabaseManager
     }
   }
 
+  // Creates a user registered to the ethereum address used for the transaction
+  Future<void> createUser() async {
+    bool exists = await checkUserExists();
+    if (exists) {
+      throw Exception('The user you are trying to create already exists!');
+    } else {
+      var result = await ethClient.call(
+        contract: userManager,
+        function: userManager.function('create'),
+        params: [],
+      );
+    }
+  }
+
   /// This needs to be called after loadUser, because it fetches the first oracle registered to the current user
   Future<DeployedContract> _loadOracle() async {
     // Fetch all the oracles (devices) that are registered to our user
     var result = await ethClient.call(
       contract: oracleManager,
       function: oracleManager.function('fetch_collection'),
-      params: [_userAddress],
+      params: [_publicAddress],
     );
 
     // This is the id String of the oracle (device)
@@ -223,7 +239,7 @@ class Web3Manager extends CachedDatabaseManager
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
     await init();
     await _loadContracts();
-    await _loadUser(_publicAddress);
+    await loadUser();
     await _loadOracle();
 
     var taskAddress = await _addTask(
