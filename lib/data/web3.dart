@@ -162,7 +162,7 @@ class Web3Manager extends CachedDatabaseManager
       var result = await ethClient.call(
         contract: oracleManager,
         function: oracleManager.function('fetch_oracle'),
-        params: [_oracleDeviceID],
+        params: [id],
       );
       var address = result.first;
       deployedOracles[id] = DeployedContract(oracle, address);
