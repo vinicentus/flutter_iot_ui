@@ -28,6 +28,12 @@ class DevicesPageState extends State<DevicesPage> {
     return await web3.loadOracles();
   }
 
+  Future<bool> _checkOracleActive(DeployedContract contract) async {
+    var result = await web3.ethClient.call(
+        contract: contract, function: contract.function('active'), params: []);
+    return result.first;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,14 +44,25 @@ class DevicesPageState extends State<DevicesPage> {
       body: FutureBuilder(
           future: _init(),
           builder: (context, snapshot) {
-            print(snapshot.hasData);
             if (snapshot.hasData) {
               Map devices = snapshot.data as Map;
-              print(devices);
               return ListView.separated(
                   itemBuilder: (context, index) {
+                    var deviceAtIndex = devices[devices.keys.elementAt(index)];
+
                     return ListTile(
-                        title: Text(devices.values.first.address.toString()));
+                      title: Text(deviceAtIndex.address.toString()),
+                      subtitle: FutureBuilder(
+                          future: _checkOracleActive(deviceAtIndex),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                  'active: ${snapshot.data.toString()}');
+                            } else {
+                              return Text('loading status...');
+                            }
+                          }),
+                    );
                   },
                   separatorBuilder: (context, index) => Divider(),
                   itemCount: devices.length);
