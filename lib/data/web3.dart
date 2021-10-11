@@ -130,11 +130,15 @@ class Web3Manager extends CachedDatabaseManager
     if (exists) {
       throw Exception('The user you are trying to create already exists!');
     } else {
-      var result = await ethClient.call(
-        contract: userManager,
-        function: userManager.function('create'),
-        params: [],
-      );
+      var result = await ethClient.sendTransaction(
+          _privateKey,
+          Transaction.callContract(
+            contract: userManager,
+            function: userManager.function('create'),
+            parameters: [],
+          ),
+          chainId: chainId);
+      print(result);
     }
   }
 
