@@ -56,6 +56,7 @@ class Web3Manager extends CachedDatabaseManager
   late Map<String, DeployedContract> deployedOracles;
   late DeployedContract deployedTask;
 
+  /// This is the id of the currently selected device
   late String _oracleDeviceID;
 
   late EthPrivateKey _privateKey;
@@ -154,6 +155,8 @@ class Web3Manager extends CachedDatabaseManager
     var oracleIds = result.first;
 
     // This is the id String of the oracle (device)
+    // we select the first availabe one as our main device that we will display data from
+    // In the future, there may not be a single selected device
     _oracleDeviceID = oracleIds.first;
 
     deployedOracles = Map<String, DeployedContract>();
