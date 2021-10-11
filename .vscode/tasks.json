@@ -31,7 +31,7 @@
 			"type": "shell",
 			"command": "ssh",
 			"args": [
-				"pi@193.167.36.202",
+				"pi@192.168.13.205",
 				"rm -rf /home/pi/flutter_iot_ui_assets"
 			],
 			"group": "build",
@@ -44,7 +44,7 @@
 			"args": [
 				"-r",
 				".\\build\\flutter_assets",
-				"pi@193.167.36.202:/home/pi/flutter_iot_ui_assets"
+				"pi@192.168.13.205:/home/pi/flutter_iot_ui_assets"
 			],
 			"group": "build",
 			"problemMatcher": [],
@@ -54,7 +54,7 @@
 			"type": "shell",
 			"command": "ssh",
 			"args": [
-				"pi@193.167.36.202",
+				"pi@192.168.13.205",
 				// The physical screen dimensions are approximately 74 by 49 mm (taken from aspect ration and 3.5" diagonal size)
 				// "sudo flutter-pi  --dimensions \"74,49\" /home/pi/flutter_iot_ui_assets"
 				"sudo flutter-pi -r 90 /home/pi/flutter_iot_ui_assets"
@@ -68,7 +68,7 @@
 			"command": "scp",
 			"args": [
 				"-r",
-				"pi@193.167.36.202:/home/pi/IoT-Microservice/app/oracle/sensor_data.db",
+				"pi@192.168.13.205:/home/pi/IoT-Microservice/app/oracle/sensor_data.db",
 				"C:\\Users\\langstvi\\OneDrive - Arcada\\Documents\\sensor_data.db"
 			],
 			"problemMatcher": [],
