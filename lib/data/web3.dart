@@ -31,8 +31,8 @@ class Web3Manager extends CachedDatabaseManager
     ethClient = new Web3Client(apiUrl, httpClient);
 
     _privateKey = EthPrivateKey.fromHex(settings['keys']['private']);
-    _publicAddress = EthereumAddress.fromHex(settings['keys']['public']);
-    _chainId = settings['chainId'];
+    publicAddress = EthereumAddress.fromHex(settings['keys']['public']);
+    chainId = settings['chainId'];
   }
 
   late String apiUrl;
@@ -58,8 +58,8 @@ class Web3Manager extends CachedDatabaseManager
 
   late EthPrivateKey _privateKey;
   // This should be the address of the user that created the user contract
-  late EthereumAddress _publicAddress;
-  late int _chainId;
+  late EthereumAddress publicAddress;
+  late int chainId;
 
   // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
   DeployedContract _getDeployedContract(String contractName, String data) {
@@ -99,7 +99,7 @@ class Web3Manager extends CachedDatabaseManager
     var returnList = await ethClient.call(
       contract: userManager,
       function: userManager.function('exists'),
-      params: [_publicAddress],
+      params: [publicAddress],
     );
 
     return returnList.first;
@@ -112,7 +112,7 @@ class Web3Manager extends CachedDatabaseManager
       var result = await ethClient.call(
         contract: userManager,
         function: userManager.function('fetch'),
-        params: [_publicAddress],
+        params: [publicAddress],
       );
       // The returned value should be the address of the User contract
       var address = result.first;
@@ -144,7 +144,7 @@ class Web3Manager extends CachedDatabaseManager
     var result = await ethClient.call(
       contract: oracleManager,
       function: oracleManager.function('fetch_collection'),
-      params: [_publicAddress],
+      params: [publicAddress],
     );
 
     // This is the id String of the oracle (device)
@@ -195,7 +195,7 @@ class Web3Manager extends CachedDatabaseManager
             }),
           ],
         ),
-        chainId: _chainId);
+        chainId: chainId);
 
     var awaitedEvent = await theOneEvent;
     await txHash;
