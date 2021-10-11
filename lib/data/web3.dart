@@ -57,7 +57,7 @@ class Web3Manager extends CachedDatabaseManager
   late DeployedContract deployedTask;
 
   /// This is the id of the currently selected device
-  late String _oracleDeviceID;
+  late String selectedOracleId;
 
   late EthPrivateKey _privateKey;
   // This should be the address of the user that created the user contract
@@ -157,7 +157,7 @@ class Web3Manager extends CachedDatabaseManager
     // This is the id String of the oracle (device)
     // we select the first availabe one as our main device that we will display data from
     // In the future, there may not be a single selected device
-    _oracleDeviceID = oracleIds.first;
+    selectedOracleId = oracleIds.first;
 
     deployedOracles = Map<String, DeployedContract>();
 
@@ -197,7 +197,7 @@ class Web3Manager extends CachedDatabaseManager
           contract: taskManager,
           function: taskManager.function('create'),
           parameters: [
-            _oracleDeviceID,
+            selectedOracleId,
             BigInt.from(2),
             BigInt.from(2),
             convertToBase64({

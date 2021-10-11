@@ -48,10 +48,13 @@ class DevicesPageState extends State<DevicesPage> {
               Map devices = snapshot.data as Map;
               return ListView.separated(
                   itemBuilder: (context, index) {
-                    var deviceAtIndex = devices[devices.keys.elementAt(index)];
+                    String id = devices.keys.elementAt(index);
+                    DeployedContract deviceAtIndex = devices[id];
 
-                    return ListTile(
-                      title: Text(deviceAtIndex.address.toString()),
+                    return RadioListTile(
+                      // Use the ID of the oracle as stored in the oracle manager,
+                      // instead of the oracle address.
+                      title: Text('ID: $id'),
                       subtitle: FutureBuilder(
                           future: _checkOracleActive(deviceAtIndex),
                           builder: (context, snapshot) {
@@ -62,6 +65,12 @@ class DevicesPageState extends State<DevicesPage> {
                               return Text('loading status...');
                             }
                           }),
+                      // Selected if selected in Web3Manager is the same as this device
+                      value: id,
+                      onChanged: (String? changedId) {
+                        web3.selectedOracleId = changedId!;
+                      },
+                      groupValue: web3.selectedOracleId,
                     );
                   },
                   separatorBuilder: (context, index) => Divider(),
