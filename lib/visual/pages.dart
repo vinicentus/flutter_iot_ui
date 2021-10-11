@@ -13,7 +13,8 @@ import 'package:moving_average/moving_average.dart';
 Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
   // Init
   var today = DateTime.now();
-  var yesterday = today.subtract(Duration(days: 1));
+  // TODO: change to one day
+  var yesterday = today.subtract(Duration(hours: 1));
   // Just creating an instance of this singleton class will initialize it and the database.
   var db = await globalDBManager.getSCD30Entries(start: yesterday, stop: today);
   yield db;
@@ -22,7 +23,8 @@ Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
   // Furhtermore this loop will automatically stop running when the stream is canceled.
   while (true) {
     today = DateTime.now();
-    yesterday = today.subtract(Duration(days: 1));
+    // TODO: change to one day
+    yesterday = today.subtract(Duration(hours: 1));
     db = await Future.delayed(
         Duration(seconds: numberOfSecondsBetweenGraphRefresh),
         () => globalDBManager.getSCD30Entries(start: yesterday, stop: today));
