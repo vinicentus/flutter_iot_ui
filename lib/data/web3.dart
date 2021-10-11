@@ -159,7 +159,7 @@ class Web3Manager extends CachedDatabaseManager
 
     deployedOracles = Map<String, DeployedContract>();
 
-    oracleIds.forEach((id) async {
+    for (String id in oracleIds) {
       var result = await ethClient.call(
         contract: oracleManager,
         function: oracleManager.function('fetch_oracle'),
@@ -167,7 +167,7 @@ class Web3Manager extends CachedDatabaseManager
       );
       var address = result.first;
       deployedOracles[id] = DeployedContract(oracle, address);
-    });
+    }
 
     return deployedOracles;
   }
