@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
 import 'package:flutter_iot_ui/visual/settings.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
+import 'package:flutter_iot_ui/visual/users.dart';
 
 class NavDrawer extends StatelessWidget {
   final String selectedRoute;
@@ -81,6 +82,12 @@ class NavDrawer extends StatelessWidget {
           title: Text('Settings'),
           routeName: SettingsPage.route,
         ),
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.verified_user),
+          title: Text('Users'),
+          routeName: UsersPage.route,
+        )
       ],
     ));
   }

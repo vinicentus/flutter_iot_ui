@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
 import 'package:flutter_iot_ui/visual/settings.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
+import 'package:flutter_iot_ui/visual/users.dart';
 
 void main() async {
   runApp(MyApp());
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         NumberConcentrationPage.route: (context) => NumberConcentrationPage(),
         TypicalParticleSizePage.route: (context) => TypicalParticleSizePage(),
         SettingsPage.route: (context) => SettingsPage(),
+        UsersPage.route: (context) => UsersPage(),
       },
     );
   }
