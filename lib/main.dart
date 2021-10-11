@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/visual/devices.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
 import 'package:flutter_iot_ui/visual/settings.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         TypicalParticleSizePage.route: (context) => TypicalParticleSizePage(),
         SettingsPage.route: (context) => SettingsPage(),
         UsersPage.route: (context) => UsersPage(),
+        DevicesPage.route: (context) => DevicesPage(),
       },
     );
   }

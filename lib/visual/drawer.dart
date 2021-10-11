@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/visual/devices.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
 import 'package:flutter_iot_ui/visual/settings.dart';
 import 'package:flutter_iot_ui/visual/svm30_page.dart';
@@ -87,7 +88,13 @@ class NavDrawer extends StatelessWidget {
           leading: Icon(Icons.verified_user),
           title: Text('Users'),
           routeName: UsersPage.route,
-        )
+        ),
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.phone_android),
+          title: Text('Devices'),
+          routeName: DevicesPage.route,
+        ),
       ],
     ));
   }
