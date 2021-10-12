@@ -24,8 +24,9 @@ class SQLiteDatabaseManager extends DatabaseManager {
       sqfliteFfiInit();
       // Change the default factory
       databaseFactory = databaseFactoryFfi;
-    } else if (Platform.isWindows && kDebugMode) {
-      print('runining on Windows in debug mode, using local db');
+    } else if (Platform.isWindows && (kDebugMode || kProfileMode)) {
+      print(
+          'running on Windows in ${kDebugMode ? 'debug' : 'profile'} mode, using local db');
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
       dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
