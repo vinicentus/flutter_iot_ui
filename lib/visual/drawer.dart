@@ -37,6 +37,25 @@ class NavDrawer extends StatelessWidget {
       children: [
         _buildMenuItem(
           context: context,
+          leading: Icon(Icons.verified_user),
+          title: Text('Users'),
+          routeName: UsersPage.route,
+        ),
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.phone_android),
+          title: Text('Devices'),
+          routeName: DevicesPage.route,
+        ),
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.settings),
+          title: Text('Settings'),
+          routeName: SettingsPage.route,
+        ),
+        Divider(),
+        _buildMenuItem(
+          context: context,
           leading: Icon(Icons.airplay),
           title: Text('SVM30'),
           routeName: SVM30Page.route,
@@ -76,24 +95,6 @@ class NavDrawer extends StatelessWidget {
           leading: Icon(Icons.add_road),
           title: Text('Typical Particle Size'),
           routeName: TypicalParticleSizePage.route,
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.settings),
-          title: Text('Settings'),
-          routeName: SettingsPage.route,
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.verified_user),
-          title: Text('Users'),
-          routeName: UsersPage.route,
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.phone_android),
-          title: Text('Devices'),
-          routeName: DevicesPage.route,
         ),
       ],
     ));
