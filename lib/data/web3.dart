@@ -8,8 +8,7 @@ import 'package:web3dart/web3dart.dart';
 import 'package:flutter_iot_ui/data/database_manager.dart';
 import 'sqlite.dart' show convertDateTimeToString;
 
-class Web3Manager extends CachedDatabaseManager
-    implements StreamedDatabaseManager {
+class Web3Manager extends DatabaseManager {
   static final Web3Manager _singleton = Web3Manager._internal();
 
   factory Web3Manager() {
@@ -400,99 +399,5 @@ class Web3Manager extends CachedDatabaseManager
           element[0], element[1], element[2]));
     });
     return returnList;
-  }
-
-  // Lazy init achieved with late keyword
-  // TODO: actively manage what is tored here
-  late Set<SCD30SensorDataEntry> _cachedSCD30 = Set<SCD30SensorDataEntry>();
-  late Set<SPS30SensorDataEntry> _cachedSPS30 = Set<SPS30SensorDataEntry>();
-  late Set<SVM30SensorDataEntry> _cachedSVM30 = Set<SVM30SensorDataEntry>();
-
-  @override
-  Set<SCD30SensorDataEntry> get cachedSCD30Entries => _cachedSCD30;
-
-  @override
-  Set<SPS30SensorDataEntry> get cachedSPS30Entries => _cachedSPS30;
-
-  @override
-  Set<SVM30SensorDataEntry> get cachedSVM30Entries => _cachedSVM30;
-
-  @override
-  Future<List<SCD30SensorDataEntry>> getCachedSCD30Entries(
-      {DateTime? start, DateTime? stop}) async {
-    var entries = await getSCD30Entries();
-    _cachedSCD30.addAll(entries);
-    return entries;
-  }
-
-  @override
-  Future<List<SPS30SensorDataEntry>> getCachedSPS30Entries(
-      {DateTime? start, DateTime? stop}) async {
-    var entries = await getSPS30Entries();
-    _cachedSPS30.addAll(entries);
-    return entries;
-  }
-
-  @override
-  Future<List<SVM30SensorDataEntry>> getCachedSVM30Entries(
-      {DateTime? start, DateTime? stop}) async {
-    var entries = await getSVM30Entries();
-    _cachedSVM30.addAll(entries);
-    return entries;
-  }
-
-  @override
-  Stream<List<SCD30SensorDataEntry>> getStreamedSCD30Entries(
-      {DateTime? start, DateTime? stop}) {
-    Stream<List> taskResultStream = _getMultipleGenericEntriesAsStream(
-        tableName: 'scd30_output', publicKey: null, start: start, stop: stop);
-
-    return taskResultStream.map((list) {
-      // Convert list of list to list of SCD30SensorDataEntry
-      return list
-          .map((element) => SCD30SensorDataEntry.createFromDB(
-              element[0], element[1], element[2], element[3]))
-          .toList();
-    });
-  }
-
-  @override
-  Stream<List<SPS30SensorDataEntry>> getStreamedSPS30Entries(
-      {DateTime? start, DateTime? stop}) {
-    Stream<List> taskResultStream = _getMultipleGenericEntriesAsStream(
-        tableName: 'sps30_output', publicKey: null, start: start, stop: stop);
-
-    return taskResultStream.map((list) {
-      // Convert list of list to list of SPS30SensorDataEntry
-      return list
-          .map((element) => SPS30SensorDataEntry.createFromDB(
-              element[0],
-              element[1],
-              element[2],
-              element[3],
-              element[4],
-              element[5],
-              element[6],
-              element[7],
-              element[8],
-              element[9],
-              element[10]))
-          .toList();
-    });
-  }
-
-  @override
-  Stream<List<SVM30SensorDataEntry>> getStreamedSVM30Entries(
-      {DateTime? start, DateTime? stop}) {
-    Stream<List> taskResultStream = _getMultipleGenericEntriesAsStream(
-        tableName: 'svm30_output', publicKey: null, start: start, stop: stop);
-
-    return taskResultStream.map((list) {
-      // Convert list of list to list of SVM30SensorDataEntry
-      return list
-          .map((element) => SVM30SensorDataEntry.createFromDB(
-              element[0], element[1], element[2]))
-          .toList();
-    });
   }
 }
