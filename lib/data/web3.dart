@@ -296,7 +296,6 @@ class Web3Manager extends CachedDatabaseManager
   }
 
   /// Split interval into smaller chunks that are a maximum of 1 hour long
-  // TODO: add tests:
   List<DateTime> splitIntoSmallTimeIntervals(DateTime start, DateTime stop) {
     var hourDifference = stop.difference(start).inHours;
     if (hourDifference > 1) {
@@ -304,7 +303,11 @@ class Web3Manager extends CachedDatabaseManager
       for (int i = 0; i <= hourDifference; i++) {
         returnList.add(start.add(Duration(hours: i)));
       }
-      returnList.add(stop);
+      // We have now addedd all the one hour segments
+      // Check if there are still shorter time intervals to be added
+      if (returnList.last != stop) {
+        returnList.add(stop);
+      }
       return returnList;
     } else {
       return [start, stop];
