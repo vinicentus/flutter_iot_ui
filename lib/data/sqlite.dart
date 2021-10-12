@@ -38,15 +38,12 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
   String dbPath = '/home/pi/IoT-Microservice/app/oracle/sensor_data.db';
 
-  Database? _db;
-
-  Future<Database?> get openedDatabaseFuture async {
-    _db ??= await openDatabase(dbPath, readOnly: true);
-    return _db;
+  Future<Database> get openedDatabase {
+    return openDatabase(dbPath, readOnly: true, singleInstance: true);
   }
 
   // TODO: close the database on exit
-  void closeDatabase() async => (await openedDatabaseFuture)!.close();
+  void closeDatabase() async => (await openedDatabase).close();
 
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
@@ -54,7 +51,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
     // If no date limitations are provided, we fetch all entries.
     if (start == null && stop == null) {
-      maps = await (await openedDatabaseFuture)!.query('sps30_output');
+      maps = await (await openedDatabase).query('sps30_output');
     } else {
       // The question marks are filled in with values from whereArgs
       var where = '';
@@ -67,7 +64,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
       if (start != null) whereArgs.add(convertDateTimeToString(start));
       if (stop != null) whereArgs.add(convertDateTimeToString(stop));
 
-      maps = await (await openedDatabaseFuture)!
+      maps = await (await openedDatabase)
           .query('sps30_output', where: where, whereArgs: whereArgs);
     }
 
@@ -95,7 +92,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
     // If no date limitations are provided, we fetch all entries.
     if (start == null && stop == null) {
-      maps = await (await openedDatabaseFuture)!.query('scd30_output');
+      maps = await (await openedDatabase).query('scd30_output');
     } else {
       // The question marks are filled in with values from whereArgs
       var where = '';
@@ -108,7 +105,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
       if (start != null) whereArgs.add(convertDateTimeToString(start));
       if (stop != null) whereArgs.add(convertDateTimeToString(stop));
 
-      maps = await (await openedDatabaseFuture)!
+      maps = await (await openedDatabase)
           .query('scd30_output', where: where, whereArgs: whereArgs);
     }
 
@@ -129,7 +126,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
     // If no date limitations are provided, we fetch all entries.
     if (start == null && stop == null) {
-      maps = await (await openedDatabaseFuture)!.query('svm30_output');
+      maps = await (await openedDatabase).query('svm30_output');
     } else {
       // The question marks are filled in with values from whereArgs
       var where = '';
@@ -142,7 +139,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
       if (start != null) whereArgs.add(convertDateTimeToString(start));
       if (stop != null) whereArgs.add(convertDateTimeToString(stop));
 
-      maps = await (await openedDatabaseFuture)!
+      maps = await (await openedDatabase)
           .query('svm30_output', where: where, whereArgs: whereArgs);
     }
 
