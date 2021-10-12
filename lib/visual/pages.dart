@@ -13,7 +13,7 @@ import 'package:moving_average/moving_average.dart';
 Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
   // Init
   var today = DateTime.now();
-  var yesterday = today.subtract(Duration(hours: 3));
+  var yesterday = today.subtract(defaultTimeWindow);
   // Just creating an instance of this singleton class will initialize it and the database.
   var db = await globalDBManager.getSCD30Entries(start: yesterday, stop: today);
   yield db;
@@ -22,7 +22,7 @@ Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
   // Furhtermore this loop will automatically stop running when the stream is canceled.
   while (true) {
     today = DateTime.now();
-    yesterday = today.subtract(Duration(hours: 3));
+    yesterday = today.subtract(defaultTimeWindow);
     db = await Future.delayed(
         Duration(seconds: numberOfSecondsBetweenGraphRefresh),
         () => globalDBManager.getSCD30Entries(start: yesterday, stop: today));
@@ -33,7 +33,7 @@ Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
 Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30() async* {
   // Init
   var today = DateTime.now();
-  var yesterday = today.subtract(Duration(hours: 3));
+  var yesterday = today.subtract(defaultTimeWindow);
   var db = await globalDBManager.getSPS30Entries(start: yesterday, stop: today);
   yield db;
 
@@ -41,7 +41,7 @@ Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30() async* {
   // Furhtermore this loop will automatically stop running when the stream is canceled.
   while (true) {
     today = DateTime.now();
-    yesterday = today.subtract(Duration(hours: 3));
+    yesterday = today.subtract(defaultTimeWindow);
     db = await Future.delayed(
         Duration(seconds: numberOfSecondsBetweenGraphRefresh),
         () => globalDBManager.getSPS30Entries(start: yesterday, stop: today));
