@@ -320,8 +320,10 @@ class Web3Manager extends CachedDatabaseManager
     // TODO: bad null check
     var timeChunkList = splitIntoSmallTimeIntervals(start!, stop!);
 
-    for (int i = 0; i < timeChunkList.length - 1; i++) {
-      print('returning chunk $i');
+    var intervalCount = timeChunkList.length - 1;
+
+    for (int i = 0; i < intervalCount; i++) {
+      print('returning chunk ${i + 1}/$intervalCount');
       yield await geteGenericEntries(
         tableName: tableName,
         publicKey: publicKey,
