@@ -42,8 +42,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
     return openDatabase(dbPath, readOnly: true, singleInstance: true);
   }
 
-  // TODO: close the database on exit
-  void closeDatabase() async => (await openedDatabase).close();
+  Future<void> closeDatabase() async => (await openedDatabase).close();
 
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
@@ -67,6 +66,8 @@ class SQLiteDatabaseManager extends DatabaseManager {
       maps = await (await openedDatabase)
           .query('sps30_output', where: where, whereArgs: whereArgs);
     }
+
+    await closeDatabase();
 
     var returnList = List.generate(maps.length, (i) {
       return SPS30SensorDataEntry.createFromDB(
@@ -109,6 +110,8 @@ class SQLiteDatabaseManager extends DatabaseManager {
           .query('scd30_output', where: where, whereArgs: whereArgs);
     }
 
+    await closeDatabase();
+
     var returnList = List.generate(maps.length, (i) {
       return SCD30SensorDataEntry.createFromDB(
         maps[i]['datetime']!,
@@ -142,6 +145,8 @@ class SQLiteDatabaseManager extends DatabaseManager {
       maps = await (await openedDatabase)
           .query('svm30_output', where: where, whereArgs: whereArgs);
     }
+
+    await closeDatabase();
 
     var returnList = List.generate(maps.length, (i) {
       return SVM30SensorDataEntry.createFromDB(
