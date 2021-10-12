@@ -19,14 +19,14 @@ class _SVM30PageState extends State<SVM30Page> {
   Stream<List<SVM30SensorDataEntry>> dbUpdates() async* {
     // Init
     var today = DateTime.now();
-    var yesterday = today.subtract(Duration(days: 1));
+    var yesterday = today.subtract(Duration(hours: 3));
     var db =
         await globalDBManager.getSVM30Entries(start: yesterday, stop: today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
-      yesterday = today.subtract(Duration(days: 1));
+      yesterday = today.subtract(Duration(hours: 3));
       db = await Future.delayed(
           Duration(seconds: numberOfSecondsBetweenGraphRefresh),
           () => globalDBManager.getSVM30Entries(start: yesterday, stop: today));
