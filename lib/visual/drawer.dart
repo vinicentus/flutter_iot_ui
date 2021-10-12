@@ -37,13 +37,13 @@ class NavDrawer extends StatelessWidget {
       children: [
         _buildMenuItem(
           context: context,
-          leading: Icon(Icons.verified_user),
+          leading: Icon(Icons.account_circle),
           title: Text('Users'),
           routeName: UsersPage.route,
         ),
         _buildMenuItem(
           context: context,
-          leading: Icon(Icons.phone_android),
+          leading: Icon(Icons.devices),
           title: Text('Devices'),
           routeName: DevicesPage.route,
         ),
@@ -68,19 +68,19 @@ class NavDrawer extends StatelessWidget {
         ),
         _buildMenuItem(
           context: context,
-          leading: Icon(Icons.ac_unit),
+          leading: Icon(Icons.thermostat),
           title: Text('Temperature'),
           routeName: TemperaturePage.route,
         ),
         _buildMenuItem(
           context: context,
-          leading: Icon(Icons.add_road),
+          leading: Icon(Icons.water),
           title: Text('Humidity'),
           routeName: HumidityPage.route,
         ),
         _buildMenuItem(
           context: context,
-          leading: Icon(Icons.air),
+          leading: Icon(Icons.circle),
           title: Text('Mass Concentration'),
           routeName: MassConcentrationPage.route,
         ),
