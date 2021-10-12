@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      initialRoute: CarbonDioxidePage.route,
+      initialRoute: SettingsPage.route,
       routes: {
         SVM30Page.route: (context) => SVM30Page(),
         CarbonDioxidePage.route: (context) => CarbonDioxidePage(),
