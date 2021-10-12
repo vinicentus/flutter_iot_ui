@@ -372,6 +372,8 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
           margin: 10,
           reservedSize: 50,
         ),
+        topTitles: SideTitles(showTitles: false),
+        rightTitles: SideTitles(showTitles: false),
       ),
       borderData: FlBorderData(
           show: true,
@@ -615,6 +617,8 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
           margin: 10,
           reservedSize: 50,
         ),
+        topTitles: SideTitles(showTitles: false),
+        rightTitles: SideTitles(showTitles: false),
       ),
       borderData: FlBorderData(
           show: true,

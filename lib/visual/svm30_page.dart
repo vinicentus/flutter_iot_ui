@@ -125,6 +125,8 @@ class _SVM30PageState extends State<SVM30Page> {
                     margin: 10,
                     reservedSize: 50,
                   ),
+                  topTitles: SideTitles(showTitles: false),
+                  rightTitles: SideTitles(showTitles: false),
                 ),
                 borderData: FlBorderData(
                     show: true,
