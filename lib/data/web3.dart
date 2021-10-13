@@ -43,7 +43,13 @@ class Web3Manager extends DatabaseManager {
     );
 
     _privateKey = EthPrivateKey.fromHex(settings['keys']['private']);
-    publicAddress = EthereumAddress.fromHex(settings['keys']['public']);
+    // Verify that the public address corresponds to the private key
+    // One we are sure of that, we can discard it,
+    // since the public address is stored in _privateKey.address anyways
+    if (EthereumAddress.fromHex(settings['keys']['public']) !=
+        _privateKey.address) {
+      throw Exception('The private key did not match the public address!');
+    }
     chainId = settings['chainId'];
 
     await _loadContracts();
@@ -73,8 +79,8 @@ class Web3Manager extends DatabaseManager {
   late String selectedOracleId;
 
   late EthPrivateKey _privateKey;
-  // This should be the address of the user that created the user contract
-  late EthereumAddress publicAddress;
+  // This should also be the address of the user that created the user contract
+  EthereumAddress get publicAddress => _privateKey.address;
   late int chainId;
 
   // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
