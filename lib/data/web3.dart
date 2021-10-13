@@ -25,21 +25,21 @@ class Web3Manager extends DatabaseManager {
     String jsonData = await rootBundle.loadString('resources/settings.json');
     Map settings = json.decode(jsonData);
 
-    httpUrl = Uri(
+    _httpUrl = Uri(
         scheme: 'http',
         host: settings["gateway"]["host"],
         port: settings["gateway"]["port"]);
 
-    wsUrl = Uri(
+    _wsUrl = Uri(
         scheme: 'ws',
         host: settings["gateway"]["host"],
         port: settings["gateway"]["wsPort"]);
 
     ethClient = new Web3Client(
-      httpUrl.toString(),
+      _httpUrl.toString(),
       httpClient,
       // Experimental websocket support
-      socketConnector: () => WebSocketChannel.connect(wsUrl).cast<String>(),
+      socketConnector: () => WebSocketChannel.connect(_wsUrl).cast<String>(),
     );
 
     _privateKey = EthPrivateKey.fromHex(settings['keys']['private']);
@@ -49,8 +49,8 @@ class Web3Manager extends DatabaseManager {
     await _loadContracts();
   }
 
-  late Uri httpUrl;
-  late Uri wsUrl;
+  late Uri _httpUrl;
+  late Uri _wsUrl;
 
   // TODO: check late keyword
   late Client httpClient;
