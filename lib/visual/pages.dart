@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/data/graph_settings_model.dart';
 import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/data/settings_constants.dart';
 import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
@@ -9,11 +10,14 @@ import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/visual/general_graph_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:moving_average/moving_average.dart';
+import 'package:provider/provider.dart';
 
-Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
+Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30(
+    {required Duration refreshDuration,
+    required Duration graphTimeWindow}) async* {
   // Init
   var today = DateTime.now();
-  var yesterday = today.subtract(defaultTimeWindow);
+  var yesterday = today.subtract(graphTimeWindow);
   // Just creating an instance of this singleton class will initialize it and the database.
   var db = await globalDBManager.getSCD30Entries(start: yesterday, stop: today);
   yield db;
@@ -22,18 +26,19 @@ Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30() async* {
   // Furhtermore this loop will automatically stop running when the stream is canceled.
   while (true) {
     today = DateTime.now();
-    yesterday = today.subtract(defaultTimeWindow);
-    db = await Future.delayed(
-        Duration(seconds: numberOfSecondsBetweenGraphRefresh),
+    yesterday = today.subtract(graphTimeWindow);
+    db = await Future.delayed(refreshDuration,
         () => globalDBManager.getSCD30Entries(start: yesterday, stop: today));
     yield db;
   }
 }
 
-Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30() async* {
+Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30(
+    {required Duration refreshDuration,
+    required Duration graphTimeWindow}) async* {
   // Init
   var today = DateTime.now();
-  var yesterday = today.subtract(defaultTimeWindow);
+  var yesterday = today.subtract(graphTimeWindow);
   var db = await globalDBManager.getSPS30Entries(start: yesterday, stop: today);
   yield db;
 
@@ -41,16 +46,15 @@ Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30() async* {
   // Furhtermore this loop will automatically stop running when the stream is canceled.
   while (true) {
     today = DateTime.now();
-    yesterday = today.subtract(defaultTimeWindow);
-    db = await Future.delayed(
-        Duration(seconds: numberOfSecondsBetweenGraphRefresh),
+    yesterday = today.subtract(graphTimeWindow);
+    db = await Future.delayed(refreshDuration,
         () => globalDBManager.getSPS30Entries(start: yesterday, stop: today));
     yield db;
   }
 }
 
 List<FlSpot> transformIntoMovingAverage(
-    List<FlSpot> flspotList, bool transform) {
+    List<FlSpot> flspotList, bool transform, int windowSize) {
   // Don't do anything with the data unless instructed to
   if (!transform) {
     return flspotList;
@@ -61,7 +65,7 @@ List<FlSpot> transformIntoMovingAverage(
     // (not specified in units of time).
     // We currently get samples roughly every minute, so a value of 5
     // would mean that the averages are calculated over 5 minute periods.
-    windowSize: numberOfSamplesPerMovingAverageWindow,
+    windowSize: windowSize,
     getValue: (FlSpot spot) => spot.y,
     add: (List<FlSpot> data, num value) {
       var middleTimestamp = data[data.length ~/ 2].x;
@@ -79,11 +83,16 @@ class CarbonDioxidePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var model = context.read<GraphSettingsModel>();
+
     return GeneralGraphPage(
         route: CarbonDioxidePage.route,
         title: this.title,
         unit: 'ppm',
-        seriesListStream: dbUpdatesSCD30().map((event) {
+        seriesListStream: dbUpdatesSCD30(
+                refreshDuration: model.graphRefreshTime,
+                graphTimeWindow: model.graphTimeWindow)
+            .map((event) {
           return (event.isNotEmpty)
               ? [
                   // id: 'Carbon Dioxide'
@@ -94,7 +103,8 @@ class CarbonDioxidePage extends StatelessWidget {
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               e.carbonDioxide))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
@@ -112,22 +122,29 @@ class TemperaturePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var model = context.read<GraphSettingsModel>();
+
     return GeneralGraphPage(
         route: TemperaturePage.route,
         title: this.title,
         unit: '°C',
-        seriesListStream: dbUpdatesSCD30().map((event) {
+        seriesListStream: dbUpdatesSCD30(
+                refreshDuration: model.graphRefreshTime,
+                graphTimeWindow: model.graphTimeWindow)
+            .map((event) {
           return (event.isNotEmpty)
               ? [
                   // id: 'Temperature',
                   LineChartBarData(
                     spots: transformIntoMovingAverage(
-                        event
-                            .map((e) => FlSpot(
-                                e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                                e.temperature))
-                            .toList(),
-                        useMovingAverage),
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.temperature))
+                          .toList(),
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
                     dotData: FlDotData(show: false),
@@ -144,22 +161,29 @@ class HumidityPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var model = context.read<GraphSettingsModel>();
+
     return GeneralGraphPage(
         route: HumidityPage.route,
         title: this.title,
         unit: '%RH',
-        seriesListStream: dbUpdatesSCD30().map((event) {
+        seriesListStream: dbUpdatesSCD30(
+                refreshDuration: model.graphRefreshTime,
+                graphTimeWindow: model.graphTimeWindow)
+            .map((event) {
           return (event.isNotEmpty)
               ? [
                   // id: 'Humidity'
                   LineChartBarData(
                     spots: transformIntoMovingAverage(
-                        event
-                            .map((e) => FlSpot(
-                                e.timeStamp.millisecondsSinceEpoch.toDouble(),
-                                e.humidity))
-                            .toList(),
-                        useMovingAverage),
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.humidity))
+                          .toList(),
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
+                    ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
                     dotData: FlDotData(show: false),
@@ -185,6 +209,8 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
 
   @override
   Widget build(BuildContext context) {
+    var model = context.read<GraphSettingsModel>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(this.widget.title),
@@ -192,7 +218,10 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
       ),
       drawer: NavDrawer(MassConcentrationPage.route),
       body: StreamBuilder(
-        stream: dbUpdatesSPS30().map((event) {
+        stream: dbUpdatesSPS30(
+                refreshDuration: model.graphRefreshTime,
+                graphTimeWindow: model.graphTimeWindow)
+            .map((event) {
           return (event.isNotEmpty)
               ? [
                   LineChartBarData(
@@ -204,7 +233,8 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                               // No need to subtract values here
                               e.massConcentrationPM1_0))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
@@ -218,11 +248,12 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               // Check if we should use subtracted values
-                              subtractParticleSizes
+                              model.subtractParticleSizes
                                   ? e.massConcentrationPM2_5Subtracted
                                   : e.massConcentrationPM2_5))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries[1]],
@@ -236,11 +267,12 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               // Check if we should use subtracted values
-                              subtractParticleSizes
+                              model.subtractParticleSizes
                                   ? e.massConcentrationPM4_0Subtracted
                                   : e.massConcentrationPM4_0))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries[2]],
@@ -254,11 +286,12 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               // Check if we should use subtracted values
-                              subtractParticleSizes
+                              model.subtractParticleSizes
                                   ? e.massConcentrationPM10Subtracted
                                   : e.massConcentrationPM10))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries[3]],
@@ -402,6 +435,8 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
 
   @override
   Widget build(BuildContext context) {
+    var model = context.read<GraphSettingsModel>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(this.widget.title),
@@ -409,7 +444,10 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
       ),
       drawer: NavDrawer(NumberConcentrationPage.route),
       body: StreamBuilder(
-        stream: dbUpdatesSPS30().map((event) {
+        stream: dbUpdatesSPS30(
+                refreshDuration: model.graphRefreshTime,
+                graphTimeWindow: model.graphTimeWindow)
+            .map((event) {
           return (event.isNotEmpty)
               ? [
                   LineChartBarData(
@@ -421,7 +459,8 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                               // No need to subtract values here
                               e.numberConcentrationPM0_5))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
@@ -435,11 +474,12 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               // Check if we should use subtracted values
-                              subtractParticleSizes
+                              model.subtractParticleSizes
                                   ? e.numberConcentrationPM1_0Subtracted
                                   : e.numberConcentrationPM1_0))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries[1]],
@@ -453,11 +493,12 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               // Check if we should use subtracted values
-                              subtractParticleSizes
+                              model.subtractParticleSizes
                                   ? e.numberConcentrationPM2_5Subtracted
                                   : e.numberConcentrationPM2_5))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries[2]],
@@ -471,11 +512,12 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               // Check if we should use subtracted values
-                              subtractParticleSizes
+                              model.subtractParticleSizes
                                   ? e.numberConcentrationPM4_0Subtracted
                                   : e.numberConcentrationPM4_0))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries[3]],
@@ -489,11 +531,12 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
                           .map((e) => FlSpot(
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               // Check if we should use subtracted values
-                              subtractParticleSizes
+                              model.subtractParticleSizes
                                   ? e.numberConcentrationPM10Subtracted
                                   : e.numberConcentrationPM10))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries[4]],
@@ -637,11 +680,16 @@ class TypicalParticleSizePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var model = context.read<GraphSettingsModel>();
+
     return GeneralGraphPage(
         route: TypicalParticleSizePage.route,
         title: this.title,
         unit: 'µm',
-        seriesListStream: dbUpdatesSPS30().map((event) {
+        seriesListStream: dbUpdatesSPS30(
+                refreshDuration: model.graphRefreshTime,
+                graphTimeWindow: model.graphTimeWindow)
+            .map((event) {
           return (event.isNotEmpty)
               ? [
                   LineChartBarData(
@@ -652,7 +700,8 @@ class TypicalParticleSizePage extends StatelessWidget {
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               e.typicalParticleSize))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries.first],

@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/data/graph_settings_model.dart';
 import 'package:flutter_iot_ui/data/settings_constants.dart';
 import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:flutter_iot_ui/visual/pages.dart';
+import 'package:provider/provider.dart';
 
 class SVM30Page extends StatefulWidget {
   static const String route = '/SVM30Page';
@@ -16,19 +18,20 @@ class SVM30Page extends StatefulWidget {
 }
 
 class _SVM30PageState extends State<SVM30Page> {
-  Stream<List<SVM30SensorDataEntry>> dbUpdates() async* {
+  Stream<List<SVM30SensorDataEntry>> dbUpdates(
+      {required Duration refreshDuration,
+      required Duration graphTimeWindow}) async* {
     // Init
     var today = DateTime.now();
-    var yesterday = today.subtract(defaultTimeWindow);
+    var yesterday = today.subtract(graphTimeWindow);
     var db =
         await globalDBManager.getSVM30Entries(start: yesterday, stop: today);
     yield db;
 
     while (this.mounted) {
       today = DateTime.now();
-      yesterday = today.subtract(defaultTimeWindow);
-      db = await Future.delayed(
-          Duration(seconds: numberOfSecondsBetweenGraphRefresh),
+      yesterday = today.subtract(graphTimeWindow);
+      db = await Future.delayed(refreshDuration,
           () => globalDBManager.getSVM30Entries(start: yesterday, stop: today));
       yield db;
     }
@@ -36,6 +39,7 @@ class _SVM30PageState extends State<SVM30Page> {
 
   @override
   Widget build(BuildContext context) {
+    var model = context.read<GraphSettingsModel>();
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -51,7 +55,10 @@ class _SVM30PageState extends State<SVM30Page> {
       ),
       drawer: NavDrawer(SVM30Page.route),
       body: StreamBuilder(
-        stream: dbUpdates().map((List<SVM30SensorDataEntry> event) {
+        stream: dbUpdates(
+                refreshDuration: model.graphRefreshTime,
+                graphTimeWindow: model.graphTimeWindow)
+            .map((List<SVM30SensorDataEntry> event) {
           // The chart library throws if it receives a LineChartBarData without any FlSpots.
           // We need to return an empty list without any "empty" LineChartBarData objects instead.
           return (event.isNotEmpty)
@@ -64,7 +71,8 @@ class _SVM30PageState extends State<SVM30Page> {
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               e.carbonDioxide))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries.first],
@@ -78,7 +86,8 @@ class _SVM30PageState extends State<SVM30Page> {
                               e.timeStamp.millisecondsSinceEpoch.toDouble(),
                               e.totalVolatileOrganicCompounds))
                           .toList(),
-                      useMovingAverage,
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
                     ),
                     isCurved: false,
                     colors: [Colors.primaries[5]],
