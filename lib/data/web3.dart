@@ -173,10 +173,11 @@ class Web3Manager extends DatabaseManager {
     );
     var oracleIds = result.first;
 
-    // This is the id String of the oracle (device)
-    // we select the first availabe one as our main device that we will display data from
-    // In the future, there may not be a single selected device
-    selectedOracleId = oracleIds.first;
+    // This is the id String of the oracle (device).
+    // We select the last availabe one as our main device that we will display data from.
+    // That should be the last created oracle.
+    // In the future, there might not be a single selected device
+    selectedOracleId = oracleIds.last;
 
     deployedOracles = Map<String, DeployedContract>();
 
