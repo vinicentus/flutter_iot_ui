@@ -101,7 +101,7 @@ class Web3Manager extends DatabaseManager {
   }
 
   Future<void> _loadContracts() async {
-    String jsonData = await rootBundle.loadString('resources/latest.json');
+    String jsonData = await rootBundle.loadString('resources/ABI.json');
 
     userManager = _getDeployedContract('usermanager', jsonData);
     oracleManager = _getDeployedContract('oraclemanager', jsonData);
