@@ -163,6 +163,20 @@ class Web3Manager extends DatabaseManager {
     }
   }
 
+  /// The uniqe id is sotred in the oracle(device) contract.
+  /// The price is the minimum required price in ERC-20 tokens required to run a task on this device.
+  Future<void> createOracle(String uniqueId, int price) async {
+    await ethClient.sendTransaction(
+      privateKey,
+      Transaction.callContract(
+        contract: oracleManager,
+        function: oracleManager.function('create'),
+        parameters: [uniqueId, BigInt.from(price)],
+      ),
+      chainId: chainId,
+    );
+  }
+
   /// This needs to be called after loadUser, because it fetches the first oracle registered to the current user
   Future<Map<String, DeployedContract>> loadOracles() async {
     // Fetch all the oracles (devices) that are registered to our user

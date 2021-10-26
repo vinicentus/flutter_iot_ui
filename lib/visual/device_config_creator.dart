@@ -26,8 +26,7 @@ class FormWidget extends StatelessWidget {
               children: [
                 FormBuilderTextField(
                   name: 'device_name',
-                  decoration: InputDecoration(
-                      labelText: 'Device Name', hintText: 'MyDevice1'),
+                  decoration: InputDecoration(labelText: 'Device Name'),
                   validator: FormBuilderValidators.compose([
                     // Require not empty
                     FormBuilderValidators.required(context),
@@ -160,6 +159,22 @@ class FormWidget extends StatelessWidget {
                       if (path != null) {
                         await File(path).writeAsString(await modifyExampleFile(
                             _formKey.currentState!.value));
+
+                        Navigator.pop(context);
+
+                        // Also create the device contact
+                        try {
+                          (globalDBManager as Web3Manager).createOracle(
+                              computeUniqueID(_formKey.currentState!.value),
+                              int.parse(_formKey
+                                  .currentState!.value['service_cost']));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Successfully created a device')));
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  'Could not create device contract: $e')));
+                        }
                       }
                     } else {
                       print("validation failed");
