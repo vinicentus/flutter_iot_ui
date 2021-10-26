@@ -77,7 +77,9 @@ class DevicesPageState extends State<DevicesPage> {
                       // Selected if selected in Web3Manager is the same as this device
                       value: id,
                       onChanged: (String? changedId) {
-                        web3.selectedOracleId = changedId!;
+                        setState(() {
+                          web3.selectedOracleId = changedId!;
+                        });
                       },
                       groupValue: web3.selectedOracleId,
                     );

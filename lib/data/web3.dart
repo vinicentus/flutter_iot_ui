@@ -76,7 +76,7 @@ class Web3Manager extends DatabaseManager {
   late DeployedContract deployedTask;
 
   /// This is the id of the currently selected device
-  late String selectedOracleId;
+  String? selectedOracleId;
 
   late EthPrivateKey privateKey;
   // This should also be the address of the user that created the user contract
@@ -191,7 +191,8 @@ class Web3Manager extends DatabaseManager {
     // We select the last availabe one as our main device that we will display data from.
     // That should be the last created oracle.
     // In the future, there might not be a single selected device
-    selectedOracleId = oracleIds.last;
+    // If there is already as selected device, won won't override it.
+    if (selectedOracleId == null) selectedOracleId = oracleIds.last;
 
     deployedOracles = Map<String, DeployedContract>();
 
