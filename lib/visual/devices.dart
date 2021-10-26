@@ -82,6 +82,50 @@ class DevicesPageState extends State<DevicesPage> {
                         });
                       },
                       groupValue: web3.selectedOracleId,
+                      secondary: OutlinedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SimpleDialog(
+                                title: Text('Device ID: $id'),
+                                children: [
+                                  SimpleDialogOption(
+                                    child: Text('Address of the Owner: YOU!'),
+                                  ),
+                                  SimpleDialogOption(
+                                    child: Text(
+                                        'Address of registered Task Manager contract: X'),
+                                  ),
+                                  SimpleDialogOption(
+                                    child: Text('Price per task: X'),
+                                  ),
+                                  SimpleDialogOption(
+                                    child: Text('Task Backlog: X'),
+                                  ),
+                                  SimpleDialogOption(
+                                    child: Text('Active Status: X'),
+                                  ),
+                                  SimpleDialogOption(
+                                    child: Text(
+                                        'Discoverable Status (obsolete): X'),
+                                  ),
+                                  SimpleDialogOption(
+                                    child: Text(
+                                        'Discovery configuratio (obsolete): X'),
+                                  ),
+                                  SimpleDialogOption(
+                                    child: Text(
+                                        'Number of complete assignments: X'),
+                                  ),
+                                  // TODO: add actions that call functions to change values
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Text('more info'),
+                      ),
                     );
                   },
                   separatorBuilder: (context, index) => Divider(),
