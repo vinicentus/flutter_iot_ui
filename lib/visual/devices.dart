@@ -3,6 +3,7 @@ import 'package:flutter_iot_ui/data/settings_constants.dart';
 import 'package:flutter_iot_ui/data/web3.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
 import 'package:web3dart/web3dart.dart';
+import 'device_config_creator.dart';
 
 class DevicesPage extends StatefulWidget {
   static const String route = '/DevicesPage';
@@ -39,6 +40,14 @@ class DevicesPageState extends State<DevicesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          MaterialButton(
+              child: Text('Create device'),
+              onPressed: () {
+                showDialog(
+                    context: context, builder: (context) => FormWidget());
+              })
+        ],
       ),
       drawer: NavDrawer(DevicesPage.route),
       body: FutureBuilder(

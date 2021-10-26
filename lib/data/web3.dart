@@ -25,7 +25,7 @@ class Web3Manager extends DatabaseManager {
     String jsonData = await rootBundle.loadString('resources/settings.json');
     Map settings = json.decode(jsonData);
 
-    _httpUrl = Uri(
+    httpUrl = Uri(
         scheme: 'http',
         host: settings["gateway"]["host"],
         port: settings["gateway"]["port"]);
@@ -36,18 +36,18 @@ class Web3Manager extends DatabaseManager {
         port: settings["gateway"]["wsPort"]);
 
     ethClient = new Web3Client(
-      _httpUrl.toString(),
+      httpUrl.toString(),
       httpClient,
       // Experimental websocket support
       socketConnector: () => WebSocketChannel.connect(_wsUrl).cast<String>(),
     );
 
-    _privateKey = EthPrivateKey.fromHex(settings['keys']['private']);
+    privateKey = EthPrivateKey.fromHex(settings['keys']['private']);
     // Verify that the public address corresponds to the private key
     // One we are sure of that, we can discard it,
     // since the public address is stored in _privateKey.address anyways
     if (EthereumAddress.fromHex(settings['keys']['public']) !=
-        _privateKey.address) {
+        privateKey.address) {
       throw Exception('The private key did not match the public address!');
     }
     chainId = settings['chainId'];
@@ -55,7 +55,7 @@ class Web3Manager extends DatabaseManager {
     await _loadContracts();
   }
 
-  late Uri _httpUrl;
+  late Uri httpUrl;
   late Uri _wsUrl;
 
   // TODO: check late keyword
@@ -78,9 +78,9 @@ class Web3Manager extends DatabaseManager {
   /// This is the id of the currently selected device
   late String selectedOracleId;
 
-  late EthPrivateKey _privateKey;
+  late EthPrivateKey privateKey;
   // This should also be the address of the user that created the user contract
-  EthereumAddress get publicAddress => _privateKey.address;
+  EthereumAddress get publicAddress => privateKey.address;
   late int chainId;
 
   // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
@@ -153,7 +153,7 @@ class Web3Manager extends DatabaseManager {
       throw Exception('The user you are trying to create already exists!');
     } else {
       var result = await ethClient.sendTransaction(
-          _privateKey,
+          privateKey,
           Transaction.callContract(
             contract: userManager,
             function: userManager.function('create'),
@@ -212,7 +212,7 @@ class Web3Manager extends DatabaseManager {
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that
     var txHash = ethClient.sendTransaction(
-        _privateKey,
+        privateKey,
         Transaction.callContract(
           contract: taskManager,
           function: taskManager.function('create'),
