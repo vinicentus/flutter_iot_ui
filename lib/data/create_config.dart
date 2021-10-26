@@ -30,14 +30,31 @@ Future<String> modifyExampleFile(Map<String, dynamic> jsonData) async {
   return file;
 }
 
-computeUniqueID(Map<String, dynamic> jsonData) {
-  // Example: '{"name":"Device1","sensors":["sps30","scd30"],"uniqueId":"0"}'
+class JsonId {
+  final String name;
+  final List<String> sensors;
+  final String uniqueId;
 
-  var idMap = {
-    'name': jsonData['device_name'],
-    'sensors': jsonData['device_types'],
-    'uniqueId': jsonData['unique_id'],
-  };
+  JsonId(this.name, this.sensors, this.uniqueId);
 
-  return json.encode(idMap);
+  factory JsonId.fromString(String id) {
+    var jsonId = json.decode(id);
+    return JsonId(
+      jsonId['name'],
+      List<String>.from(jsonId['sensors']),
+      jsonId['uniqueId'],
+    );
+  }
+
+  /// Example: '{"name":"Device1","sensors":["sps30","scd30"],"uniqueId":"0"}'
+  @override
+  String toString() {
+    var idMap = {
+      'name': name,
+      'sensors': sensors,
+      'uniqueId': uniqueId,
+    };
+
+    return json.encode(idMap);
+  }
 }

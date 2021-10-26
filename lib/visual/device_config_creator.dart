@@ -164,10 +164,14 @@ class FormWidget extends StatelessWidget {
 
                         // Also create the device contact
                         try {
+                          var jsonData = _formKey.currentState!.value;
                           (globalDBManager as Web3Manager).createOracle(
-                              computeUniqueID(_formKey.currentState!.value),
-                              int.parse(_formKey
-                                  .currentState!.value['service_cost']));
+                              JsonId(
+                                      jsonData['device_name'],
+                                      jsonData['device_types'],
+                                      jsonData['unique_id'])
+                                  .toString(),
+                              int.parse(jsonData['service_cost']));
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text('Successfully created a device')));
                         } catch (e) {

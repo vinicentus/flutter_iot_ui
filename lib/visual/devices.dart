@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/data/create_config.dart';
 import 'package:flutter_iot_ui/data/settings_constants.dart';
 import 'package:flutter_iot_ui/data/web3.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';
@@ -60,10 +61,19 @@ class DevicesPageState extends State<DevicesPage> {
                     String id = devices.keys.elementAt(index);
                     DeployedContract deviceAtIndex = devices[id];
 
+                    JsonId? jsonId;
+                    try {
+                      jsonId = JsonId.fromString(id);
+                    } catch (e) {
+                      print('whoopise');
+                    }
+
                     return RadioListTile(
                       // Use the ID of the oracle as stored in the oracle manager,
                       // instead of the oracle address.
-                      title: Text('ID: $id'),
+                      title: Text(jsonId != null
+                          ? '${jsonId.name}  #${jsonId.uniqueId}  ${jsonId.sensors}'
+                          : 'ID: $id'),
                       subtitle: FutureBuilder(
                           future: _checkOracleActive(deviceAtIndex),
                           builder: (context, snapshot) {
@@ -88,8 +98,24 @@ class DevicesPageState extends State<DevicesPage> {
                             context: context,
                             builder: (context) {
                               return SimpleDialog(
-                                title: Text('Device ID: $id'),
+                                title: Text(id),
                                 children: [
+                                  Wrap(
+                                    children: [
+                                      SimpleDialogOption(
+                                        child: Text('Name: ${jsonId?.name}'),
+                                      ),
+                                      SimpleDialogOption(
+                                        child: Text(
+                                            'Supported Sensors: ${jsonId?.sensors}'),
+                                      ),
+                                      SimpleDialogOption(
+                                        child: Text(
+                                            'Unique ID: ${jsonId?.uniqueId}'),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(),
                                   SimpleDialogOption(
                                     child: Text('Address of the Owner: YOU!'),
                                   ),
