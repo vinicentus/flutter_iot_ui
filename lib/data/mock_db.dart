@@ -5,9 +5,6 @@ import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
 
-// Note to self: Don't touch unless absolutely necessary!
-// I'm by no means proud of the following code, but it works for now...
-
 class MockDbManager extends DatabaseManager {
   var rnd = Random();
 
@@ -18,6 +15,9 @@ class MockDbManager extends DatabaseManager {
         ? DateTime.now().toIso8601String()
         : _data.elementAt(_data.length - 1)['datetime'] as String));
     var nextDateTime = prevDateTime.add(Duration(minutes: 5));
+
+    // Generate enough data so that any entry can be used as mock data for any sensor data class.
+    // (even if all sensor data classes don't need this much data)
     _data.add({
       'datetime': nextDateTime.toIso8601String().split('.').first,
       'd1': rnd.nextDouble() * 50,
