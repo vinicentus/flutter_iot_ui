@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_iot_ui/data/mock_db.dart';
 import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
@@ -31,9 +30,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
       databaseFactory = databaseFactoryFfi;
       dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
     } else {
-      print('Using mock DB');
-      databaseFactory = databaseFactoryMock;
-      //setMockDatabaseFactory(databaseFactoryMock);
+      throw Exception('Running on platform that does not support SQLite ...');
     }
   }
 

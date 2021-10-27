@@ -43,12 +43,10 @@ class GraphSettingsModel extends ChangeNotifier {
 
   bool usesWeb3() {
     switch (globalDBManager.runtimeType) {
-      case SQLiteDatabaseManager:
-        return false;
       case Web3Manager:
         return true;
       default:
-        throw Exception('DBManager type not recognized!');
+        return false;
     }
   }
 
