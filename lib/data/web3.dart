@@ -10,17 +10,6 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'sqlite.dart' show convertDateTimeToString;
 
 class Web3Manager extends DatabaseManager {
-  static final Web3Manager _singleton = Web3Manager._internal();
-
-  factory Web3Manager() {
-    return _singleton;
-  }
-
-  Web3Manager._internal() {
-    // TODO: use websockets
-    httpClient = new Client();
-  }
-
   Future<void> init() async {
     String jsonData = await rootBundle.loadString('resources/settings.json');
     Map settings = json.decode(jsonData);
@@ -37,7 +26,7 @@ class Web3Manager extends DatabaseManager {
 
     ethClient = new Web3Client(
       httpUrl.toString(),
-      httpClient,
+      Client(),
       // Experimental websocket support
       socketConnector: () => WebSocketChannel.connect(_wsUrl).cast<String>(),
     );
@@ -58,8 +47,6 @@ class Web3Manager extends DatabaseManager {
   late Uri httpUrl;
   late Uri _wsUrl;
 
-  // TODO: check late keyword
-  late Client httpClient;
   late Web3Client ethClient;
 
   late DeployedContract userManager;
@@ -152,7 +139,7 @@ class Web3Manager extends DatabaseManager {
     if (exists) {
       throw Exception('The user you are trying to create already exists!');
     } else {
-      var result = await ethClient.sendTransaction(
+      await ethClient.sendTransaction(
           privateKey,
           Transaction.callContract(
             contract: userManager,
