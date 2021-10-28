@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/services.dart';
 
 /// Returns a yaml String, with passed values filled in according to device_config.yaml file format.
