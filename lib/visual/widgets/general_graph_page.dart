@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
-import 'package:flutter_iot_ui/visual/drawer.dart';
+import 'package:flutter_iot_ui/visual/widgets/appbar_trailing.dart';
+import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class GeneralGraphPage extends StatelessWidget {

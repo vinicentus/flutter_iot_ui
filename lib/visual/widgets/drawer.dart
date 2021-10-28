@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iot_ui/visual/devices.dart';
-import 'package:flutter_iot_ui/visual/pages.dart';
-import 'package:flutter_iot_ui/visual/settings.dart';
-import 'package:flutter_iot_ui/visual/svm30_page.dart';
-import 'package:flutter_iot_ui/visual/users.dart';
+import 'package:flutter_iot_ui/visual/pages/devices.dart';
+import 'package:flutter_iot_ui/visual/pages/pages.dart';
+import 'package:flutter_iot_ui/visual/pages/settings.dart';
+import 'package:flutter_iot_ui/visual/pages/svm30_page.dart';
+import 'package:flutter_iot_ui/visual/pages/users.dart';
 
 class NavDrawer extends StatelessWidget {
   final String selectedRoute;

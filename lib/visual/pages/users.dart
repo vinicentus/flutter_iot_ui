@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/settings_constants.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
-import 'package:flutter_iot_ui/visual/drawer.dart';
+import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 
 class UsersPage extends StatefulWidget {
   static const String route = '/UsersPage';

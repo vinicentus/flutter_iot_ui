@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/settings_constants.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
-import 'package:flutter_iot_ui/visual/drawer.dart';
+import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:web3dart/web3dart.dart';
-import 'device_config_creator.dart';
+import 'package:flutter_iot_ui/visual/widgets/device_config_creator.dart';
 
 class DevicesPage extends StatefulWidget {
   static const String route = '/DevicesPage';
