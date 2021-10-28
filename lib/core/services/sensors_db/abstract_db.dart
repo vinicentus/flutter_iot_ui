@@ -1,6 +1,6 @@
-import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
-import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
-import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 
 /// Base class that will be extended by implementations,
 /// such as an SQLite based database, or a Storj DCS based database.

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_iot_ui/data/graph_settings_model.dart';
-import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
-import 'package:flutter_iot_ui/data/settings_constants.dart';
-import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
+import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
+import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/core/settings_constants.dart';
+import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/visual/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/checkbox_widget.dart';
 import 'package:flutter_iot_ui/visual/drawer.dart';

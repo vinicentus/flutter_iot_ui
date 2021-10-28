@@ -3,9 +3,10 @@ import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_iot_ui/data/create_config.dart';
-import 'package:flutter_iot_ui/data/settings_constants.dart';
-import 'package:flutter_iot_ui/data/web3.dart';
+import 'package:flutter_iot_ui/core/util/create_config.dart';
+import 'package:flutter_iot_ui/core/models/json_id.dart';
+import 'package:flutter_iot_ui/core/settings_constants.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
 import 'package:web3dart/credentials.dart';
 
 class FormWidget extends StatelessWidget {

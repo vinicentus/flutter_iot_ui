@@ -1,4 +1,4 @@
-import 'package:flutter_iot_ui/data/web3.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

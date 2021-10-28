@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_iot_ui/data/settings_constants.dart';
-import 'package:flutter_iot_ui/data/sqlite.dart';
-import 'package:flutter_iot_ui/data/web3.dart';
+import 'package:flutter_iot_ui/core/settings_constants.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
 
 class GraphSettingsModel extends ChangeNotifier {
   /// Wether to subtract the smaller size values from the bigger ones,

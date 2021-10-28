@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter_iot_ui/data/database_manager.dart';
-import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
-import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
-import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
+import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 
 class MockDbManager extends DatabaseManager {
   var rnd = Random();

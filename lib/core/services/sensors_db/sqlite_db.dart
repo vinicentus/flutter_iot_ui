@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
-import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
-import 'database_manager.dart';
+import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
 
 /// Singleton SQLite Databse Manager, implementing the common functions from [DatabaseManager].
 /// This class just provides convenient functiosn for common database operations.

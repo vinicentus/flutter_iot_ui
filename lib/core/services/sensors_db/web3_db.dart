@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:flutter_iot_ui/data/svm30_datamodel.dart';
-import 'package:flutter_iot_ui/data/sps30_datamodel.dart';
-import 'package:flutter_iot_ui/data/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:flutter_iot_ui/data/database_manager.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'sqlite.dart' show convertDateTimeToString;
+import 'sqlite_db.dart' show convertDateTimeToString;
 
 class Web3Manager extends DatabaseManager {
   Future<void> init() async {
