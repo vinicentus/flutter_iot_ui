@@ -6,7 +6,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_iot_ui/core/util/create_config.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/settings_constants.dart';
-import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
 import 'package:web3dart/credentials.dart';
 
 class FormWidget extends StatelessWidget {
@@ -93,37 +92,33 @@ class FormWidget extends StatelessWidget {
                   name: 'gateway_host',
                   decoration: InputDecoration(labelText: 'gateway host'),
                   enabled: false,
-                  initialValue: (globalDBManager as Web3Manager).httpUrl.host,
+                  initialValue: globalWeb3Client.httpUrl.host,
                 ),
                 FormBuilderTextField(
                   name: 'gateway_port',
                   decoration: InputDecoration(labelText: 'gateway port'),
                   enabled: false,
-                  initialValue:
-                      (globalDBManager as Web3Manager).httpUrl.port.toString(),
+                  initialValue: globalWeb3Client.httpUrl.port.toString(),
                 ),
                 FormBuilderTextField(
                   name: 'chain_id',
                   decoration: InputDecoration(labelText: 'Chain ID'),
                   enabled: false,
-                  initialValue:
-                      (globalDBManager as Web3Manager).chainId.toString(),
+                  initialValue: globalWeb3Client.chainId.toString(),
                 ),
                 FormBuilderTextField(
                   name: 'public_address',
                   decoration: InputDecoration(
                       labelText: 'Public Ethereum Address of the User'),
                   enabled: false,
-                  initialValue:
-                      (globalDBManager as Web3Manager).publicAddress.hex,
+                  initialValue: globalWeb3Client.publicAddress.hex,
                 ),
                 FormBuilderTextField(
                   name: 'private_key',
                   decoration: InputDecoration(
                       labelText: 'Private Ethereum Key of the User'),
                   enabled: false,
-                  initialValue:
-                      (globalDBManager as Web3Manager).privateKey.toHexString,
+                  initialValue: globalWeb3Client.privateKey.toHexString,
                 ),
               ],
             ),
@@ -166,7 +161,7 @@ class FormWidget extends StatelessWidget {
                         // Also create the device contact
                         try {
                           var jsonData = _formKey.currentState!.value;
-                          (globalDBManager as Web3Manager).createOracle(
+                          globalWeb3Client.createOracle(
                               JsonId(
                                       jsonData['device_name'],
                                       jsonData['device_types'],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/settings_constants.dart';
-import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:flutter_iot_ui/visual/widgets/device_config_creator.dart';
@@ -17,21 +16,13 @@ class DevicesPage extends StatefulWidget {
 }
 
 class DevicesPageState extends State<DevicesPage> {
-  Web3Manager get web3 {
-    if (globalDBManager is! Web3Manager) {
-      throw Exception('Not using web3 for data access!');
-    } else {
-      return globalDBManager as Web3Manager;
-    }
-  }
-
   _init() async {
-    await web3.init();
-    return await web3.loadOracles();
+    await globalWeb3Client.init();
+    return await globalWeb3Client.loadOracles();
   }
 
   Future<bool> _checkOracleActive(DeployedContract contract) async {
-    var result = await web3.ethClient.call(
+    var result = await globalWeb3Client.ethClient.call(
         contract: contract, function: contract.function('active'), params: []);
     return result.first;
   }
@@ -88,10 +79,10 @@ class DevicesPageState extends State<DevicesPage> {
                       value: id,
                       onChanged: (String? changedId) {
                         setState(() {
-                          web3.selectedOracleId = changedId!;
+                          globalWeb3Client.selectedOracleId = changedId!;
                         });
                       },
-                      groupValue: web3.selectedOracleId,
+                      groupValue: globalWeb3Client.selectedOracleId,
                       secondary: OutlinedButton(
                         onPressed: () {
                           showDialog(
