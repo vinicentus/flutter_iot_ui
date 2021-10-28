@@ -21,10 +21,24 @@ class DevicesPageState extends State<DevicesPage> {
     return await globalWeb3Client.loadOracles();
   }
 
+  // TODO: move into web3 file
   Future<bool> _checkOracleActive(DeployedContract contract) async {
     var result = await globalWeb3Client.ethClient.call(
         contract: contract, function: contract.function('active'), params: []);
     return result.first;
+  }
+
+  // TODO: move into web3 file
+  _toggleContractActiveStatus(DeployedContract contract) async {
+    await globalWeb3Client.ethClient.sendTransaction(
+      globalWeb3Client.privateKey,
+      Transaction.callContract(
+        contract: contract,
+        function: contract.function('toggle_active'),
+        parameters: [],
+      ),
+      chainId: globalWeb3Client.chainId,
+    );
   }
 
   @override
@@ -121,7 +135,18 @@ class DevicesPageState extends State<DevicesPage> {
                                     child: Text('Task Backlog: X'),
                                   ),
                                   SimpleDialogOption(
-                                    child: Text('Active Status: X'),
+                                    child: Row(
+                                      children: [
+                                        Text('Active Status: X'),
+                                        MaterialButton(
+                                            child: Text('toggle'),
+                                            onPressed: () {
+                                              _toggleContractActiveStatus(
+                                                  deviceAtIndex);
+                                              setState(() {});
+                                            })
+                                      ],
+                                    ),
                                   ),
                                   SimpleDialogOption(
                                     child: Text(
