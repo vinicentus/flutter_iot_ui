@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/util/moving_average.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/settings_constants.dart';
@@ -9,7 +10,6 @@ import 'package:flutter_iot_ui/visual/widgets/checkbox_widget.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:flutter_iot_ui/visual/widgets/general_graph_page.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:moving_average/moving_average.dart';
 import 'package:provider/provider.dart';
 
 Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30(
@@ -51,30 +51,6 @@ Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30(
         () => globalDBManager.getSPS30Entries(start: yesterday, stop: today));
     yield db;
   }
-}
-
-List<FlSpot> transformIntoMovingAverage(
-    List<FlSpot> flspotList, bool transform, int windowSize) {
-  // Don't do anything with the data unless instructed to
-  if (!transform) {
-    return flspotList;
-  }
-
-  var simpleMovingAverage = MovingAverage<FlSpot>(
-    // The window size is the number of samples per average sample returned
-    // (not specified in units of time).
-    // We currently get samples roughly every minute, so a value of 5
-    // would mean that the averages are calculated over 5 minute periods.
-    windowSize: windowSize,
-    getValue: (FlSpot spot) => spot.y,
-    add: (List<FlSpot> data, num value) {
-      var middleTimestamp = data[data.length ~/ 2].x;
-      // We know the y coordinate will be a double, since we only return doubles in getValue
-      return FlSpot(middleTimestamp, (value as double));
-    },
-  );
-
-  return simpleMovingAverage(flspotList);
 }
 
 class CarbonDioxidePage extends StatelessWidget {

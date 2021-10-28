@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/util/moving_average.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/core/settings_constants.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/visual/widgets/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
-import 'package:flutter_iot_ui/visual/pages/pages.dart';
 import 'package:provider/provider.dart';
 
 class SVM30Page extends StatefulWidget {
