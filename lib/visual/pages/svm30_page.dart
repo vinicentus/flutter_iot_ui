@@ -1,9 +1,8 @@
-import 'dart:async';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/util/db_updates_stream.dart';
 import 'package:flutter_iot_ui/core/util/moving_average.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
-import 'package:flutter_iot_ui/core/settings_constants.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/visual/widgets/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
@@ -18,25 +17,6 @@ class SVM30Page extends StatefulWidget {
 }
 
 class _SVM30PageState extends State<SVM30Page> {
-  Stream<List<SVM30SensorDataEntry>> dbUpdates(
-      {required Duration refreshDuration,
-      required Duration graphTimeWindow}) async* {
-    // Init
-    var today = DateTime.now();
-    var yesterday = today.subtract(graphTimeWindow);
-    var db =
-        await globalDBManager.getSVM30Entries(start: yesterday, stop: today);
-    yield db;
-
-    while (this.mounted) {
-      today = DateTime.now();
-      yesterday = today.subtract(graphTimeWindow);
-      db = await Future.delayed(refreshDuration,
-          () => globalDBManager.getSVM30Entries(start: yesterday, stop: today));
-      yield db;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var model = context.read<GraphSettingsModel>();
@@ -55,7 +35,7 @@ class _SVM30PageState extends State<SVM30Page> {
       ),
       drawer: NavDrawer(SVM30Page.route),
       body: StreamBuilder(
-        stream: dbUpdates(
+        stream: dbUpdatesOfType<SVM30SensorDataEntry>(
                 refreshDuration: model.graphRefreshTime,
                 graphTimeWindow: model.graphTimeWindow)
             .map((List<SVM30SensorDataEntry> event) {

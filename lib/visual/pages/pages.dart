@@ -1,10 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
+import 'package:flutter_iot_ui/core/util/db_updates_stream.dart';
 import 'package:flutter_iot_ui/core/util/moving_average.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
-import 'package:flutter_iot_ui/core/settings_constants.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/visual/widgets/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/widgets/checkbox_widget.dart';
@@ -12,68 +11,6 @@ import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:flutter_iot_ui/visual/widgets/general_graph_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
-
-Stream<List<SCD30SensorDataEntry>> dbUpdatesSCD30(
-    {required Duration refreshDuration,
-    required Duration graphTimeWindow}) async* {
-  // Init
-  var today = DateTime.now();
-  var yesterday = today.subtract(graphTimeWindow);
-  // Just creating an instance of this singleton class will initialize it and the database.
-  var db = await globalDBManager.getSCD30Entries(start: yesterday, stop: today);
-  yield db;
-
-  // This stream will be automatically cancelled by dart when no longer needed.
-  // Furhtermore this loop will automatically stop running when the stream is canceled.
-  while (true) {
-    today = DateTime.now();
-    yesterday = today.subtract(graphTimeWindow);
-    db = await Future.delayed(refreshDuration,
-        () => globalDBManager.getSCD30Entries(start: yesterday, stop: today));
-    yield db;
-  }
-}
-
-Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30(
-    {required Duration refreshDuration,
-    required Duration graphTimeWindow}) async* {
-  // Init
-  var today = DateTime.now();
-  var yesterday = today.subtract(graphTimeWindow);
-  var db = await globalDBManager.getSPS30Entries(start: yesterday, stop: today);
-  yield db;
-
-  // This stream will be automatically cancelled by dart when no longer needed.
-  // Furhtermore this loop will automatically stop running when the stream is canceled.
-  while (true) {
-    today = DateTime.now();
-    yesterday = today.subtract(graphTimeWindow);
-    db = await Future.delayed(refreshDuration,
-        () => globalDBManager.getSPS30Entries(start: yesterday, stop: today));
-    yield db;
-  }
-}
-
-Stream<List<SCD41SensorDataEntry>> dbUpdatesSCD41(
-    {required Duration refreshDuration,
-    required Duration graphTimeWindow}) async* {
-  // Init
-  var today = DateTime.now();
-  var yesterday = today.subtract(graphTimeWindow);
-  // Just creating an instance of this singleton class will initialize it and the database.
-  var db = await globalDBManager.getSCD41Entries(start: yesterday, stop: today);
-  yield db;
-
-  // This stream will be automatically cancelled by dart when no longer needed.
-  // Furhtermore this loop will automatically stop running when the stream is canceled.
-  while (true) {
-    today = DateTime.now();
-    yesterday = today.subtract(graphTimeWindow);
-    db = await Future.delayed(refreshDuration,
-        () => globalDBManager.getSCD41Entries(start: yesterday, stop: today));
-    yield db;
-  }
-}
 
 class CarbonDioxidePage2 extends StatelessWidget {
   static const String route = '/CarbonDioxidePage2';
@@ -87,7 +24,7 @@ class CarbonDioxidePage2 extends StatelessWidget {
         route: CarbonDioxidePage2.route,
         title: this.title,
         unit: 'ppm',
-        seriesListStream: dbUpdatesSCD41(
+        seriesListStream: dbUpdatesOfType<SCD41SensorDataEntry>(
                 refreshDuration: model.graphRefreshTime,
                 graphTimeWindow: model.graphTimeWindow)
             .map((event) {
@@ -126,7 +63,7 @@ class CarbonDioxidePage extends StatelessWidget {
         route: CarbonDioxidePage.route,
         title: this.title,
         unit: 'ppm',
-        seriesListStream: dbUpdatesSCD30(
+        seriesListStream: dbUpdatesOfType<SCD30SensorDataEntry>(
                 refreshDuration: model.graphRefreshTime,
                 graphTimeWindow: model.graphTimeWindow)
             .map((event) {
@@ -165,7 +102,7 @@ class TemperaturePage extends StatelessWidget {
         route: TemperaturePage.route,
         title: this.title,
         unit: '°C',
-        seriesListStream: dbUpdatesSCD30(
+        seriesListStream: dbUpdatesOfType<SCD30SensorDataEntry>(
                 refreshDuration: model.graphRefreshTime,
                 graphTimeWindow: model.graphTimeWindow)
             .map((event) {
@@ -204,7 +141,7 @@ class HumidityPage extends StatelessWidget {
         route: HumidityPage.route,
         title: this.title,
         unit: '%RH',
-        seriesListStream: dbUpdatesSCD30(
+        seriesListStream: dbUpdatesOfType<SCD30SensorDataEntry>(
                 refreshDuration: model.graphRefreshTime,
                 graphTimeWindow: model.graphTimeWindow)
             .map((event) {
@@ -255,7 +192,7 @@ class _MassConcentrationPageState extends State<MassConcentrationPage> {
       ),
       drawer: NavDrawer(MassConcentrationPage.route),
       body: StreamBuilder(
-        stream: dbUpdatesSPS30(
+        stream: dbUpdatesOfType<SPS30SensorDataEntry>(
                 refreshDuration: model.graphRefreshTime,
                 graphTimeWindow: model.graphTimeWindow)
             .map((event) {
@@ -481,7 +418,7 @@ class _NumberConcentrationPageState extends State<NumberConcentrationPage> {
       ),
       drawer: NavDrawer(NumberConcentrationPage.route),
       body: StreamBuilder(
-        stream: dbUpdatesSPS30(
+        stream: dbUpdatesOfType<SPS30SensorDataEntry>(
                 refreshDuration: model.graphRefreshTime,
                 graphTimeWindow: model.graphTimeWindow)
             .map((event) {
@@ -723,7 +660,7 @@ class TypicalParticleSizePage extends StatelessWidget {
         route: TypicalParticleSizePage.route,
         title: this.title,
         unit: 'µm',
-        seriesListStream: dbUpdatesSPS30(
+        seriesListStream: dbUpdatesOfType<SPS30SensorDataEntry>(
                 refreshDuration: model.graphRefreshTime,
                 graphTimeWindow: model.graphTimeWindow)
             .map((event) {
