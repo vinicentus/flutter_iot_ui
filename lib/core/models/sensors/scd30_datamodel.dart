@@ -1,5 +1,6 @@
-class SCD30SensorDataEntry {
-  final DateTime timeStamp;
+import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
+
+class SCD30SensorDataEntry extends GenericSensorDataEntry {
   final List<double> _measurements;
 
   // f"CO2: {m[0]:.2f}ppm, temp: {m[1]:.2f}'C, rh: {m[2]:.2f}%"
@@ -13,13 +14,14 @@ class SCD30SensorDataEntry {
   /// Humidity (%RH)
   get humidity => this._measurements[2];
 
-  SCD30SensorDataEntry(this.timeStamp, this._measurements);
+  SCD30SensorDataEntry(DateTime timeStamp, this._measurements)
+      : super.createFromDB(timeStamp);
 
   SCD30SensorDataEntry.createFromDB(
     String dateTime,
     double d1,
     double d2,
     double d3,
-  )   : this.timeStamp = DateTime.parse(dateTime),
-        this._measurements = [d1, d2, d3];
+  )   : this._measurements = [d1, d2, d3],
+        super.createFromDB(DateTime.parse(dateTime));
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
@@ -156,6 +157,21 @@ class Web3Manager extends DatabaseManager {
     var returnList = <SCD30SensorDataEntry>[];
     taskResult.forEach((element) {
       returnList.add(SCD30SensorDataEntry.createFromDB(
+          element[0], element[1], element[2], element[3]));
+    });
+    return returnList;
+  }
+
+  @override
+  Future<List<SCD41SensorDataEntry>> getSCD41Entries(
+      {DateTime? start, DateTime? stop}) async {
+    List taskResult = await _getEntriesInChunks(
+        tableName: 'scd41_output', publicKey: null, start: start, stop: stop);
+
+    // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
+    var returnList = <SCD41SensorDataEntry>[];
+    taskResult.forEach((element) {
+      returnList.add(SCD41SensorDataEntry.createFromDB(
           element[0], element[1], element[2], element[3]));
     });
     return returnList;

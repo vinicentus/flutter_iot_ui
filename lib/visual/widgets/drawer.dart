@@ -96,6 +96,12 @@ class NavDrawer extends StatelessWidget {
           title: Text('Typical Particle Size'),
           routeName: TypicalParticleSizePage.route,
         ),
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.access_alarms),
+          title: Text('CO2 SCD41'),
+          routeName: CarbonDioxidePage2.route,
+        ),
       ],
     ));
   }

@@ -1,5 +1,6 @@
-class SVM30SensorDataEntry {
-  final DateTime timeStamp;
+import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
+
+class SVM30SensorDataEntry extends GenericSensorDataEntry {
   final List<double> _measurements;
 
   /// CO2eq (ppm)
@@ -8,12 +9,13 @@ class SVM30SensorDataEntry {
   /// tVOC (ppb)
   get totalVolatileOrganicCompounds => this._measurements[1];
 
-  SVM30SensorDataEntry(this.timeStamp, this._measurements);
+  SVM30SensorDataEntry(DateTime timeStamp, this._measurements)
+      : super.createFromDB(timeStamp);
 
   SVM30SensorDataEntry.createFromDB(
     String dateTime,
     double co2,
     double tvoc,
-  )   : this.timeStamp = DateTime.parse(dateTime),
-        this._measurements = [co2, tvoc];
+  )   : this._measurements = [co2, tvoc],
+        super.createFromDB(DateTime.parse(dateTime));
 }

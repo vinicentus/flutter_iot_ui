@@ -1,5 +1,6 @@
-class SPS30SensorDataEntry {
-  final DateTime timeStamp;
+import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
+
+class SPS30SensorDataEntry extends GenericSensorDataEntry {
   final List<num> _measurements;
 
   /// Mass Concentration (µg/m³) in the particle size range 0.3-1.0µm.
@@ -79,7 +80,8 @@ class SPS30SensorDataEntry {
   get numberConcentrationPM10Subtracted =>
       this.numberConcentrationPM10 - this.numberConcentrationPM4_0;
 
-  SPS30SensorDataEntry(this.timeStamp, this._measurements);
+  SPS30SensorDataEntry(DateTime timeStamp, this._measurements)
+      : super.createFromDB(timeStamp);
 
   SPS30SensorDataEntry.createFromDB(
     String dateTime,
@@ -93,6 +95,6 @@ class SPS30SensorDataEntry {
     num d8,
     num d9,
     num d10,
-  )   : this.timeStamp = DateTime.parse(dateTime),
-        this._measurements = [d1, d2, d3, d4, d5, d6, d7, d8, d9, d10];
+  )   : this._measurements = [d1, d2, d3, d4, d5, d6, d7, d8, d9, d10],
+        super.createFromDB(DateTime.parse(dateTime));
 }

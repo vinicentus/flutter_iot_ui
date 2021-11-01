@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         routes: {
           SVM30Page.route: (context) => SVM30Page(),
           CarbonDioxidePage.route: (context) => CarbonDioxidePage(),
+          CarbonDioxidePage2.route: (contetx) => CarbonDioxidePage2(),
           TemperaturePage.route: (context) => TemperaturePage(),
           HumidityPage.route: (context) => HumidityPage(),
           MassConcentrationPage.route: (context) => MassConcentrationPage(),

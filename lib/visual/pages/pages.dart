@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/util/moving_average.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
@@ -50,6 +51,66 @@ Stream<List<SPS30SensorDataEntry>> dbUpdatesSPS30(
     db = await Future.delayed(refreshDuration,
         () => globalDBManager.getSPS30Entries(start: yesterday, stop: today));
     yield db;
+  }
+}
+
+Stream<List<SCD41SensorDataEntry>> dbUpdatesSCD41(
+    {required Duration refreshDuration,
+    required Duration graphTimeWindow}) async* {
+  // Init
+  var today = DateTime.now();
+  var yesterday = today.subtract(graphTimeWindow);
+  // Just creating an instance of this singleton class will initialize it and the database.
+  var db = await globalDBManager.getSCD41Entries(start: yesterday, stop: today);
+  yield db;
+
+  // This stream will be automatically cancelled by dart when no longer needed.
+  // Furhtermore this loop will automatically stop running when the stream is canceled.
+  while (true) {
+    today = DateTime.now();
+    yesterday = today.subtract(graphTimeWindow);
+    db = await Future.delayed(refreshDuration,
+        () => globalDBManager.getSCD41Entries(start: yesterday, stop: today));
+    yield db;
+  }
+}
+
+class CarbonDioxidePage2 extends StatelessWidget {
+  static const String route = '/CarbonDioxidePage2';
+  final String title = 'Carbon Dioxide (ppm)';
+
+  @override
+  Widget build(BuildContext context) {
+    var model = context.read<GraphSettingsModel>();
+
+    return GeneralGraphPage(
+        route: CarbonDioxidePage2.route,
+        title: this.title,
+        unit: 'ppm',
+        seriesListStream: dbUpdatesSCD41(
+                refreshDuration: model.graphRefreshTime,
+                graphTimeWindow: model.graphTimeWindow)
+            .map((event) {
+          return (event.isNotEmpty)
+              ? [
+                  // id: 'Carbon Dioxide'
+                  LineChartBarData(
+                    spots: transformIntoMovingAverage(
+                      event
+                          .map((e) => FlSpot(
+                              e.timeStamp.millisecondsSinceEpoch.toDouble(),
+                              e.carbonDioxide.toDouble()))
+                          .toList(),
+                      model.useMovingAverage,
+                      model.movingAverageSamples,
+                    ),
+                    isCurved: false,
+                    colors: [Colors.primaries.first],
+                    dotData: FlDotData(show: false),
+                  ),
+                ]
+              : <LineChartBarData>[];
+        }));
   }
 }
 

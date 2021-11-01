@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
@@ -112,6 +113,42 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
     var returnList = List.generate(maps.length, (i) {
       return SCD30SensorDataEntry.createFromDB(
+        maps[i]['datetime']!,
+        maps[i]['d1']!,
+        maps[i]['d2']!,
+        maps[i]['d3']!,
+      );
+    });
+    return returnList;
+  }
+
+  Future<List<SCD41SensorDataEntry>> getSCD41Entries(
+      {DateTime? start, DateTime? stop}) async {
+    final List<Map<String, dynamic>> maps;
+
+    // If no date limitations are provided, we fetch all entries.
+    if (start == null && stop == null) {
+      maps = await (await openedDatabase).query('scd41_output');
+    } else {
+      // The question marks are filled in with values from whereArgs
+      var where = '';
+      if (start != null) where += 'datetime >= ?';
+      if (start != null && stop != null) where += ' AND ';
+      if (stop != null) where += 'datetime <= ?';
+
+      var whereArgs = <String>[];
+      // We use UTC in the database
+      if (start != null) whereArgs.add(convertDateTimeToString(start));
+      if (stop != null) whereArgs.add(convertDateTimeToString(stop));
+
+      maps = await (await openedDatabase)
+          .query('scd41_output', where: where, whereArgs: whereArgs);
+    }
+
+    await closeDatabase();
+
+    var returnList = List.generate(maps.length, (i) {
+      return SCD41SensorDataEntry.createFromDB(
         maps[i]['datetime']!,
         maps[i]['d1']!,
         maps[i]['d2']!,
