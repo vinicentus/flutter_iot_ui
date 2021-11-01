@@ -3,5 +3,8 @@ abstract class GenericSensorDataEntry {
   // The timestamp param is the only thing every sensor data entry class will have in common.
   final DateTime timeStamp;
 
-  GenericSensorDataEntry.createFromDB(this.timeStamp);
+  // GenericSensorDataEntry(this.timeStamp);
+
+  GenericSensorDataEntry.createFromDB(String dateTime)
+      : this.timeStamp = DateTime.parse(dateTime);
 }

@@ -80,8 +80,8 @@ class SPS30SensorDataEntry extends GenericSensorDataEntry {
   get numberConcentrationPM10Subtracted =>
       this.numberConcentrationPM10 - this.numberConcentrationPM4_0;
 
-  SPS30SensorDataEntry(DateTime timeStamp, this._measurements)
-      : super.createFromDB(timeStamp);
+  // SPS30SensorDataEntry(DateTime timeStamp, this._measurements)
+  //     : super(timeStamp);
 
   SPS30SensorDataEntry.createFromDB(
     String dateTime,
@@ -96,5 +96,5 @@ class SPS30SensorDataEntry extends GenericSensorDataEntry {
     num d9,
     num d10,
   )   : this._measurements = [d1, d2, d3, d4, d5, d6, d7, d8, d9, d10],
-        super.createFromDB(DateTime.parse(dateTime));
+        super.createFromDB(dateTime);
 }

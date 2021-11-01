@@ -9,13 +9,13 @@ class SVM30SensorDataEntry extends GenericSensorDataEntry {
   /// tVOC (ppb)
   get totalVolatileOrganicCompounds => this._measurements[1];
 
-  SVM30SensorDataEntry(DateTime timeStamp, this._measurements)
-      : super.createFromDB(timeStamp);
+  // SVM30SensorDataEntry(DateTime timeStamp, this._measurements)
+  //     : super(timeStamp);
 
   SVM30SensorDataEntry.createFromDB(
     String dateTime,
     double co2,
     double tvoc,
   )   : this._measurements = [co2, tvoc],
-        super.createFromDB(DateTime.parse(dateTime));
+        super.createFromDB(dateTime);
 }
