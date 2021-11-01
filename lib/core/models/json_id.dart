@@ -2,7 +2,7 @@ import 'dart:convert';
 
 class JsonId {
   final String name;
-  final List<String> sensors;
+  final Set<String> sensors;
   final String uniqueId;
 
   JsonId(this.name, this.sensors, this.uniqueId);
@@ -11,7 +11,7 @@ class JsonId {
     var jsonId = json.decode(id);
     return JsonId(
       jsonId['name'],
-      List<String>.from(jsonId['sensors']),
+      Set<String>.from(jsonId['sensors']),
       jsonId['uniqueId'],
     );
   }
