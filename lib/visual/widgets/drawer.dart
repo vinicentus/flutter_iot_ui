@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/models/json_id.dart';
+import 'package:flutter_iot_ui/core/settings_constants.dart';
 import 'package:flutter_iot_ui/visual/pages/devices.dart';
 import 'package:flutter_iot_ui/visual/pages/pages.dart';
 import 'package:flutter_iot_ui/visual/pages/settings.dart';
@@ -32,33 +34,64 @@ class NavDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-        child: ListView(
-      children: [
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.account_circle),
-          title: Text('Users'),
-          routeName: UsersPage.route,
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.devices),
-          title: Text('Devices'),
-          routeName: DevicesPage.route,
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.settings),
-          title: Text('Settings'),
-          routeName: SettingsPage.route,
-        ),
+    // An empty list means that the device doesn't have any sensors connected or that the ID could not be correctly parsed
+    // TODO: handle that situation
+    var sensors = <String>[];
+    if (globalWeb3Client.selectedOracleId != null) {
+      try {
+        sensors = JsonId.fromString(globalWeb3Client.selectedOracleId!)
+            .sensors
+            .toList();
+      } catch (e) {
+        print('Drawer: Could not parse JsonId');
+      }
+    } else {
+      print('Drawer: Could not get selected Oracle');
+    }
+
+    var children = <Widget>[
+      _buildMenuItem(
+        context: context,
+        leading: Icon(Icons.account_circle),
+        title: Text('Users'),
+        routeName: UsersPage.route,
+      ),
+      _buildMenuItem(
+        context: context,
+        leading: Icon(Icons.devices),
+        title: Text('Devices'),
+        routeName: DevicesPage.route,
+      ),
+      _buildMenuItem(
+        context: context,
+        leading: Icon(Icons.settings),
+        title: Text('Settings'),
+        routeName: SettingsPage.route,
+      ),
+    ];
+
+    if (sensors.contains('svm30')) {
+      children.addAll([
         Divider(),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text('SVM30'),
+        ),
         _buildMenuItem(
           context: context,
           leading: Icon(Icons.airplay),
           title: Text('SVM30'),
           routeName: SVM30Page.route,
+        ),
+      ]);
+    }
+
+    if (sensors.contains('scd30')) {
+      children.addAll([
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text('SCD30'),
         ),
         _buildMenuItem(
           context: context,
@@ -78,6 +111,16 @@ class NavDrawer extends StatelessWidget {
           title: Text('Humidity'),
           routeName: HumidityPage.route,
         ),
+      ]);
+    }
+
+    if (sensors.contains('sps30')) {
+      children.addAll([
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text('SPS30'),
+        ),
         _buildMenuItem(
           context: context,
           leading: Icon(Icons.circle),
@@ -96,13 +139,40 @@ class NavDrawer extends StatelessWidget {
           title: Text('Typical Particle Size'),
           routeName: TypicalParticleSizePage.route,
         ),
+      ]);
+    }
+
+    if (sensors.contains('scd41')) {
+      children.addAll([
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text('SCD41'),
+        ),
         _buildMenuItem(
           context: context,
           leading: Icon(Icons.access_alarms),
           title: Text('CO2 SCD41'),
           routeName: CarbonDioxidePage2.route,
         ),
-      ],
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.thermostat),
+          title: Text('Temperature'),
+          routeName: TemperaturePage.route,
+        ),
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.water),
+          title: Text('Humidity'),
+          routeName: HumidityPage.route,
+        ),
+      ]);
+    }
+
+    return Drawer(
+        child: ListView(
+      children: children,
     ));
   }
 }
