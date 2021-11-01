@@ -97,19 +97,47 @@ class NavDrawer extends StatelessWidget {
           context: context,
           leading: Icon(Icons.air),
           title: Text('Carbon Dioxide'),
-          routeName: CarbonDioxidePage.route,
+          routeName: CarbonDioxidePage.route + '/scd30',
         ),
         _buildMenuItem(
           context: context,
           leading: Icon(Icons.thermostat),
           title: Text('Temperature'),
-          routeName: TemperaturePage.route,
+          routeName: TemperaturePage.route + '/scd30',
         ),
         _buildMenuItem(
           context: context,
           leading: Icon(Icons.water),
           title: Text('Humidity'),
-          routeName: HumidityPage.route,
+          routeName: HumidityPage.route + '/scd30',
+        ),
+      ]);
+    }
+
+    if (sensors.contains('scd41')) {
+      children.addAll([
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text('SCD41'),
+        ),
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.air),
+          title: Text('Carbon Dioxide'),
+          routeName: CarbonDioxidePage.route + '/scd41',
+        ),
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.thermostat),
+          title: Text('Temperature'),
+          routeName: TemperaturePage.route + '/scd41',
+        ),
+        _buildMenuItem(
+          context: context,
+          leading: Icon(Icons.water),
+          title: Text('Humidity'),
+          routeName: HumidityPage.route + '/scd41',
         ),
       ]);
     }
@@ -138,34 +166,6 @@ class NavDrawer extends StatelessWidget {
           leading: Icon(Icons.add_road),
           title: Text('Typical Particle Size'),
           routeName: TypicalParticleSizePage.route,
-        ),
-      ]);
-    }
-
-    if (sensors.contains('scd41')) {
-      children.addAll([
-        Divider(),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('SCD41'),
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.access_alarms),
-          title: Text('CO2 SCD41'),
-          routeName: CarbonDioxidePage2.route,
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.thermostat),
-          title: Text('Temperature'),
-          routeName: TemperaturePage.route,
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.water),
-          title: Text('Humidity'),
-          routeName: HumidityPage.route,
         ),
       ]);
     }
