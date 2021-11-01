@@ -35,16 +35,17 @@ abstract class DatabaseManager {
   /// Get all database entries for any subtype of GenericSensorDataEntry.
   /// Optionally provide a [start] and [stop] time,
   /// to get only the entries between those timestamps.
-  Future<List<GenericSensorDataEntry>>
-      getEntriesOfType<T extends GenericSensorDataEntry>(
-          {DateTime? start, DateTime? stop}) {
+  Future<List<T>> getEntriesOfType<T extends GenericSensorDataEntry>(
+      {DateTime? start, DateTime? stop}) {
     switch (T) {
       case SPS30SensorDataEntry:
-        return getSPS30Entries(start: start, stop: stop);
+        return getSPS30Entries(start: start, stop: stop) as Future<List<T>>;
       case SCD30SensorDataEntry:
-        return getSCD30Entries(start: start, stop: stop);
+        return getSCD30Entries(start: start, stop: stop) as Future<List<T>>;
+      case SCD41SensorDataEntry:
+        return getSCD41Entries(start: start, stop: stop) as Future<List<T>>;
       case SVM30SensorDataEntry:
-        return getSVM30Entries(start: start, stop: stop);
+        return getSVM30Entries(start: start, stop: stop) as Future<List<T>>;
       default:
         throw Exception(
             'Tried to get an unimplemented type of GenericSensorDataEntry.');

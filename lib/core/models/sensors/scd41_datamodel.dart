@@ -1,6 +1,6 @@
-class SCD41SensorDataEntry {
-  final DateTime timeStamp;
+import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
 
+class SCD41SensorDataEntry extends GenericSensorDataEntry {
   /// Carbon Dioxide (ppm)
   final int carbonDioxide;
 
@@ -11,12 +11,13 @@ class SCD41SensorDataEntry {
   final double humidity;
 
   SCD41SensorDataEntry(
-      this.timeStamp, this.carbonDioxide, this.temperature, this.humidity);
+      DateTime timeStamp, this.carbonDioxide, this.temperature, this.humidity)
+      : super.createFromDB(timeStamp);
 
   SCD41SensorDataEntry.createFromDB(
     String dateTime,
     this.carbonDioxide,
     this.temperature,
     this.humidity,
-  ) : this.timeStamp = DateTime.parse(dateTime);
+  ) : super.createFromDB(DateTime.parse(dateTime));
 }
