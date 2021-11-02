@@ -54,7 +54,9 @@ class MockDbManager extends DatabaseManager {
     return Future.value(_freshData()
         .map((entry) => SCD41SensorDataEntry.createFromDB(
               entry['datetime'] as String,
-              entry['d1'] as int,
+              // We stored it as a double in _data,
+              // now we have to convert
+              (entry['d1'] as double).toInt(),
               entry['d2'] as double,
               entry['d3'] as double,
             ))
