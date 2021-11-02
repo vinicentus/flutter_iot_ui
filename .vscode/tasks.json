@@ -74,5 +74,17 @@
 			"problemMatcher": [],
 			"label": "copy db to local"
 		},
+
+		{
+			"type": "shell",
+			"command": "scp",
+			"args": [
+				"-r",
+				"pi@193.167.36.29:/home/pi/git-repos/IoT-Microservice/app/oracle/sensor_data.db",
+				"C:\\Users\\langstvi\\OneDrive - Arcada\\Documents\\sensor_data.db"
+			],
+			"problemMatcher": [],
+			"label": "[NEW] copy db to local"
+		},
 	]
 }
