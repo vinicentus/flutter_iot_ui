@@ -130,7 +130,7 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
           showTitles: true,
           // TODO: show decimal values if the value range is small enough
           getTitles: (value) =>
-              '${value.toStringAsFixed(0)} ${this.widget.unit}',
+              '${value.toStringAsFixed(2)} ${this.widget.unit}',
           // interval: 1,
           margin: 10,
           reservedSize: 50,
