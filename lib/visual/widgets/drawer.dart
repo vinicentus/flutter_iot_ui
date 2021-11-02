@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/settings_constants.dart';
 import 'package:flutter_iot_ui/visual/pages/devices.dart';
-import 'package:flutter_iot_ui/visual/pages/pages.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/mass_concentration.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/number_concentration.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/scdxx_pages.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/typical_particle_size.dart';
 import 'package:flutter_iot_ui/visual/pages/settings.dart';
-import 'package:flutter_iot_ui/visual/pages/svm30_page.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/svm30_page.dart';
 import 'package:flutter_iot_ui/visual/pages/users.dart';
 
 class NavDrawer extends StatelessWidget {

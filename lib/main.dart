@@ -3,9 +3,12 @@ import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/visual/pages/devices.dart';
-import 'package:flutter_iot_ui/visual/pages/pages.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/mass_concentration.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/number_concentration.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/scdxx_pages.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/typical_particle_size.dart';
 import 'package:flutter_iot_ui/visual/pages/settings.dart';
-import 'package:flutter_iot_ui/visual/pages/svm30_page.dart';
+import 'package:flutter_iot_ui/visual/pages/graphs/svm30_page.dart';
 import 'package:flutter_iot_ui/visual/pages/users.dart';
 import 'package:provider/provider.dart';
 
