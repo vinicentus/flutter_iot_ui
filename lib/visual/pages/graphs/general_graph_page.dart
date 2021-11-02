@@ -117,12 +117,14 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
           showTitles: true,
           reservedSize: 20,
           margin: 10,
-          // An hour in milliseconds
-          interval: 3.6e6,
-          getTitles: (value) =>
-              DateTime.fromMillisecondsSinceEpoch(value.toInt())
-                  .hour
-                  .toString(),
+          // An hour in milliseconds / 2
+          interval: 3.6e6 / 2,
+          getTitles: (value) {
+            var time = DateTime.fromMillisecondsSinceEpoch(value.toInt())
+                // Show local time
+                .toLocal();
+            return '${time.hour}:${time.minute}';
+          },
         ),
         leftTitles: SideTitles(
           showTitles: true,
