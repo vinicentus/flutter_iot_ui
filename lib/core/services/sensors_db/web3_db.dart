@@ -49,7 +49,7 @@ class Web3Manager extends DatabaseManager {
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
     await _web3Client.init();
     await _web3Client.loadUser();
-    await _web3Client.loadOracles();
+    await _web3Client.loadOraclesForActiveUser();
 
     var taskAddress = await _web3Client.addTask(_createTaskString(
         // TODO: bad non-null assertions
@@ -61,19 +61,13 @@ class Web3Manager extends DatabaseManager {
       throw Exception('Got back invalid task address: $taskAddress');
     }
 
-    var taskCompletedEvent = _web3Client.taskManager.event('task_completed');
-
-    var event = _web3Client.ethClient
-        .events(FilterOptions.events(
-            contract: _web3Client.taskManager, event: taskCompletedEvent))
+    var event = _web3Client.taskManager
+        .task_completedEvents()
         // 10 retries
         .take(10)
         .firstWhere((event) {
-      // TODO: bad null check
-      var decoded =
-          taskCompletedEvent.decodeResults(event.topics!, event.data!);
       // Check that it is the right task that was completed!
-      return (decoded.first as EthereumAddress) == taskAddress;
+      return event.task == taskAddress;
     }, orElse: () {
       // TODO: add orelse that return custom error
       throw Exception('Failed to get back completed task');
@@ -81,15 +75,9 @@ class Web3Manager extends DatabaseManager {
 
     var awaitedEvent = await event;
 
-    // TODO: bad null check
-    var result = taskCompletedEvent.decodeResults(
-        awaitedEvent.topics!, awaitedEvent.data!);
-
-    List taskResult = convertFromBase64(result.last);
-
     // Example of valid task in list [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
     // This breaks the while loop
-    return taskResult;
+    return convertFromBase64(awaitedEvent.data);
   }
 
   /// Split interval into smaller chunks that are a maximum of 1 hour long

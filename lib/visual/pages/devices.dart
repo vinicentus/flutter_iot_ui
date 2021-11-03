@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/models/contracts/Oracle.g.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
@@ -21,27 +22,7 @@ class DevicesPageState extends State<DevicesPage> {
 
   _init() async {
     await web3.init();
-    return await web3.loadOracles();
-  }
-
-  // TODO: move into web3 file
-  Future<bool> _checkOracleActive(DeployedContract contract) async {
-    var result = await web3.ethClient.call(
-        contract: contract, function: contract.function('active'), params: []);
-    return result.first;
-  }
-
-  // TODO: move into web3 file
-  _toggleContractActiveStatus(DeployedContract contract) async {
-    await web3.ethClient.sendTransaction(
-      web3.privateKey,
-      Transaction.callContract(
-        contract: contract,
-        function: contract.function('toggle_active'),
-        parameters: [],
-      ),
-      chainId: web3.chainId,
-    );
+    return await web3.loadOraclesForActiveUser();
   }
 
   @override
@@ -67,7 +48,7 @@ class DevicesPageState extends State<DevicesPage> {
               return ListView.separated(
                   itemBuilder: (context, index) {
                     String id = devices.keys.elementAt(index);
-                    DeployedContract deviceAtIndex = devices[id];
+                    Oracle deviceAtIndex = devices[id]!;
 
                     JsonId? jsonId;
                     try {
@@ -83,7 +64,7 @@ class DevicesPageState extends State<DevicesPage> {
                           ? '${jsonId.name}  #${jsonId.uniqueId}  ${jsonId.sensors}'
                           : 'ID: $id'),
                       subtitle: FutureBuilder(
-                          future: _checkOracleActive(deviceAtIndex),
+                          future: deviceAtIndex.active(),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Text(
@@ -144,8 +125,8 @@ class DevicesPageState extends State<DevicesPage> {
                                         MaterialButton(
                                             child: Text('toggle'),
                                             onPressed: () {
-                                              _toggleContractActiveStatus(
-                                                  deviceAtIndex);
+                                              deviceAtIndex.toggle_active(
+                                                  credentials: web3.privateKey);
                                               setState(() {});
                                             })
                                       ],

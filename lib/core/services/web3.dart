@@ -1,5 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:flutter_iot_ui/core/models/contracts/Oracle.g.dart';
+import 'package:flutter_iot_ui/core/models/contracts/OracleManager.g.dart';
+import 'package:flutter_iot_ui/core/models/contracts/Task.g.dart';
+import 'package:flutter_iot_ui/core/models/contracts/TaskManager.g.dart';
+import 'package:flutter_iot_ui/core/models/contracts/TokenManager.g.dart';
+import 'package:flutter_iot_ui/core/models/contracts/User.g.dart';
+import 'package:flutter_iot_ui/core/models/contracts/UserManager.g.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -44,18 +51,14 @@ class Web3 {
 
   late Web3Client ethClient;
 
-  late DeployedContract userManager;
-  late DeployedContract oracleManager;
-  late DeployedContract taskManager;
-  late DeployedContract tokenManager;
+  late UserManager userManager;
+  late OracleManager oracleManager;
+  late TaskManager taskManager;
+  late TokenManager tokenManager;
 
-  late ContractAbi user;
-  late ContractAbi oracle;
-  late ContractAbi task;
-
-  late DeployedContract deployedUser;
-  late Map<String, DeployedContract> deployedOracles;
-  late DeployedContract deployedTask;
+  late User deployedUser;
+  late Map<String, Oracle> deployedOracles;
+  late Task deployedTask;
 
   /// This is the id of the currently selected device
   String? selectedOracleId;
@@ -65,63 +68,54 @@ class Web3 {
   EthereumAddress get publicAddress => privateKey.address;
   late int chainId;
 
-  // Gets the correct contract ABI and address from the json file containing info on all the deployed contracts
-  DeployedContract _getDeployedContract(String contractName, String data) {
+  EthereumAddress _getContractAddress(String contractName, String data) {
     var decoded = json.decode(data);
-    var abi = json.encode(decoded[contractName]['abi']);
     var address = decoded[contractName]['address'];
 
-    return DeployedContract(ContractAbi.fromJson(abi, contractName),
-        EthereumAddress.fromHex(address));
-  }
-
-  ContractAbi _getContractABI(String contractName, String data) {
-    var decoded = json.decode(data);
-    var abi = json.encode(decoded[contractName]['abi']);
-
-    return ContractAbi.fromJson(abi, contractName);
+    return EthereumAddress.fromHex(address);
   }
 
   Future<void> _loadContracts() async {
     String jsonData = await rootBundle.loadString('resources/ABI.json');
+    userManager = UserManager(
+      address: _getContractAddress('usermanager', jsonData),
+      client: ethClient,
+      chainId: chainId,
+    );
+    oracleManager = OracleManager(
+      address: _getContractAddress('oraclemanager', jsonData),
+      client: ethClient,
+      chainId: chainId,
+    );
+    taskManager = TaskManager(
+      address: _getContractAddress('taskmanager', jsonData),
+      client: ethClient,
+      chainId: chainId,
+    );
+    tokenManager = TokenManager(
+      address: _getContractAddress('tokenmanager', jsonData),
+      client: ethClient,
+      chainId: chainId,
+    );
 
-    userManager = _getDeployedContract('usermanager', jsonData);
-    oracleManager = _getDeployedContract('oraclemanager', jsonData);
-    taskManager = _getDeployedContract('taskmanager', jsonData);
-    tokenManager = _getDeployedContract('tokenmanager', jsonData);
-
-    // We can't load these as deployed contracts yet,
+    // We can't load the other contracts yet,
     // since we don't know what address they have been deployed to
     // before querying info from the manager contracts...
-    user = _getContractABI('user', jsonData);
-    oracle = _getContractABI('oracle', jsonData);
-    task = _getContractABI('task', jsonData);
   }
 
   Future<bool> checkUserExists() async {
     // Requires the address of the user that has been created...
-    var returnList = await ethClient.call(
-      contract: userManager,
-      function: userManager.function('exists'),
-      params: [publicAddress],
-    );
-
-    return returnList.first;
+    return userManager.exists(publicAddress);
   }
 
-  Future<DeployedContract> loadUser() async {
+  Future<User> loadUser() async {
+    // TODO: don't check this because the node checks it, as written in contract function, upon call
     bool exists = await checkUserExists();
 
     if (exists) {
-      var result = await ethClient.call(
-        contract: userManager,
-        function: userManager.function('fetch'),
-        params: [publicAddress],
-      );
-      // The returned value should be the address of the User contract
-      var address = result.first;
-      // We save the the deployed user contract, but also return it
-      deployedUser = DeployedContract(user, address);
+      var address = await userManager.fetch(publicAddress);
+      deployedUser =
+          User(address: address, client: ethClient, chainId: chainId);
       return deployedUser;
     } else {
       throw Exception('The user you are trying to load does not exist.');
@@ -134,40 +128,24 @@ class Web3 {
     if (exists) {
       throw Exception('The user you are trying to create already exists!');
     } else {
-      await ethClient.sendTransaction(
-          privateKey,
-          Transaction.callContract(
-            contract: userManager,
-            function: userManager.function('create'),
-            parameters: [],
-          ),
-          chainId: chainId);
+      //TODO: check that this works, because we don't provide the chainID
+      await userManager.create(credentials: privateKey);
     }
   }
 
   /// The uniqe id is sotred in the oracle(device) contract.
   /// The price is the minimum required price in ERC-20 tokens required to run a task on this device.
   Future<void> createOracle(String uniqueId, int price) async {
-    await ethClient.sendTransaction(
-      privateKey,
-      Transaction.callContract(
-        contract: oracleManager,
-        function: oracleManager.function('create'),
-        parameters: [uniqueId, BigInt.from(price)],
-      ),
-      chainId: chainId,
-    );
+    //TODO: check that this works, because we don't provide the chainID
+    await oracleManager.create(uniqueId, BigInt.from(price),
+        credentials: privateKey);
   }
 
-  /// This needs to be called after loadUser, because it fetches the first oracle registered to the current user
-  Future<Map<String, DeployedContract>> loadOracles() async {
+  /// This needs to be called after loadUser, because it fetches all oracles registered to the current user
+  Future<Map<String, Oracle>> loadOraclesForActiveUser() async {
     // Fetch all the oracles (devices) that are registered to our user
-    var result = await ethClient.call(
-      contract: oracleManager,
-      function: oracleManager.function('fetch_collection'),
-      params: [publicAddress],
-    );
-    var oracleIds = result.first;
+
+    var oracleIds = await oracleManager.fetch_collection(publicAddress);
 
     // This is the id String of the oracle (device).
     // We select the last availabe one as our main device that we will display data from.
@@ -176,16 +154,12 @@ class Web3 {
     // If there is already as selected device, won won't override it.
     if (selectedOracleId == null) selectedOracleId = oracleIds.last;
 
-    deployedOracles = Map<String, DeployedContract>();
+    deployedOracles = Map<String, Oracle>();
 
     for (String id in oracleIds) {
-      var result = await ethClient.call(
-        contract: oracleManager,
-        function: oracleManager.function('fetch_oracle'),
-        params: [id],
-      );
-      var address = result.first;
-      deployedOracles[id] = DeployedContract(oracle, address);
+      var address = await oracleManager.fetch_oracle(id);
+      deployedOracles[id] =
+          Oracle(address: address, client: ethClient, chainId: chainId);
     }
 
     return deployedOracles;
@@ -194,29 +168,24 @@ class Web3 {
   /// Adds a task and returns the address of that created task.
   /// This needs to be processed on-chain, and that takes a while.
   Future<EthereumAddress> addTask(String params) async {
-    var taskCreatedEvent = taskManager.event('task_created');
+    if (selectedOracleId == null) {
+      throw Exception(
+          'Can\'t create a task without selecting a oracle on which to create it first.');
+    }
+
+    var taskCreatedEvent = taskManager.self.event('task_created');
 
     var theOneEvent = ethClient
         .events(FilterOptions.events(
-            contract: taskManager, event: taskCreatedEvent))
+            contract: taskManager.self, event: taskCreatedEvent))
         // TODO: don't use first, add retry possibility
         .first;
 
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that
-    var txHash = ethClient.sendTransaction(
-        privateKey,
-        Transaction.callContract(
-          contract: taskManager,
-          function: taskManager.function('create'),
-          parameters: [
-            selectedOracleId,
-            BigInt.from(2),
-            BigInt.from(2),
-            params,
-          ],
-        ),
-        chainId: chainId);
+    var txHash = taskManager.create(
+        selectedOracleId!, BigInt.from(2), BigInt.from(2), params,
+        credentials: privateKey);
 
     var awaitedEvent = await theOneEvent;
     await txHash;
@@ -229,38 +198,12 @@ class Web3 {
         .decodeResults(awaitedEvent.topics!, awaitedEvent.data!)
         .first;
 
-    var result3 = await ethClient.call(
-        contract: taskManager,
-        function: taskManager.function('fetch_task'),
-        params: [taskAddress]);
-    return result3.first;
+    var result3 = await taskManager.fetch_task(taskAddress);
+    return result3;
   }
 
   // Used to retire COMPLETED tasks
   retireTask() {
     throw UnimplementedError();
-  }
-
-  /// Call a function of a contract that modifies blockchain state,
-  /// using the already loaded parameters (private key and chainID).
-  Future<String> callWriteFunction(
-      DeployedContract contract, String function, List<dynamic> parameters) {
-    return ethClient.sendTransaction(
-      privateKey,
-      Transaction.callContract(
-        contract: contract,
-        function: contract.function(function),
-        parameters: [],
-      ),
-      chainId: chainId,
-    );
-  }
-
-  Future<List<dynamic>> callReadFunction(
-      DeployedContract contract, String function, List<dynamic> parameters) {
-    return ethClient.call(
-        contract: contract,
-        function: contract.function(function),
-        params: parameters);
   }
 }
