@@ -1,5 +1,7 @@
 // Generated code, do not modify. Run `build_runner build` to re-generate!
 // @dart=2.12
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:web3dart/web3dart.dart' as _i1;
 
 final _contractAbi = _i1.ContractAbi.fromJson(
