@@ -240,4 +240,27 @@ class Web3 {
   retireTask() {
     throw UnimplementedError();
   }
+
+  /// Call a function of a contract that modifies blockchain state,
+  /// using the already loaded parameters (private key and chainID).
+  Future<String> callWriteFunction(
+      DeployedContract contract, String function, List<dynamic> parameters) {
+    return ethClient.sendTransaction(
+      privateKey,
+      Transaction.callContract(
+        contract: contract,
+        function: contract.function(function),
+        parameters: [],
+      ),
+      chainId: chainId,
+    );
+  }
+
+  Future<List<dynamic>> callReadFunction(
+      DeployedContract contract, String function, List<dynamic> parameters) {
+    return ethClient.call(
+        contract: contract,
+        function: contract.function(function),
+        params: parameters);
+  }
 }
