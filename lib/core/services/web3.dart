@@ -128,7 +128,6 @@ class Web3 {
     if (exists) {
       throw Exception('The user you are trying to create already exists!');
     } else {
-      //TODO: check that this works, because we don't provide the chainID
       await userManager.create(credentials: privateKey);
     }
   }
@@ -136,7 +135,6 @@ class Web3 {
   /// The uniqe id is sotred in the oracle(device) contract.
   /// The price is the minimum required price in ERC-20 tokens required to run a task on this device.
   Future<void> createOracle(String uniqueId, int price) async {
-    //TODO: check that this works, because we don't provide the chainID
     await oracleManager.create(uniqueId, BigInt.from(price),
         credentials: privateKey);
   }
