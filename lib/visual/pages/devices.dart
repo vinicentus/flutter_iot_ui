@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
-import 'package:flutter_iot_ui/core/settings_constants.dart';
+import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
+import 'package:get_it/get_it.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:flutter_iot_ui/visual/widgets/device_config_creator.dart';
 
@@ -16,28 +17,30 @@ class DevicesPage extends StatefulWidget {
 }
 
 class DevicesPageState extends State<DevicesPage> {
+  var web3 = GetIt.instance<Web3>();
+
   _init() async {
-    await globalWeb3Client.init();
-    return await globalWeb3Client.loadOracles();
+    await web3.init();
+    return await web3.loadOracles();
   }
 
   // TODO: move into web3 file
   Future<bool> _checkOracleActive(DeployedContract contract) async {
-    var result = await globalWeb3Client.ethClient.call(
+    var result = await web3.ethClient.call(
         contract: contract, function: contract.function('active'), params: []);
     return result.first;
   }
 
   // TODO: move into web3 file
   _toggleContractActiveStatus(DeployedContract contract) async {
-    await globalWeb3Client.ethClient.sendTransaction(
-      globalWeb3Client.privateKey,
+    await web3.ethClient.sendTransaction(
+      web3.privateKey,
       Transaction.callContract(
         contract: contract,
         function: contract.function('toggle_active'),
         parameters: [],
       ),
-      chainId: globalWeb3Client.chainId,
+      chainId: web3.chainId,
     );
   }
 
@@ -93,10 +96,10 @@ class DevicesPageState extends State<DevicesPage> {
                       value: id,
                       onChanged: (String? changedId) {
                         setState(() {
-                          globalWeb3Client.selectedOracleId = changedId!;
+                          web3.selectedOracleId = changedId!;
                         });
                       },
-                      groupValue: globalWeb3Client.selectedOracleId,
+                      groupValue: web3.selectedOracleId,
                       secondary: OutlinedButton(
                         onPressed: () {
                           showDialog(

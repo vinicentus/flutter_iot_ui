@@ -1,15 +1,17 @@
 import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
-import 'package:flutter_iot_ui/core/settings_constants.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
+import 'package:get_it/get_it.dart';
 
 Stream<List<T>> dbUpdatesOfType<T extends GenericSensorDataEntry>(
     {required Duration refreshDuration,
     required Duration graphTimeWindow}) async* {
+  var dbManager = GetIt.instance<DatabaseManager>();
+
   // Init
   var today = DateTime.now();
   var yesterday = today.subtract(graphTimeWindow);
   // Just creating an instance of this singleton class will initialize it and the database.
-  var db =
-      await globalDBManager.getEntriesOfType<T>(start: yesterday, stop: today);
+  var db = await dbManager.getEntriesOfType<T>(start: yesterday, stop: today);
   yield db;
 
   // This stream will be automatically cancelled by dart when no longer needed.
@@ -17,10 +19,8 @@ Stream<List<T>> dbUpdatesOfType<T extends GenericSensorDataEntry>(
   while (true) {
     today = DateTime.now();
     yesterday = today.subtract(graphTimeWindow);
-    db = await Future.delayed(
-        refreshDuration,
-        () =>
-            globalDBManager.getEntriesOfType<T>(start: yesterday, stop: today));
+    db = await Future.delayed(refreshDuration,
+        () => dbManager.getEntriesOfType<T>(start: yesterday, stop: today));
     yield db;
   }
 }

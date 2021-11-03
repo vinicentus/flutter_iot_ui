@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
+import 'package:flutter_iot_ui/core/services/global_deps.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/visual/pages/devices.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/mass_concentration.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_iot_ui/visual/pages/users.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
+  registerGetItServices();
   runApp(MyApp());
 }
 

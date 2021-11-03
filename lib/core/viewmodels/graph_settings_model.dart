@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_iot_ui/core/settings_constants.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
+import 'package:get_it/get_it.dart';
 
 class GraphSettingsModel extends ChangeNotifier {
   /// Wether to subtract the smaller size values from the bigger ones,
@@ -42,7 +43,8 @@ class GraphSettingsModel extends ChangeNotifier {
   Duration graphTimeWindow = Duration(hours: 3);
 
   bool usesWeb3() {
-    switch (globalDBManager.runtimeType) {
+    var db = GetIt.instance<DatabaseManager>();
+    switch (db.runtimeType) {
       case Web3Manager:
         return true;
       default:
@@ -51,10 +53,12 @@ class GraphSettingsModel extends ChangeNotifier {
   }
 
   setUsesWeb3(bool value) {
+    var getIt = GetIt.instance;
+    // Overwrite previous registration
     if (value)
-      globalDBManager = Web3Manager();
+      getIt.registerSingleton<DatabaseManager>(Web3Manager());
     else
-      globalDBManager = SQLiteDatabaseManager();
+      getIt.registerSingleton<DatabaseManager>(SQLiteDatabaseManager());
     notifyListeners();
   }
 }

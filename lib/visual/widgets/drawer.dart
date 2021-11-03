@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
-import 'package:flutter_iot_ui/core/settings_constants.dart';
+import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:flutter_iot_ui/visual/pages/devices.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/mass_concentration.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/number_concentration.dart';
@@ -9,10 +9,13 @@ import 'package:flutter_iot_ui/visual/pages/graphs/typical_particle_size.dart';
 import 'package:flutter_iot_ui/visual/pages/settings.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/svm30_page.dart';
 import 'package:flutter_iot_ui/visual/pages/users.dart';
+import 'package:get_it/get_it.dart';
 
 class NavDrawer extends StatelessWidget {
   final String selectedRoute;
   NavDrawer(this.selectedRoute, {Key? key}) : super(key: key);
+
+  var web3 = GetIt.instance<Web3>();
 
   Widget _buildMenuItem(
       {required BuildContext context,
@@ -40,11 +43,9 @@ class NavDrawer extends StatelessWidget {
     // An empty list means that the device doesn't have any sensors connected or that the ID could not be correctly parsed
     // TODO: handle that situation
     var sensors = <String>[];
-    if (globalWeb3Client.selectedOracleId != null) {
+    if (web3.selectedOracleId != null) {
       try {
-        sensors = JsonId.fromString(globalWeb3Client.selectedOracleId!)
-            .sensors
-            .toList();
+        sensors = JsonId.fromString(web3.selectedOracleId!).sensors.toList();
       } catch (e) {
         print('Drawer: Could not parse JsonId');
       }

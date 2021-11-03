@@ -6,14 +6,14 @@ import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
-import 'package:flutter_iot_ui/core/settings_constants.dart';
+import 'package:get_it/get_it.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
 import 'sqlite_db.dart' show convertDateTimeToString;
 
 class Web3Manager extends DatabaseManager {
   // Use the globally exposed web3client, not a separate one.
-  Web3 _web3Client = globalWeb3Client;
+  Web3 _web3Client = GetIt.instance<Web3>();
 
   String _createTaskString(
       {required String startTime,
