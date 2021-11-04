@@ -67,6 +67,7 @@ class Web3 {
   late EthPrivateKey privateKey;
   // This should also be the address of the user that created the user contract
   EthereumAddress get publicAddress => privateKey.address;
+
   late int chainId;
 
   EthereumAddress _getContractAddress(String contractName, String data) {
