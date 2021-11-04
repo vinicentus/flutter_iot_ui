@@ -166,7 +166,7 @@ class FormWidget extends StatelessWidget {
                         try {
                           var jsonData = _formKey.currentState!.value;
                           web3.createOracle(
-                              JsonId(
+                              JsonId.fromValues(
                                       jsonData['device_name'],
                                       jsonData['device_types'],
                                       jsonData['unique_id'])

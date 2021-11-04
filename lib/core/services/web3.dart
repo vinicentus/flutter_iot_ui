@@ -7,6 +7,7 @@ import 'package:flutter_iot_ui/core/models/contracts/TaskManager.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/TokenManager.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/User.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/UserManager.g.dart';
+import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -57,11 +58,11 @@ class Web3 {
   late TokenManager tokenManager;
 
   late User deployedUser;
-  late Map<String, Oracle> deployedOracles;
+  late Map<JsonId, Oracle> deployedOracles;
   late Task deployedTask;
 
   /// This is the id of the currently selected device
-  String? selectedOracleId;
+  JsonId? selectedOracleId;
 
   late EthPrivateKey privateKey;
   // This should also be the address of the user that created the user contract
@@ -140,7 +141,7 @@ class Web3 {
   }
 
   /// This needs to be called after loadUser, because it fetches all oracles registered to the current user
-  Future<Map<String, Oracle>> loadOraclesForActiveUser() async {
+  Future<Map<JsonId, Oracle>> loadOraclesForActiveUser() async {
     // Fetch all the oracles (devices) that are registered to our user
 
     var oracleIds = await oracleManager.fetch_collection(publicAddress);
@@ -150,13 +151,14 @@ class Web3 {
     // That should be the last created oracle.
     // In the future, there might not be a single selected device
     // If there is already as selected device, won won't override it.
-    if (selectedOracleId == null) selectedOracleId = oracleIds.last;
+    if (selectedOracleId == null) selectedOracleId = JsonId(oracleIds.last);
 
-    deployedOracles = Map<String, Oracle>();
+    deployedOracles = Map<JsonId, Oracle>();
 
     for (String id in oracleIds) {
       var address = await oracleManager.fetch_oracle(id);
-      deployedOracles[id] =
+      var jsonId = JsonId(id);
+      deployedOracles[jsonId] =
           Oracle(address: address, client: ethClient, chainId: chainId);
     }
 
@@ -182,7 +184,7 @@ class Web3 {
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that
     var txHash = taskManager.create(
-        selectedOracleId!, BigInt.from(2), BigInt.from(2), params,
+        selectedOracleId!.id, BigInt.from(2), BigInt.from(2), params,
         credentials: privateKey);
 
     var awaitedEvent = await theOneEvent;

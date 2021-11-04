@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:flutter_iot_ui/visual/pages/devices.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/mass_concentration.dart';
@@ -15,7 +14,7 @@ class NavDrawer extends StatelessWidget {
   final String selectedRoute;
   NavDrawer(this.selectedRoute, {Key? key}) : super(key: key);
 
-  var web3 = GetIt.instance<Web3>();
+  final web3 = GetIt.instance<Web3>();
 
   Widget _buildMenuItem(
       {required BuildContext context,
@@ -44,11 +43,7 @@ class NavDrawer extends StatelessWidget {
     // TODO: handle that situation
     var sensors = <String>[];
     if (web3.selectedOracleId != null) {
-      try {
-        sensors = JsonId.fromString(web3.selectedOracleId!).sensors.toList();
-      } catch (e) {
-        print('Drawer: Could not parse JsonId');
-      }
+      sensors = web3.selectedOracleId!.sensors;
     } else {
       print('Drawer: Could not get selected Oracle');
     }

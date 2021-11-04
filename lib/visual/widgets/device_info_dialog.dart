@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/viewmodels/device_info_dialog_model.dart';
+import 'package:provider/provider.dart';
+
+class DeviceInfoDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var model = context.watch<DeviceInfoDialogModel>();
+
+    //TODO: init model in a better place
+    model.init();
+
+    return model.dataState == state.loading
+        ? Dialog(
+            child: CircularProgressIndicator(),
+          )
+        : SimpleDialog(
+            title: Text(model.jsonId.toString()),
+            children: [
+              Wrap(
+                children: [
+                  SimpleDialogOption(
+                    child: Text('Name: ${model.jsonId.name}'),
+                  ),
+                  SimpleDialogOption(
+                    child: Text('Supported Sensors: ${model.jsonId.sensors}'),
+                  ),
+                  SimpleDialogOption(
+                    child: Text('Unique ID: ${model.jsonId.uniqueId}'),
+                  ),
+                ],
+              ),
+              Divider(),
+              SimpleDialogOption(
+                child: Text('Address of the Owner: ${model.owner}'),
+              ),
+              SimpleDialogOption(
+                child: Text(
+                    'Address of registered Task Manager contract: ${model.manager}'),
+              ),
+              SimpleDialogOption(
+                child: Text('Price per task: ${model.price}'),
+              ),
+              SimpleDialogOption(
+                child: Text('Task Backlog: ${model.backlog}'),
+              ),
+              SimpleDialogOption(
+                child: Row(
+                  children: [
+                    Text('Active Status: ${model.active}'),
+                    Spacer(),
+                    Flexible(
+                      flex: 28,
+                      child: OutlinedButton(
+                          child: Text('toggle'), onPressed: model.toggleActive),
+                    ),
+                  ],
+                ),
+              ),
+              SimpleDialogOption(
+                child: Text(
+                    'Discoverable Status (obsolete): ${model.discoverable}'),
+              ),
+              SimpleDialogOption(
+                child: Text(
+                    'Discovery configuratio (obsolete): "${model.configuration}"'),
+              ),
+              SimpleDialogOption(
+                child:
+                    Text('Number of complete assignments: ${model.completed}'),
+              ),
+              // TODO: add actions that call functions to change values
+            ],
+          );
+  }
+}
