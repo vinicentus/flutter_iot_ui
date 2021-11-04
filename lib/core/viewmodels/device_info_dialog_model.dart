@@ -38,6 +38,7 @@ class DeviceInfoDialogModel extends ChangeNotifier {
 
   toggleActive() async {
     await _device.toggle_active(credentials: _web3.privateKey);
+    notifyListeners();
   }
 
   late List<EthereumAddress> _backlog;
