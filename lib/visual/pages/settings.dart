@@ -47,7 +47,7 @@ class SettingsPage extends StatelessWidget {
                     'Set the number of samples per moving average point on the graph.'),
                 subtitle: Text(
                     '''We currently get samples roughly every minute, so a value of 10 would mean that the averages are calculated over 10 minute periods.
-      Higher values mean smoother lines on the graph.'''),
+Higher values mean smoother lines on the graph.'''),
               ),
               Slider(
                 value: model.movingAverageSamples.toDouble(),
