@@ -3,6 +3,7 @@ import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/global_deps.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
+import 'package:flutter_iot_ui/core/viewmodels/token_manager_model.dart';
 import 'package:flutter_iot_ui/visual/pages/devices.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/mass_concentration.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/number_concentration.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_iot_ui/visual/pages/graphs/scdxx_pages.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/typical_particle_size.dart';
 import 'package:flutter_iot_ui/visual/pages/settings.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/svm30_page.dart';
+import 'package:flutter_iot_ui/visual/pages/token_manager.dart';
 import 'package:flutter_iot_ui/visual/pages/users.dart';
 import 'package:provider/provider.dart';
 
@@ -22,8 +24,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => GraphSettingsModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GraphSettingsModel()),
+        ChangeNotifierProvider(create: (_) => TokenManagerPageModel()),
+      ],
       child: MaterialApp(
         title: 'Flutter Graph Demo',
         theme: ThemeData(
@@ -51,6 +56,7 @@ class MyApp extends StatelessWidget {
           TypicalParticleSizePage.route: (context) => TypicalParticleSizePage(),
           SettingsPage.route: (context) => SettingsPage(),
           UsersPage.route: (context) => UsersPage(),
+          TokenManagerPage.route: (context) => TokenManagerPage(),
           DevicesPage.route: (context) => DevicesPage(),
         },
       ),

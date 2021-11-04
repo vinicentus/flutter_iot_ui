@@ -7,6 +7,7 @@ import 'package:flutter_iot_ui/visual/pages/graphs/scdxx_pages.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/typical_particle_size.dart';
 import 'package:flutter_iot_ui/visual/pages/settings.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/svm30_page.dart';
+import 'package:flutter_iot_ui/visual/pages/token_manager.dart';
 import 'package:flutter_iot_ui/visual/pages/users.dart';
 import 'package:get_it/get_it.dart';
 
@@ -60,6 +61,12 @@ class NavDrawer extends StatelessWidget {
         leading: Icon(Icons.devices),
         title: Text('Devices'),
         routeName: DevicesPage.route,
+      ),
+      _buildMenuItem(
+        context: context,
+        leading: Icon(Icons.attach_money),
+        title: Text('Tokens'),
+        routeName: TokenManagerPage.route,
       ),
       _buildMenuItem(
         context: context,
