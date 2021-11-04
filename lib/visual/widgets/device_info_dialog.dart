@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/util/view_state_enum.dart';
 import 'package:flutter_iot_ui/core/viewmodels/device_info_dialog_model.dart';
 import 'package:provider/provider.dart';
 
-class DeviceInfoDialog extends StatelessWidget {
+class DeviceInfoDialog extends StatefulWidget {
+  @override
+  State<DeviceInfoDialog> createState() => _DeviceInfoDialogState();
+}
+
+class _DeviceInfoDialogState extends State<DeviceInfoDialog> {
+  @override
+  initState() {
+    super.initState();
+    var model = context.read<DeviceInfoDialogModel>();
+    model.init();
+  }
+
   @override
   Widget build(BuildContext context) {
     var model = context.watch<DeviceInfoDialogModel>();
 
-    //TODO: init model in a better place
-    model.init();
-
-    return model.dataState == state.loading
+    return model.dataState == ViewState.loading
         ? Dialog(
             child: CircularProgressIndicator(),
           )
