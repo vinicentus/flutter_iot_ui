@@ -2,17 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_iot_ui/core/models/contracts/Oracle.g.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
+import 'package:flutter_iot_ui/core/util/view_state_enum.dart';
 import 'package:get_it/get_it.dart';
 import 'package:web3dart/web3dart.dart';
-
-enum state { loading, ready }
 
 class DeviceInfoDialogModel extends ChangeNotifier {
   final Oracle _device;
   late final JsonId _jsonId;
   var _web3 = GetIt.instance<Web3>();
 
-  state dataState = state.loading;
+  ViewState dataState = ViewState.loading;
 
   DeviceInfoDialogModel(this._device, JsonId id) : _jsonId = id;
 
@@ -26,7 +25,7 @@ class DeviceInfoDialogModel extends ChangeNotifier {
     _configuration = await _device.config();
     _completed = (await _device.completed()).toInt();
 
-    dataState = state.ready;
+    dataState = ViewState.ready;
     notifyListeners();
   }
 
