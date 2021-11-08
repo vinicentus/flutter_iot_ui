@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
+import 'package:flutter_iot_ui/core/util/view_state_enum.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:get_it/get_it.dart';
+import 'package:web3dart/web3dart.dart';
 
 class UsersPage extends StatefulWidget {
   static const String route = '/UsersPage';
@@ -17,6 +19,10 @@ class UsersPageState extends State<UsersPage> {
   var web3 = GetIt.instance<Web3>();
   bool _userExists = false;
 
+  late num _balance;
+
+  ViewState _viewState = ViewState.loading;
+
   @override
   initState() {
     super.initState();
@@ -28,8 +34,14 @@ class UsersPageState extends State<UsersPage> {
     await web3.init();
     var exists = await web3.checkUserExists();
     await web3.loadUser();
+
+    var balance = (await web3.ethClient.getBalance(web3.publicAddress))
+        .getValueInUnit(EtherUnit.ether);
+
     setState(() {
       _userExists = exists;
+      _balance = balance;
+      _viewState = ViewState.ready;
     });
   }
 
@@ -41,30 +53,41 @@ class UsersPageState extends State<UsersPage> {
       ),
       drawer: NavDrawer(UsersPage.route),
       body: Center(
-        child: _userExists
-            ? Card(
-                child:
-                    Text('The currently loaded user is ${web3.publicAddress}'),
-              )
-            : Card(
-                child: Column(
+        child: _viewState == ViewState.loading
+            ? CircularProgressIndicator()
+            : Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                      'There is no user registered to the current ethereum address (${web3.publicAddress}). Do you want to create one?'),
-                  MaterialButton(
-                    child: Text('Create user for the current account?'),
-                    onPressed: () async {
-                      await web3.createUser();
-                      var exists = await web3.checkUserExists();
-                      await web3.loadUser();
-                      setState(() {
-                        _userExists = exists;
-                      });
-                    },
+                  _userExists
+                      ? Card(
+                          child: Text(
+                              'The currently loaded user is ${web3.publicAddress.hexEip55}'),
+                        )
+                      : Card(
+                          child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                                'There is no user registered to the current ethereum address (${web3.publicAddress.hexEip55}). Do you want to create one?'),
+                            MaterialButton(
+                              child:
+                                  Text('Create user for the current account?'),
+                              onPressed: () async {
+                                await web3.createUser();
+                                var exists = await web3.checkUserExists();
+                                await web3.loadUser();
+                                setState(() {
+                                  _userExists = exists;
+                                });
+                              },
+                            ),
+                          ],
+                        )),
+                  Card(
+                    child: Text('current account balance in ETH: $_balance'),
                   ),
                 ],
-              )),
+              ),
       ),
     );
   }
