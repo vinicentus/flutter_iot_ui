@@ -115,7 +115,7 @@ class FormWidget extends StatelessWidget {
                   decoration: InputDecoration(
                       labelText: 'Public Ethereum Address of the User'),
                   enabled: false,
-                  initialValue: web3.publicAddress.hex,
+                  initialValue: web3.publicAddress.hexEip55,
                 ),
                 FormBuilderTextField(
                   name: 'private_key',
