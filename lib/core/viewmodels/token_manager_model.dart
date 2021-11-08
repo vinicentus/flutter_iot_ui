@@ -7,18 +7,21 @@ import 'package:web3dart/web3dart.dart';
 
 class TokenManagerPageModel extends ChangeNotifier {
   final _web3 = GetIt.instance<Web3>();
-  late final TokenManager _manager;
+  late TokenManager _manager;
 
   ViewState viewState = ViewState.ready;
 
   // TODO: figure out a way to list all users and their respective balances
   // late Map<EthereumAddress, int> tokensPerUser;
   late String symbol;
+
+  /// The unit is wei.
   late int price;
   late int capacity;
   late int sold;
-  late final bool initialized;
-  late final EthereumAddress taskManager;
+  late bool initialized;
+  late EthereumAddress taskManager;
+  late num currentUserBalance;
 
   init() async {
     viewState = ViewState.loading;
@@ -33,13 +36,29 @@ class TokenManagerPageModel extends ChangeNotifier {
     sold = (await _manager.sold()).toInt();
     initialized = await _manager.initialized();
     taskManager = await _manager.task_manager();
+
+    currentUserBalance = await _web3.getUserBalance(unit: EtherUnit.wei);
+
     viewState = ViewState.ready;
     notifyListeners();
   }
 
-  purchaseTokens(int amount) async {
-    await _manager.purchase(BigInt.from(amount), credentials: _web3.privateKey);
-    // TODO: maybe fetch new values here?
+  purchaseTokens(String amount) async {
+    // We don't expect to get a value that can not be parsed, since we validate the form input...
+    var bigInt = BigInt.parse(amount);
+    await _web3.purchaseTokens(bigInt);
+
+    // Fetch new values
+    init();
     notifyListeners();
+  }
+
+  /// Returns the price in wei.
+  String calculatePurchasePrice(String amount) {
+    return ((int.tryParse(amount) ?? 0) * price).toString();
+  }
+
+  String computeMaxPurchaseableAMount() {
+    return (currentUserBalance / price).floor().toString();
   }
 }

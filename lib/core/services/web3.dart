@@ -207,4 +207,25 @@ class Web3 {
   retireTask() {
     throw UnimplementedError();
   }
+
+  /// Returns the eth balance for the current user.
+  /// Value is in ether by default,
+  /// but you can specifya different unit such as gwei or wei.
+  Future<num> getUserBalance({EtherUnit unit = EtherUnit.ether}) async {
+    return (await ethClient.getBalance(publicAddress)).getValueInUnit(unit);
+  }
+
+  /// Special method needed because we need to include the required eth in the transaction
+  Future<void> purchaseTokens(BigInt amount) async {
+    var price = await tokenManager.price();
+    var requiredTokens = price * amount;
+
+    await tokenManager.purchase(
+      amount,
+      credentials: privateKey,
+      transaction: Transaction(
+        value: EtherAmount.fromUnitAndValue(EtherUnit.wei, requiredTokens),
+      ),
+    );
+  }
 }

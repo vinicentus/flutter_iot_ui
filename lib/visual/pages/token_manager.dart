@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/util/view_state_enum.dart';
 import 'package:flutter_iot_ui/core/viewmodels/token_manager_model.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
+import 'package:flutter_iot_ui/visual/widgets/purchase_tokens_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TokenManagerPage extends StatefulWidget {
@@ -30,24 +32,29 @@ class _TokenManagerPageState extends State<TokenManagerPage> {
         ),
         drawer: NavDrawer(TokenManagerPage.route),
         body: Center(
-          child: Card(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('token symbol/name: ${model.symbol}'),
-                Text('price per token: ${model.price}'),
-                Text('capacity: ${model.capacity}'),
-                Text('number of tokens sold: ${model.sold}'),
-                Text('initialized: ${model.initialized}'),
-                Text('task manager: ${model.taskManager.hexEip55}'),
-                ElevatedButton(
-                  // TODO: popup dialog
-                  onPressed: () => null,
-                  child: Text('Purchase tokens'),
-                )
-              ],
-            ),
-          ),
+          child: model.viewState == ViewState.loading
+              ? CircularProgressIndicator()
+              : Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('token symbol/name: ${model.symbol}'),
+                      Text('price per token (in wei): ${model.price}'),
+                      Text('capacity: ${model.capacity}'),
+                      Text('number of tokens sold: ${model.sold}'),
+                      Text('initialized: ${model.initialized}'),
+                      Text('task manager: ${model.taskManager.hexEip55}'),
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => PurchaseTokensDialog());
+                        },
+                        child: Text('Purchase tokens (for yourself)'),
+                      )
+                    ],
+                  ),
+                ),
         ));
   }
 }

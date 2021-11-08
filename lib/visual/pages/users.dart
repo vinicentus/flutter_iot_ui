@@ -3,7 +3,6 @@ import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:flutter_iot_ui/core/util/view_state_enum.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:get_it/get_it.dart';
-import 'package:web3dart/web3dart.dart';
 
 class UsersPage extends StatefulWidget {
   static const String route = '/UsersPage';
@@ -35,8 +34,7 @@ class UsersPageState extends State<UsersPage> {
     var exists = await web3.checkUserExists();
     await web3.loadUser();
 
-    var balance = (await web3.ethClient.getBalance(web3.publicAddress))
-        .getValueInUnit(EtherUnit.ether);
+    var balance = await web3.getUserBalance();
 
     setState(() {
       _userExists = exists;
