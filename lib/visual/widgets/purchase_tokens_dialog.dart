@@ -30,6 +30,8 @@ class _PurchaseTokensDialogState extends State<PurchaseTokensDialog> {
 
   @override
   Widget build(BuildContext context) {
+    // We expect the model to be fully initialized already,
+    // since it is used by the page that opens this dialog.
     var model = context.watch<TokenManagerPageModel>();
 
     return AlertDialog(
