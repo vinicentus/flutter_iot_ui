@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
@@ -7,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 /// Singleton SQLite Databse Manager, implementing the common functions from [DatabaseManager].
 /// This class just provides convenient functiosn for common database operations.
@@ -19,19 +19,20 @@ class SQLiteDatabaseManager extends DatabaseManager {
   }
 
   SQLiteDatabaseManager._internal() {
-    if (Platform.isLinux) {
+    if (UniversalPlatform.isDesktop) {
       // Initialize FFI
       sqfliteFfiInit();
       // Change the default factory
       databaseFactory = databaseFactoryFfi;
-    } else if (Platform.isWindows && (kDebugMode || kProfileMode)) {
-      print(
-          'running on Windows in ${kDebugMode ? 'debug' : 'profile'} mode, using local db');
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
-      dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
+
+      // Use different db path if debugging
+      if (kDebugMode || kProfileMode) {
+        print(
+            'running in ${kDebugMode ? 'debug' : 'profile'} mode, using local db');
+        dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
+      }
     } else {
-      throw Exception('Running on platform that does not support SQLite ...');
+      throw Exception('Running on a platform that does not support SQLite ...');
     }
   }
 

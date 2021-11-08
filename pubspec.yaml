@@ -40,6 +40,7 @@ dependencies:
   form_builder_validators: ^7.0.0
   file_picker: ^4.1.6
   get_it: ^7.2.0
+  universal_platform: ^1.0.0+1
 
 dev_dependencies:
   build_runner: ^2.1.4
