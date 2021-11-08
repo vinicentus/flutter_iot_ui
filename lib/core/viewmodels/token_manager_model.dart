@@ -36,4 +36,10 @@ class TokenManagerPageModel extends ChangeNotifier {
     viewState = ViewState.ready;
     notifyListeners();
   }
+
+  purchaseTokens(int amount) async {
+    await _manager.purchase(BigInt.from(amount), credentials: _web3.privateKey);
+    // TODO: maybe fetch new values here?
+    notifyListeners();
+  }
 }

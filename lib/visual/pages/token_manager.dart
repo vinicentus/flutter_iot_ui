@@ -29,8 +29,25 @@ class _TokenManagerPageState extends State<TokenManagerPage> {
           title: Text(title),
         ),
         drawer: NavDrawer(TokenManagerPage.route),
-        body: Column(
-          children: [Text('template')],
+        body: Center(
+          child: Card(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('token symbol/name: ${model.symbol}'),
+                Text('price per token: ${model.price}'),
+                Text('capacity: ${model.capacity}'),
+                Text('number of tokens sold: ${model.sold}'),
+                Text('initialized: ${model.initialized}'),
+                Text('task manager: ${model.taskManager.hexEip55}'),
+                ElevatedButton(
+                  // TODO: popup dialog
+                  onPressed: () => null,
+                  child: Text('Purchase tokens'),
+                )
+              ],
+            ),
+          ),
         ));
   }
 }
