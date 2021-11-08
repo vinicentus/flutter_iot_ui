@@ -44,13 +44,13 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
   Future<void> closeDatabase() async => (await openedDatabase).close();
 
-  Future<List<SPS30SensorDataEntry>> getSPS30Entries(
-      {DateTime? start, DateTime? stop}) async {
+  Future<List<Map<String, dynamic>>> _getDBEntries(
+      String tableName, DateTime? start, DateTime? stop) async {
     final List<Map<String, dynamic>> maps;
 
     // If no date limitations are provided, we fetch all entries.
     if (start == null && stop == null) {
-      maps = await (await openedDatabase).query('sps30_output');
+      maps = await (await openedDatabase).query(tableName);
     } else {
       // The question marks are filled in with values from whereArgs
       var where = '';
@@ -64,10 +64,17 @@ class SQLiteDatabaseManager extends DatabaseManager {
       if (stop != null) whereArgs.add(convertDateTimeToString(stop));
 
       maps = await (await openedDatabase)
-          .query('sps30_output', where: where, whereArgs: whereArgs);
+          .query(tableName, where: where, whereArgs: whereArgs);
     }
 
     await closeDatabase();
+
+    return maps;
+  }
+
+  Future<List<SPS30SensorDataEntry>> getSPS30Entries(
+      {DateTime? start, DateTime? stop}) async {
+    var maps = await _getDBEntries('sps30_output', start, stop);
 
     var returnList = List.generate(maps.length, (i) {
       return SPS30SensorDataEntry.createFromDB(
@@ -89,28 +96,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
       {DateTime? start, DateTime? stop}) async {
-    final List<Map<String, dynamic>> maps;
-
-    // If no date limitations are provided, we fetch all entries.
-    if (start == null && stop == null) {
-      maps = await (await openedDatabase).query('scd30_output');
-    } else {
-      // The question marks are filled in with values from whereArgs
-      var where = '';
-      if (start != null) where += 'datetime >= ?';
-      if (start != null && stop != null) where += ' AND ';
-      if (stop != null) where += 'datetime <= ?';
-
-      var whereArgs = <String>[];
-      // We use UTC in the database
-      if (start != null) whereArgs.add(convertDateTimeToString(start));
-      if (stop != null) whereArgs.add(convertDateTimeToString(stop));
-
-      maps = await (await openedDatabase)
-          .query('scd30_output', where: where, whereArgs: whereArgs);
-    }
-
-    await closeDatabase();
+    var maps = await _getDBEntries('scd30_output', start, stop);
 
     var returnList = List.generate(maps.length, (i) {
       return SCD30SensorDataEntry.createFromDB(
@@ -125,28 +111,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
       {DateTime? start, DateTime? stop}) async {
-    final List<Map<String, dynamic>> maps;
-
-    // If no date limitations are provided, we fetch all entries.
-    if (start == null && stop == null) {
-      maps = await (await openedDatabase).query('scd41_output');
-    } else {
-      // The question marks are filled in with values from whereArgs
-      var where = '';
-      if (start != null) where += 'datetime >= ?';
-      if (start != null && stop != null) where += ' AND ';
-      if (stop != null) where += 'datetime <= ?';
-
-      var whereArgs = <String>[];
-      // We use UTC in the database
-      if (start != null) whereArgs.add(convertDateTimeToString(start));
-      if (stop != null) whereArgs.add(convertDateTimeToString(stop));
-
-      maps = await (await openedDatabase)
-          .query('scd41_output', where: where, whereArgs: whereArgs);
-    }
-
-    await closeDatabase();
+    var maps = await _getDBEntries('scd41_output', start, stop);
 
     var returnList = List.generate(maps.length, (i) {
       return SCD41SensorDataEntry.createFromDB(
@@ -161,28 +126,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
 
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop}) async {
-    final List<Map<String, dynamic>> maps;
-
-    // If no date limitations are provided, we fetch all entries.
-    if (start == null && stop == null) {
-      maps = await (await openedDatabase).query('svm30_output');
-    } else {
-      // The question marks are filled in with values from whereArgs
-      var where = '';
-      if (start != null) where += 'datetime >= ?';
-      if (start != null && stop != null) where += ' AND ';
-      if (stop != null) where += 'datetime <= ?';
-
-      var whereArgs = <String>[];
-      // We use UTC in the database
-      if (start != null) whereArgs.add(convertDateTimeToString(start));
-      if (stop != null) whereArgs.add(convertDateTimeToString(stop));
-
-      maps = await (await openedDatabase)
-          .query('svm30_output', where: where, whereArgs: whereArgs);
-    }
-
-    await closeDatabase();
+    var maps = await _getDBEntries('svm30_output', start, stop);
 
     var returnList = List.generate(maps.length, (i) {
       return SVM30SensorDataEntry.createFromDB(
