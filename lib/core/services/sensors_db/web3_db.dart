@@ -61,6 +61,7 @@ class Web3Manager extends DatabaseManager {
       throw Exception('Got back invalid task address: $taskAddress');
     }
 
+    // TODO: add timeout
     var event = _web3Client.taskManager
         .task_completedEvents()
         // 10 retries

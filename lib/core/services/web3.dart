@@ -176,11 +176,8 @@ class Web3 {
 
     var taskCreatedEvent = taskManager.self.event('task_created');
 
-    var theOneEvent = ethClient
-        .events(FilterOptions.events(
-            contract: taskManager.self, event: taskCreatedEvent))
-        // TODO: don't use first, add retry possibility
-        .first;
+    var eventStream = ethClient.events(FilterOptions.events(
+        contract: taskManager.self, event: taskCreatedEvent));
 
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that
@@ -188,19 +185,23 @@ class Web3 {
         selectedOracleId!.id, BigInt.from(2), BigInt.from(2), params,
         credentials: privateKey);
 
-    var awaitedEvent = await theOneEvent;
-    await txHash;
+    // The stream is canceled when the loop exits
+    // TODO: add timeout / retry count
+    await for (FilterEvent event in eventStream) {
+      if (event.transactionHash == await txHash) {
+        print('yay');
+        var taskAddress =
+            taskCreatedEvent.decodeResults(event.topics!, event.data!).first;
 
-    if (awaitedEvent.transactionHash != await txHash) {
-      throw Exception('Got the incorrect event');
+        return await taskManager.fetch_task(taskAddress);
+      } else {
+        print('nope');
+      }
     }
 
-    var taskAddress = taskCreatedEvent
-        .decodeResults(awaitedEvent.topics!, awaitedEvent.data!)
-        .first;
-
-    var result3 = await taskManager.fetch_task(taskAddress);
-    return result3;
+    // If the loop was exited without returning
+    // (i.e if the stream was canceled or completed or something similar)
+    throw Exception('Could not get the correct event');
   }
 
   // Used to retire COMPLETED tasks
