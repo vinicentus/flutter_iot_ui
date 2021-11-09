@@ -123,17 +123,9 @@ class Web3 {
   }
 
   Future<User> loadUser() async {
-    // TODO: don't check this because the node checks it, as written in contract function, upon call
-    bool exists = await checkUserExists();
-
-    if (exists) {
-      var address = await userManager.fetch(publicAddress);
-      deployedUser =
-          User(address: address, client: ethClient, chainId: chainId);
-      return deployedUser;
-    } else {
-      throw Exception('The user you are trying to load does not exist.');
-    }
+    var address = await userManager.fetch(publicAddress);
+    deployedUser = User(address: address, client: ethClient, chainId: chainId);
+    return deployedUser;
   }
 
   // Creates a user registered to the ethereum address used for the transaction

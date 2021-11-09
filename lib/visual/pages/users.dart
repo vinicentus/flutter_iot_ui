@@ -32,7 +32,9 @@ class UsersPageState extends State<UsersPage> {
   void _initUser() async {
     await web3.init();
     var exists = await web3.checkUserExists();
-    await web3.loadUser();
+    if (exists) {
+      await web3.loadUser();
+    }
 
     var balance = await web3.getUserBalance();
 
@@ -67,7 +69,7 @@ class UsersPageState extends State<UsersPage> {
                           children: [
                             Text(
                                 'There is no user registered to the current ethereum address (${web3.publicAddress.hexEip55}). Do you want to create one?'),
-                            MaterialButton(
+                            ElevatedButton(
                               child:
                                   Text('Create user for the current account?'),
                               onPressed: () async {
