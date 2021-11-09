@@ -82,6 +82,7 @@ class Web3 {
     String jsonData =
         await rootBundle.loadString('lib/core/models/contracts/$contractName');
     var decoded = json.decode(jsonData);
+    // TODO
     // print(decoded);
     print(decoded['networks']);
     var address = decoded['networks'][chainId.toString()]['address'];
@@ -161,13 +162,13 @@ class Web3 {
 
     if (selectedOracleId == null && oracleIds.isNotEmpty) {
       selectedOracleId = JsonId(oracleIds.last);
-    } else {
-      for (String id in oracleIds) {
-        var address = await oracleManager.fetch_oracle(id);
-        var jsonId = JsonId(id);
-        deployedOracles[jsonId] =
-            Oracle(address: address, client: ethClient, chainId: chainId);
-      }
+    }
+
+    for (String id in oracleIds) {
+      var address = await oracleManager.fetch_oracle(id);
+      var jsonId = JsonId(id);
+      deployedOracles[jsonId] =
+          Oracle(address: address, client: ethClient, chainId: chainId);
     }
 
     return deployedOracles;
