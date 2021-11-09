@@ -165,7 +165,7 @@ class FormWidget extends StatelessWidget {
                         // Also create the device contact
                         try {
                           var jsonData = _formKey.currentState!.value;
-                          web3.createOracle(
+                          await web3.createOracle(
                               JsonId.fromValues(
                                       jsonData['device_name'],
                                       jsonData['device_types'],
