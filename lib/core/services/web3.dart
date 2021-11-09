@@ -70,32 +70,44 @@ class Web3 {
 
   late int chainId;
 
-  EthereumAddress _getContractAddress(String contractName, String data) {
-    var decoded = json.decode(data);
-    var address = decoded[contractName]['address'];
+  // "networks": {
+  //   "11865": {
+  //     "events": {},
+  //     "links": {},
+  //     "address": "0x8059A32A4cfC22431F428926F85a10C8eB69c6f4",
+  //     "transactionHash": "0xc06c50f867cd380daff71201348fb0ad9da3323e86946709770c2d4563ff9a78"
+  //   }
+  // },
+  Future<EthereumAddress> _getContractAddress(String contractName) async {
+    String jsonData =
+        await rootBundle.loadString('lib/core/models/contracts/$contractName');
+    var decoded = json.decode(jsonData);
+    // print(decoded);
+    print(decoded['networks']);
+    var address = decoded['networks'][chainId.toString()]['address'];
+    // var abi = decoded['abi'];
 
     return EthereumAddress.fromHex(address);
   }
 
   Future<void> _loadContracts() async {
-    String jsonData = await rootBundle.loadString('resources/ABI.json');
     userManager = UserManager(
-      address: _getContractAddress('usermanager', jsonData),
+      address: await _getContractAddress('UserManager.abi.json'),
       client: ethClient,
       chainId: chainId,
     );
     oracleManager = OracleManager(
-      address: _getContractAddress('oraclemanager', jsonData),
+      address: await _getContractAddress('OracleManager.abi.json'),
       client: ethClient,
       chainId: chainId,
     );
     taskManager = TaskManager(
-      address: _getContractAddress('taskmanager', jsonData),
+      address: await _getContractAddress('TaskManager.abi.json'),
       client: ethClient,
       chainId: chainId,
     );
     tokenManager = TokenManager(
-      address: _getContractAddress('tokenmanager', jsonData),
+      address: await _getContractAddress('TokenManager.abi.json'),
       client: ethClient,
       chainId: chainId,
     );

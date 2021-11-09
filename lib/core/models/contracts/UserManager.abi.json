@@ -12,7 +12,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -25,7 +26,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -44,7 +46,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -63,7 +66,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -102,7 +106,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"create\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"exists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"fetch\",\"outputs\":[{\"internalType\":\"contract User\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_task_manager\",\"type\":\"address\"}],\"name\":\"init\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initialized\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"task_manager\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"users\",\"outputs\":[{\"internalType\":\"contract User\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/user_manager.sol\":\"UserManager\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/user.sol\":{\"keccak256\":\"0x62ba86f9ac6d041d4a3eb0e7c4209de8f796b8010fa05218f64bcc6fbc3060c9\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://79169b69e11f1676f9fc84979b97dd532f51c04a9f42a6fbaa8809e95bc550f6\",\"dweb:/ipfs/QmPCbshuJZ5r1Gsc5YM9oTXvaxb2UBdnp9oRMdTvcH8GNK\"]},\"project:/contracts/user_manager.sol\":{\"keccak256\":\"0xae65937e246342dc9e39767cb52a700ec4f348004c7ad84a82713c4bed0946ab\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://ea6e1dc5b2804412d9d329f29d87647c9d72b56ddc4ef6d664dbbefb35addea5\",\"dweb:/ipfs/QmXUseYgEv495pvketb2CcWGoBJzq4j7THRNpihuvEC5WW\"]}},\"version\":1}",
@@ -2643,9 +2648,17 @@
     "name": "solc",
     "version": "0.7.6+commit.7338295f.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "11865": {
+      "events": {},
+      "links": {},
+      "address": "0x9f13f58ff36413F56354B5D8a8c069e5f9465f6B",
+      "transactionHash": "0xe677d81c63c9725fe30e2014595ebf55cf2c2f0ed82013d211b4db45764d0256"
+    }
+  },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-11-03T11:25:00.511Z",
+  "updatedAt": "2021-11-09T10:21:59.709Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},
