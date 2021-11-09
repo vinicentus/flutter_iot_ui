@@ -47,58 +47,62 @@ class DevicesPageState extends State<DevicesPage> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var devices = snapshot.data as Map<JsonId, Oracle>;
-              return ListView.separated(
-                  itemBuilder: (context, index) {
-                    JsonId jsonId = devices.keys.elementAt(index);
-                    Oracle deviceAtIndex = devices[jsonId]!;
+              if (devices.isEmpty) {
+                return Center(child: Text('no devices'));
+              } else {
+                return ListView.separated(
+                    itemBuilder: (context, index) {
+                      JsonId jsonId = devices.keys.elementAt(index);
+                      Oracle deviceAtIndex = devices[jsonId]!;
 
-                    return RadioListTile(
-                      // Use the ID of the oracle as stored in the oracle manager,
-                      // instead of the oracle address.
-                      title: Text(jsonId.isValidJson
-                          ? '${jsonId.name}  #${jsonId.uniqueId}  ${jsonId.sensors}'
-                          : 'ID: ${jsonId.id}'),
-                      subtitle: FutureBuilder(
-                          future: deviceAtIndex.active(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return Text(
-                                  'active: ${snapshot.data.toString()}');
-                            } else {
-                              return Text('loading status...');
-                            }
-                          }),
-                      // Selected if selected in Web3Manager is the same as this device
-                      value: jsonId,
-                      onChanged: (JsonId? changedId) {
-                        setState(() {
-                          web3.selectedOracleId = changedId!;
-                        });
-                      },
-                      groupValue: web3.selectedOracleId,
-                      secondary: OutlinedButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              // TODO: use CangeNotifierProxyProvider !
-                              return ChangeNotifierProvider<
-                                      DeviceInfoDialogModel>(
-                                  create: (context) => DeviceInfoDialogModel(
-                                      deviceAtIndex, jsonId),
-                                  builder: (context, child) =>
-                                      DeviceInfoDialog());
-                            },
-                          );
+                      return RadioListTile(
+                        // Use the ID of the oracle as stored in the oracle manager,
+                        // instead of the oracle address.
+                        title: Text(jsonId.isValidJson
+                            ? '${jsonId.name}  #${jsonId.uniqueId}  ${jsonId.sensors}'
+                            : 'ID: ${jsonId.id}'),
+                        subtitle: FutureBuilder(
+                            future: deviceAtIndex.active(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Text(
+                                    'active: ${snapshot.data.toString()}');
+                              } else {
+                                return CircularProgressIndicator();
+                              }
+                            }),
+                        // Selected if selected in Web3Manager is the same as this device
+                        value: jsonId,
+                        onChanged: (JsonId? changedId) {
+                          setState(() {
+                            web3.selectedOracleId = changedId!;
+                          });
                         },
-                        child: Text('more info'),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) => Divider(),
-                  itemCount: devices.length);
+                        groupValue: web3.selectedOracleId,
+                        secondary: OutlinedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                // TODO: use CangeNotifierProxyProvider !
+                                return ChangeNotifierProvider<
+                                        DeviceInfoDialogModel>(
+                                    create: (context) => DeviceInfoDialogModel(
+                                        deviceAtIndex, jsonId),
+                                    builder: (context, child) =>
+                                        DeviceInfoDialog());
+                              },
+                            );
+                          },
+                          child: Text('more info'),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) => Divider(),
+                    itemCount: devices.length);
+              }
             } else {
-              return Text('loading');
+              return Center(child: CircularProgressIndicator());
             }
           }),
     );

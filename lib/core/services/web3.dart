@@ -156,15 +156,18 @@ class Web3 {
     // That should be the last created oracle.
     // In the future, there might not be a single selected device
     // If there is already as selected device, won won't override it.
-    if (selectedOracleId == null) selectedOracleId = JsonId(oracleIds.last);
 
     deployedOracles = Map<JsonId, Oracle>();
 
-    for (String id in oracleIds) {
-      var address = await oracleManager.fetch_oracle(id);
-      var jsonId = JsonId(id);
-      deployedOracles[jsonId] =
-          Oracle(address: address, client: ethClient, chainId: chainId);
+    if (selectedOracleId == null && oracleIds.isNotEmpty) {
+      selectedOracleId = JsonId(oracleIds.last);
+    } else {
+      for (String id in oracleIds) {
+        var address = await oracleManager.fetch_oracle(id);
+        var jsonId = JsonId(id);
+        deployedOracles[jsonId] =
+            Oracle(address: address, client: ethClient, chainId: chainId);
+      }
     }
 
     return deployedOracles;
