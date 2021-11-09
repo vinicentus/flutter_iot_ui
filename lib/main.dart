@@ -13,6 +13,7 @@ import 'package:flutter_iot_ui/visual/pages/settings.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/svm30_page.dart';
 import 'package:flutter_iot_ui/visual/pages/token_manager.dart';
 import 'package:flutter_iot_ui/visual/pages/users.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -59,6 +60,10 @@ class MyApp extends StatelessWidget {
           TokenManagerPage.route: (context) => TokenManagerPage(),
           DevicesPage.route: (context) => DevicesPage(),
         },
+        localizationsDelegates: [
+          // TODO: remove! seems to be required due to a bug in form_builder_validators (7.1.0)
+          FormBuilderLocalizations.delegate,
+        ],
       ),
     );
   }
