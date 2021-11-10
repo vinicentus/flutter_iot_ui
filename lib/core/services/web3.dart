@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_iot_ui/core/models/contracts/Oracle.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/OracleManager.g.dart';
-import 'package:flutter_iot_ui/core/models/contracts/Task.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/TaskManager.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/TokenManager.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/User.g.dart';
@@ -117,12 +116,9 @@ class Web3 {
   late final TaskManager taskManager;
   late final TokenManager tokenManager;
 
-  // These should not be marked late since we don't know when, or if they will be initialized.
-  User? deployedUser;
-  Map<JsonId, Oracle> deployedOracles = Map<JsonId, Oracle>();
-  Task? deployedTask;
-
   /// The id of the currently selected device.
+  /// There are numerous cases where this will be null,
+  /// such as when no user is loaded, or when there are no oracles for that user.
   JsonId? selectedOracleId;
 
   Future<bool> checkUserExists() async {
@@ -131,8 +127,7 @@ class Web3 {
 
   Future<User> loadUser() async {
     var address = await userManager.fetch(publicAddress);
-    deployedUser = User(address: address, client: ethClient, chainId: chainId);
-    return deployedUser!;
+    return User(address: address, client: ethClient, chainId: chainId);
   }
 
   // Creates a user registered to the ethereum address used for the transaction
@@ -167,6 +162,8 @@ class Web3 {
     if (selectedOracleId == null && oracleIds.isNotEmpty) {
       selectedOracleId = JsonId(oracleIds.last);
     }
+
+    var deployedOracles = Map<JsonId, Oracle>();
 
     for (String id in oracleIds) {
       var address = await oracleManager.fetch_oracle(id);
@@ -214,11 +211,6 @@ class Web3 {
     // If the loop was exited without returning
     // (i.e if the stream was canceled or completed or something similar)
     throw Exception('Could not get the correct event');
-  }
-
-  // Used to retire COMPLETED tasks
-  retireTask() {
-    throw UnimplementedError();
   }
 
   /// Returns the eth balance for the current user.
