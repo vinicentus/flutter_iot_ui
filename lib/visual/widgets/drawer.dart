@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
+import 'package:flutter_iot_ui/core/util/view_state_enum.dart';
 import 'package:flutter_iot_ui/visual/pages/devices.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/mass_concentration.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/number_concentration.dart';
@@ -24,12 +25,15 @@ class _NavDrawerState extends State<NavDrawer> {
 
   var _sensors = <String>[];
 
+  var viewState = ViewState.loading;
+
   @override
   initState() {
     super.initState();
 
     if (_web3.selectedOracleId != null) {
       _sensors = _web3.selectedOracleId!.sensors;
+      viewState = ViewState.ready;
     } else {
       // This will complete sometime in the future and call setState
       _asyncLoadSensors();
@@ -41,6 +45,7 @@ class _NavDrawerState extends State<NavDrawer> {
       await _web3.loadOraclesForActiveUser();
       setState(() {
         _sensors = _web3.selectedOracleId!.sensors;
+        viewState = ViewState.ready;
       });
     }
   }
@@ -95,6 +100,9 @@ class _NavDrawerState extends State<NavDrawer> {
       ),
     ];
 
+    if (viewState == ViewState.loading) {
+      children.add(Center(child: CircularProgressIndicator()));
+    }
     if (_sensors.contains('svm30')) {
       children.addAll([
         Divider(),
