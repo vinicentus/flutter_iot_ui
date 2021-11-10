@@ -91,9 +91,6 @@ class Web3 {
     String jsonData =
         await rootBundle.loadString('lib/core/models/contracts/$contractName');
     var decoded = json.decode(jsonData);
-    // TODO
-    // print(decoded);
-    print(decoded['networks']);
     var address = decoded['networks'][chainId.toString()]['address'];
     // var abi = decoded['abi'];
 
