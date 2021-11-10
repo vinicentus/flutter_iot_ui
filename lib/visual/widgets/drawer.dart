@@ -11,18 +11,46 @@ import 'package:flutter_iot_ui/visual/pages/token_manager.dart';
 import 'package:flutter_iot_ui/visual/pages/users.dart';
 import 'package:get_it/get_it.dart';
 
-class NavDrawer extends StatelessWidget {
+class NavDrawer extends StatefulWidget {
   final String selectedRoute;
   NavDrawer(this.selectedRoute, {Key? key}) : super(key: key);
 
-  final web3 = GetIt.instance<Web3>();
+  @override
+  State<NavDrawer> createState() => _NavDrawerState();
+}
+
+class _NavDrawerState extends State<NavDrawer> {
+  final _web3 = GetIt.instance<Web3>();
+
+  var _sensors = <String>[];
+
+  @override
+  initState() {
+    super.initState();
+
+    if (_web3.selectedOracleId != null) {
+      _sensors = _web3.selectedOracleId!.sensors;
+    } else {
+      // This will complete sometime in the future and call setState
+      _asyncLoadSensors();
+    }
+  }
+
+  _asyncLoadSensors() async {
+    if (await _web3.checkUserExists()) {
+      await _web3.loadOraclesForActiveUser();
+      setState(() {
+        _sensors = _web3.selectedOracleId!.sensors;
+      });
+    }
+  }
 
   Widget _buildMenuItem(
       {required BuildContext context,
       required Widget leading,
       required Widget title,
       required String routeName}) {
-    var isSelected = routeName == selectedRoute;
+    var isSelected = routeName == widget.selectedRoute;
 
     return ListTile(
       leading: leading,
@@ -40,15 +68,6 @@ class NavDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // An empty list means that the device doesn't have any sensors connected or that the ID could not be correctly parsed
-    // TODO: handle that situation
-    var sensors = <String>[];
-    if (web3.selectedOracleId != null) {
-      sensors = web3.selectedOracleId!.sensors;
-    } else {
-      print('Drawer: Could not get selected Oracle');
-    }
-
     var children = <Widget>[
       _buildMenuItem(
         context: context,
@@ -76,7 +95,7 @@ class NavDrawer extends StatelessWidget {
       ),
     ];
 
-    if (sensors.contains('svm30')) {
+    if (_sensors.contains('svm30')) {
       children.addAll([
         Divider(),
         Padding(
@@ -92,7 +111,7 @@ class NavDrawer extends StatelessWidget {
       ]);
     }
 
-    if (sensors.contains('scd30')) {
+    if (_sensors.contains('scd30')) {
       children.addAll([
         Divider(),
         Padding(
@@ -120,7 +139,7 @@ class NavDrawer extends StatelessWidget {
       ]);
     }
 
-    if (sensors.contains('scd41')) {
+    if (_sensors.contains('scd41')) {
       children.addAll([
         Divider(),
         Padding(
@@ -148,7 +167,7 @@ class NavDrawer extends StatelessWidget {
       ]);
     }
 
-    if (sensors.contains('sps30')) {
+    if (_sensors.contains('sps30')) {
       children.addAll([
         Divider(),
         Padding(
