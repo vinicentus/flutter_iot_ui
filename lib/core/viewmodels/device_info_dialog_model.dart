@@ -37,6 +37,7 @@ class DeviceInfoDialogModel extends ChangeNotifier {
 
   toggleActive() async {
     await _device.toggle_active(credentials: _web3.privateKey);
+    _active = await _device.active();
     notifyListeners();
   }
 

@@ -25,35 +25,33 @@ class _DeviceInfoDialogState extends State<DeviceInfoDialog> {
             child: CircularProgressIndicator(),
           )
         : SimpleDialog(
-            title: Text(model.jsonId.toString()),
+            title: Wrap(
+              children: [
+                SimpleDialogOption(
+                  child: Text('Name: ${model.jsonId.name}'),
+                ),
+                SimpleDialogOption(
+                  child: Text('Supported Sensors: ${model.jsonId.sensors}'),
+                ),
+                SimpleDialogOption(
+                  child: Text('Unique ID: ${model.jsonId.uniqueId}'),
+                ),
+              ],
+            ),
             children: [
-              Wrap(
-                children: [
-                  SimpleDialogOption(
-                    child: Text('Name: ${model.jsonId.name}'),
-                  ),
-                  SimpleDialogOption(
-                    child: Text('Supported Sensors: ${model.jsonId.sensors}'),
-                  ),
-                  SimpleDialogOption(
-                    child: Text('Unique ID: ${model.jsonId.uniqueId}'),
-                  ),
-                ],
-              ),
+              SimpleDialogOption(child: Text('ID: ${model.jsonId}')),
               Divider(),
               SimpleDialogOption(
-                child: Text('Address of the Owner: ${model.owner}'),
+                child: Text('Address of the Owner: ${model.owner.hexEip55}'),
               ),
               SimpleDialogOption(
                 child: Text(
-                    'Address of registered Task Manager contract: ${model.manager}'),
+                    'Address of registered Task Manager contract: ${model.manager.hexEip55}'),
               ),
               SimpleDialogOption(
                 child: Text('Price per task: ${model.price}'),
               ),
-              SimpleDialogOption(
-                child: Text('Task Backlog: ${model.backlog}'),
-              ),
+
               SimpleDialogOption(
                 child: Row(
                   children: [
@@ -78,6 +76,9 @@ class _DeviceInfoDialogState extends State<DeviceInfoDialog> {
               SimpleDialogOption(
                 child:
                     Text('Number of complete assignments: ${model.completed}'),
+              ),
+              SimpleDialogOption(
+                child: Text('Task Backlog: ${model.backlog}'),
               ),
               // TODO: add actions that call functions to change values
             ],
