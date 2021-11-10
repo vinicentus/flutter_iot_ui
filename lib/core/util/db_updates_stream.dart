@@ -18,6 +18,8 @@ Stream<List<T>> dbUpdatesOfType<T extends GenericSensorDataEntry>(
 
     print('dbUpdates loop $today');
 
+    // If this stream is canceled, the stream completes next time we land here
+    // TODO: don't evaluate right hand before returning if stream is canceled
     yield await dbManager.getEntriesOfType<T>(start: yesterday, stop: today);
     await Future.delayed(refreshDuration);
   }
