@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
-import 'package:flutter_iot_ui/visual/widgets/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +14,6 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        actions: [AppbarTrailingInfo()],
       ),
       drawer: NavDrawer(SettingsPage.route),
       body: ListView(
