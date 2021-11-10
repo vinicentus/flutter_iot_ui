@@ -23,7 +23,6 @@ class DevicesPageState extends State<DevicesPage> {
   var web3 = GetIt.instance<Web3>();
 
   _init() async {
-    await web3.init();
     return await web3.loadOraclesForActiveUser();
   }
 

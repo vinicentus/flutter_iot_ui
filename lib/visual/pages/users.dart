@@ -30,7 +30,6 @@ class UsersPageState extends State<UsersPage> {
   }
 
   void _initUser() async {
-    await web3.init();
     var exists = await web3.checkUserExists();
     if (exists) {
       await web3.loadUser();

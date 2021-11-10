@@ -9,6 +9,7 @@ import 'package:flutter_iot_ui/visual/pages/graphs/mass_concentration.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/number_concentration.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/scdxx_pages.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/typical_particle_size.dart';
+import 'package:flutter_iot_ui/visual/pages/initial_loading_page.dart';
 import 'package:flutter_iot_ui/visual/pages/settings.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/svm30_page.dart';
 import 'package:flutter_iot_ui/visual/pages/token_manager.dart';
@@ -36,9 +37,12 @@ class MyApp extends StatelessWidget {
           // This is the theme of your application.
           primarySwatch: Colors.blue,
         ),
-        initialRoute: SettingsPage.route,
+        initialRoute: InitialLoadingPage.route,
         // TODO: clean up
         routes: {
+          InitialLoadingPage.route: (context) =>
+              // This is where we define the next route after the loading screen
+              InitialLoadingPage(nextRoute: SettingsPage.route),
           SVM30Page.route: (context) => SVM30Page(),
           CarbonDioxidePage.route + '/scd30': (context) =>
               CarbonDioxidePage<SCD30SensorDataEntry>(),

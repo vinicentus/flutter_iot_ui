@@ -26,8 +26,6 @@ class TokenManagerPageModel extends ChangeNotifier {
   init() async {
     viewState = ViewState.loading;
 
-    // Make sure web3 is initialized and then fetch the tokenManager
-    await _web3.init();
     _manager = _web3.tokenManager;
 
     symbol = await _manager.symbol();
