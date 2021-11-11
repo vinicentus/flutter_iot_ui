@@ -32,7 +32,7 @@ dependencies:
   sqflite: ^2.0.0+3
   sqflite_common_ffi: ^2.0.0+1
   intl: ^0.17.0
-  web3dart: 2.3.1 # TODO: wait for bugfix upstream (2.3.2 has a bug in sendTransaction)
+  web3dart: ^2.3.3
   moving_average: ^0.3.0
   web_socket_channel: ^2.1.0
   provider: ^6.0.1
