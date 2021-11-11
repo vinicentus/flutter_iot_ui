@@ -58,6 +58,8 @@ Higher values mean smoother lines on the graph.'''),
           ),
           SwitchListTile(
             title: Text('Get data over web3?'),
+            subtitle: Text(
+                'If false, the app will try to get data from a local SQLite DB.'),
             value: model.usesWeb3(),
             onChanged: model.setUsesWeb3,
           ),
