@@ -75,7 +75,25 @@ Higher values mean smoother lines on the graph.'''),
                 max: 120,
                 divisions: 11,
                 label: '${model.graphRefreshTime.inSeconds.round()}s',
-                onChanged: model.setGraphRefreshime,
+                onChanged: model.setGraphRefreshimeSeconds,
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              ListTile(
+                title: Text('Set the time window in hours for data per graph.'),
+                subtitle: Text(
+                    '''This determines how many hours woth of data to display in a graph.
+Currently there is no way to dynamically change this while viewing the graph..'''),
+              ),
+              Slider(
+                value: model.graphTimeWindow.inHours.toDouble(),
+                min: 1,
+                max: 48,
+                divisions: 48,
+                label: '${model.graphTimeWindow.inHours.round()}h',
+                onChanged: model.setGraphTimeWindowHours,
               ),
             ],
           ),

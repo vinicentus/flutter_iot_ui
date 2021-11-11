@@ -34,13 +34,18 @@ class GraphSettingsModel extends ChangeNotifier {
   /// This sets how often the UI gets new data to display.
   Duration graphRefreshTime = Duration(seconds: 60);
 
-  setGraphRefreshime(double value) {
+  setGraphRefreshimeSeconds(double value) {
     graphRefreshTime = Duration(seconds: value.toInt());
     notifyListeners();
   }
 
   /// Specifies which time interval to show data from in graphs.
   Duration graphTimeWindow = Duration(hours: 3);
+
+  setGraphTimeWindowHours(double value) {
+    graphTimeWindow = Duration(hours: value.toInt());
+    notifyListeners();
+  }
 
   bool usesWeb3() {
     var db = GetIt.instance<DatabaseManager>();
