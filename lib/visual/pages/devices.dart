@@ -32,12 +32,49 @@ class DevicesPageState extends State<DevicesPage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          MaterialButton(
-              child: Text('Create device'),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MaterialButton(
+              child: Text(
+                'Create device',
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () {
                 showDialog(
                     context: context, builder: (context) => FormWidget());
-              })
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PopupMenuButton(
+                child: Center(child: Text('Choose mode')),
+                // icon: Icon(Icons.ac_unit),
+                itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.phone_android,
+                                color: Theme.of(context).indicatorColor),
+                            Spacer(),
+                            Text('Single device mode'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.devices,
+                                color: Theme.of(context).indicatorColor),
+                            Spacer(),
+                            Text('Multiple devices mode'),
+                          ],
+                        ),
+                      )
+                    ]),
+          ),
         ],
       ),
       drawer: NavDrawer(DevicesPage.route),
