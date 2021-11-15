@@ -8,7 +8,7 @@ class SVM30Page extends StatelessWidget {
   final String title = 'SVM30 Sensor Data';
 
   Widget build(BuildContext context) {
-    return GeneralGraphPage(
+    return GeneralGraphPage<SVM30SensorDataEntry>(
       title: title,
       route: route,
       unit: 'ppm (CO2eq) / ppb (VOC)',
