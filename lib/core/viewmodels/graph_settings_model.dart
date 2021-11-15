@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
-import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
-import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
+import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
 import 'package:get_it/get_it.dart';
 
 class GraphSettingsModel extends ChangeNotifier {
+  var _devicesModel = GetIt.instance<SelectedDevicesModel>();
+
   /// Wether to subtract the smaller size values from the larger ones,
   /// so that the range of the bigger particle size measurements doesn't include the range of the smaller ones...
   bool subtractParticleSizes = true;
@@ -47,23 +47,31 @@ class GraphSettingsModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _usesWeb3 = true;
+
   bool usesWeb3() {
-    var db = GetIt.instance<DatabaseManager>();
-    switch (db.runtimeType) {
-      case Web3Manager:
-        return true;
-      default:
-        return false;
-    }
+    return _usesWeb3;
   }
 
-  setUsesWeb3(bool value) {
-    var getIt = GetIt.instance;
-    // Overwrite previous registration
-    if (value)
-      getIt.registerSingleton<DatabaseManager>(Web3Manager());
-    else
-      getIt.registerSingleton<DatabaseManager>(SQLiteDatabaseManager());
+  setUsesWeb3(bool value) async {
+    if (value) {
+      await _devicesModel.loadLocalID();
+    }
+    _usesWeb3 = value;
+    notifyListeners();
+  }
+
+  bool _usesSQLite = true;
+
+  bool usesSqLite() {
+    return _usesSQLite;
+  }
+
+  setUsesSqLite(bool value) async {
+    if (value) {
+      await _devicesModel.loadRemoteID();
+    }
+    _usesSQLite = value;
     notifyListeners();
   }
 }

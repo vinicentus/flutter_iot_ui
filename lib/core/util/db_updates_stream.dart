@@ -1,11 +1,11 @@
 import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
-import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
 import 'package:get_it/get_it.dart';
 
 Stream<List<T>> dbUpdatesOfType<T extends GenericSensorDataEntry>(
     {required Duration refreshDuration,
     required Duration graphTimeWindow}) async* {
-  var dbManager = GetIt.instance<DatabaseManager>();
+  var dbManager = GetIt.instance<Web3Manager>(); // TODO: make generic
 
   DateTime today;
   DateTime yesterday;

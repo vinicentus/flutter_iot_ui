@@ -57,11 +57,19 @@ Higher values mean smoother lines on the graph.'''),
             ],
           ),
           SwitchListTile(
-            title: Text('Get data over web3?'),
+            title: Text('Show data from web3?'),
             subtitle: Text(
-                'If false, the app will try to get data from a local SQLite DB.'),
+                'If set, the app will try to get data from selected devices over web3.'),
             value: model.usesWeb3(),
             onChanged: model.setUsesWeb3,
+          ),
+          SwitchListTile(
+            title: Text('Show data from local database'),
+            subtitle: Text(
+                '''If set, the app will try to get data from a local SQLite DB.
+It will try to load sensor configuration from ~/git-repos/IoT-Microservice/app/resources/device_settings.yaml'''),
+            value: model.usesSqLite(),
+            onChanged: model.setUsesSqLite,
           ),
           Column(
             children: [

@@ -3,6 +3,7 @@ import 'package:flutter_iot_ui/core/models/contracts/Oracle.g.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:flutter_iot_ui/core/viewmodels/device_info_dialog_model.dart';
+import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
 import 'package:flutter_iot_ui/visual/widgets/device_info_dialog.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:get_it/get_it.dart';
@@ -21,9 +22,11 @@ class DevicesPage extends StatefulWidget {
 
 class DevicesPageState extends State<DevicesPage> {
   var web3 = GetIt.instance<Web3>();
+  var selectedDevicesModel = GetIt.instance<SelectedDevicesModel>();
 
   _init() async {
-    return await web3.loadOraclesForActiveUser();
+    await selectedDevicesModel.loadRemoteID();
+    return await web3.getOraclesForActiveUser();
   }
 
   @override
@@ -111,10 +114,10 @@ class DevicesPageState extends State<DevicesPage> {
                         value: jsonId,
                         onChanged: (JsonId? changedId) {
                           setState(() {
-                            web3.selectedOracleId = changedId!;
+                            selectedDevicesModel.selectedOracleId = changedId!;
                           });
                         },
-                        groupValue: web3.selectedOracleId,
+                        groupValue: selectedDevicesModel.selectedOracleId,
                         secondary: OutlinedButton(
                           onPressed: () {
                             showDialog(

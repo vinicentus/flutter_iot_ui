@@ -7,6 +7,8 @@ import 'package:flutter_iot_ui/core/models/contracts/TokenManager.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/User.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/UserManager.g.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
+import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -113,11 +115,6 @@ class Web3 {
   late final TaskManager taskManager;
   late final TokenManager tokenManager;
 
-  /// The id of the currently selected device.
-  /// There are numerous cases where this will be null,
-  /// such as when no user is loaded, or when there are no oracles for that user.
-  JsonId? selectedOracleId;
-
   Future<bool> checkUserExists() async {
     return userManager.exists(publicAddress);
   }
@@ -145,20 +142,10 @@ class Web3 {
   }
 
   /// This needs to be called after loadUser, because it fetches all oracles registered to the current user
-  Future<Map<JsonId, Oracle>> loadOraclesForActiveUser() async {
+  Future<Map<JsonId, Oracle>> getOraclesForActiveUser() async {
     // Fetch all the oracles (devices) that are registered to our user
 
     var oracleIds = await oracleManager.fetch_collection(publicAddress);
-
-    // This is the id String of the oracle (device).
-    // We select the last availabe one as our main device that we will display data from.
-    // That should be the last created oracle.
-    // In the future, there might not be a single selected device
-    // If there is already as selected device, won won't override it.
-
-    if (selectedOracleId == null && oracleIds.isNotEmpty) {
-      selectedOracleId = JsonId(oracleIds.last);
-    }
 
     var deployedOracles = Map<JsonId, Oracle>();
 
@@ -174,8 +161,11 @@ class Web3 {
 
   /// Adds a task and returns the address of that created task.
   /// This needs to be processed on-chain, and that takes a while.
+  // TODO: make it an extension metod on Oracle class?
   Future<EthereumAddress> addTask(String params) async {
-    if (selectedOracleId == null) {
+    var selectedDevicesModel = GetIt.instance<SelectedDevicesModel>();
+
+    if (selectedDevicesModel.selectedOracleId == null) {
       throw Exception(
           'Can\'t create a task without selecting a oracle on which to create it first.');
     }
@@ -191,8 +181,8 @@ class Web3 {
 
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that
-    var txHash = taskManager.create(
-        selectedOracleId!.id, BigInt.from(2), BigInt.from(2), params,
+    var txHash = taskManager.create(selectedDevicesModel.selectedOracleId!.id,
+        BigInt.from(2), BigInt.from(2), params,
         credentials: privateKey);
 
     // The stream is canceled when the loop exits

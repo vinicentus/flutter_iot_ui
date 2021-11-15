@@ -48,7 +48,7 @@ class Web3Manager extends DatabaseManager {
       DateTime? stop}) async {
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
     await _web3Client.loadUser();
-    await _web3Client.loadOraclesForActiveUser();
+    await _web3Client.getOraclesForActiveUser();
 
     var taskAddress = await _web3Client.addTask(_createTaskString(
         // TODO: bad non-null assertions

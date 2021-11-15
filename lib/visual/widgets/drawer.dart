@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:flutter_iot_ui/core/util/view_state_enum.dart';
+import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
+import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
 import 'package:flutter_iot_ui/visual/pages/devices.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/mass_concentration.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/number_concentration.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_iot_ui/visual/pages/graphs/svm30_page.dart';
 import 'package:flutter_iot_ui/visual/pages/token_manager.dart';
 import 'package:flutter_iot_ui/visual/pages/users.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 class NavDrawer extends StatefulWidget {
   final String selectedRoute;
@@ -21,9 +23,10 @@ class NavDrawer extends StatefulWidget {
 }
 
 class _NavDrawerState extends State<NavDrawer> {
-  final _web3 = GetIt.instance<Web3>();
+  var _selectedDevicesModel = GetIt.instance<SelectedDevicesModel>();
 
-  var _sensors = <String>[];
+  List<String> _sensorsRemote = [];
+  List<String> _sensorsLocal = [];
 
   var viewState = ViewState.loading;
 
@@ -31,23 +34,40 @@ class _NavDrawerState extends State<NavDrawer> {
   initState() {
     super.initState();
 
-    if (_web3.selectedOracleId != null) {
-      _sensors = _web3.selectedOracleId!.sensors;
+    if (_selectedDevicesModel.selectedOracleId != null) {
+      _sensorsRemote = _selectedDevicesModel.selectedOracleId!.sensors;
       viewState = ViewState.ready;
     } else {
       // This will complete sometime in the future and call setState
-      _asyncLoadSensors();
+      _asyncLoadRemoteID();
+    }
+
+    if (_selectedDevicesModel.localOracleId != null) {
+      _sensorsLocal = _selectedDevicesModel.localOracleId!.sensors;
+    } else {
+      // This will complete sometime in the future and call setState
+      _asyncLoadLocalID();
     }
   }
 
-  _asyncLoadSensors() async {
-    if (await _web3.checkUserExists()) {
-      await _web3.loadOraclesForActiveUser();
-      setState(() {
-        _sensors = _web3.selectedOracleId!.sensors;
-        viewState = ViewState.ready;
-      });
-    }
+  _asyncLoadRemoteID() async {
+    await _selectedDevicesModel.loadRemoteID();
+
+    setState(() {
+      if (_selectedDevicesModel.selectedOracleId != null)
+        _sensorsRemote = _selectedDevicesModel.selectedOracleId!.sensors;
+      viewState = ViewState.ready;
+    });
+  }
+
+  _asyncLoadLocalID() async {
+    await _selectedDevicesModel.loadLocalID();
+
+    setState(() {
+      if (_selectedDevicesModel.localOracleId != null)
+        _sensorsRemote = _selectedDevicesModel.localOracleId!.sensors;
+      viewState = ViewState.ready;
+    });
   }
 
   Widget _buildMenuItem(
@@ -73,6 +93,8 @@ class _NavDrawerState extends State<NavDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    var settingsModel = context.read<GraphSettingsModel>();
+
     var children = <Widget>[
       _buildMenuItem(
         context: context,
@@ -103,104 +125,127 @@ class _NavDrawerState extends State<NavDrawer> {
     if (viewState == ViewState.loading) {
       children.add(Center(child: CircularProgressIndicator()));
     }
-    if (_sensors.contains('svm30')) {
+
+    if (settingsModel.usesSqLite()) {
       children.addAll([
         Divider(),
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('SVM30'),
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.airplay),
-          title: Text('SVM30'),
-          routeName: SVM30Page.route,
+          padding: const EdgeInsets.all(8.0),
+          child: Center(child: Text('SQLite')),
         ),
       ]);
+
+      // TODO: display local sensors
     }
 
-    if (_sensors.contains('scd30')) {
+    if (settingsModel.usesWeb3()) {
       children.addAll([
         Divider(),
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('SCD30'),
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.air),
-          title: Text('Carbon Dioxide'),
-          routeName: CarbonDioxidePage.route + '/scd30',
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.thermostat),
-          title: Text('Temperature'),
-          routeName: TemperaturePage.route + '/scd30',
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.water),
-          title: Text('Humidity'),
-          routeName: HumidityPage.route + '/scd30',
+          padding: const EdgeInsets.all(8.0),
+          child: Center(child: Text('Web3')),
         ),
       ]);
-    }
 
-    if (_sensors.contains('scd41')) {
-      children.addAll([
-        Divider(),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('SCD41'),
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.air),
-          title: Text('Carbon Dioxide'),
-          routeName: CarbonDioxidePage.route + '/scd41',
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.thermostat),
-          title: Text('Temperature'),
-          routeName: TemperaturePage.route + '/scd41',
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.water),
-          title: Text('Humidity'),
-          routeName: HumidityPage.route + '/scd41',
-        ),
-      ]);
-    }
+      if (_sensorsRemote.contains('svm30')) {
+        children.addAll([
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text('SVM30'),
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.airplay),
+            title: Text('SVM30'),
+            routeName: SVM30Page.route,
+          ),
+        ]);
+      }
 
-    if (_sensors.contains('sps30')) {
-      children.addAll([
-        Divider(),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('SPS30'),
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.circle),
-          title: Text('Mass Concentration'),
-          routeName: MassConcentrationPage.route,
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.ac_unit),
-          title: Text('Number Concentration'),
-          routeName: NumberConcentrationPage.route,
-        ),
-        _buildMenuItem(
-          context: context,
-          leading: Icon(Icons.add_road),
-          title: Text('Typical Particle Size'),
-          routeName: TypicalParticleSizePage.route,
-        ),
-      ]);
+      if (_sensorsRemote.contains('scd30')) {
+        children.addAll([
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text('SCD30'),
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.air),
+            title: Text('Carbon Dioxide'),
+            routeName: CarbonDioxidePage.route + '/scd30',
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.thermostat),
+            title: Text('Temperature'),
+            routeName: TemperaturePage.route + '/scd30',
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.water),
+            title: Text('Humidity'),
+            routeName: HumidityPage.route + '/scd30',
+          ),
+        ]);
+      }
+
+      if (_sensorsRemote.contains('scd41')) {
+        children.addAll([
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text('SCD41'),
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.air),
+            title: Text('Carbon Dioxide'),
+            routeName: CarbonDioxidePage.route + '/scd41',
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.thermostat),
+            title: Text('Temperature'),
+            routeName: TemperaturePage.route + '/scd41',
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.water),
+            title: Text('Humidity'),
+            routeName: HumidityPage.route + '/scd41',
+          ),
+        ]);
+      }
+
+      if (_sensorsRemote.contains('sps30')) {
+        children.addAll([
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text('SPS30'),
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.circle),
+            title: Text('Mass Concentration'),
+            routeName: MassConcentrationPage.route,
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.ac_unit),
+            title: Text('Number Concentration'),
+            routeName: NumberConcentrationPage.route,
+          ),
+          _buildMenuItem(
+            context: context,
+            leading: Icon(Icons.add_road),
+            title: Text('Typical Particle Size'),
+            routeName: TypicalParticleSizePage.route,
+          ),
+        ]);
+      }
     }
 
     return Drawer(
