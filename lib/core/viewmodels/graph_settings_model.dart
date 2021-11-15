@@ -5,7 +5,7 @@ import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
 import 'package:get_it/get_it.dart';
 
 class GraphSettingsModel extends ChangeNotifier {
-  /// Wether to subtract the smaller size values from the bigger ones,
+  /// Wether to subtract the smaller size values from the larger ones,
   /// so that the range of the bigger particle size measurements doesn't include the range of the smaller ones...
   bool subtractParticleSizes = true;
 
