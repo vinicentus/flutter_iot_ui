@@ -182,8 +182,12 @@ class Web3 {
 
     var taskCreatedEvent = taskManager.self.event('task_created');
 
-    var eventStream = ethClient.events(FilterOptions.events(
-        contract: taskManager.self, event: taskCreatedEvent));
+    var eventStream = ethClient
+        .events(FilterOptions.events(
+            contract: taskManager.self, event: taskCreatedEvent))
+        // Time out stream if after 10 seconds
+        // (meaning we have 10 seconds to get the right event before stream is canceled)
+        .timeout(Duration(seconds: 10));
 
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that
@@ -192,7 +196,6 @@ class Web3 {
         credentials: privateKey);
 
     // The stream is canceled when the loop exits
-    // TODO: add timeout / retry count
     await for (FilterEvent event in eventStream) {
       if (event.transactionHash == await txHash) {
         print('yay');
@@ -206,7 +209,7 @@ class Web3 {
     }
 
     // If the loop was exited without returning
-    // (i.e if the stream was canceled or completed or something similar)
+    // (i.e if the stream was canceled, but not if it completed with an error)
     throw Exception('Could not get the correct event');
   }
 

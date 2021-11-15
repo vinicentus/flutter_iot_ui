@@ -60,17 +60,15 @@ class Web3Manager extends DatabaseManager {
       throw Exception('Got back invalid task address: $taskAddress');
     }
 
-    // TODO: add timeout
     var event = _web3Client.taskManager
         .task_completedEvents()
-        // 10 retries
-        .take(10)
+        // Time out after 10 seconds
+        .timeout(Duration(seconds: 10))
         .firstWhere((event) {
       // Check that it is the right task that was completed!
       return event.task == taskAddress;
     }, orElse: () {
-      // TODO: add orelse that return custom error
-      throw Exception('Failed to get back completed task');
+      throw Exception('Could not find correct task in stream');
     });
 
     var awaitedEvent = await event;
