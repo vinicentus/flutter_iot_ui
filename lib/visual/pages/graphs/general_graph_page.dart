@@ -62,10 +62,16 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
       ),
       drawer: NavDrawer(this.widget.route),
       body: StreamBuilder(
-        stream: dbUpdatesOfType<T>(
+        stream: multipleDeviceDbUpdatesOfType<T>(
                 refreshDuration: model.graphRefreshTime,
                 graphTimeWindow: model.graphTimeWindow)
-            .map((e) => lineChartBarDatas(e, model)),
+            .map((listOfLists) {
+          var accumulator = <LineChartBarData>[];
+          for (final list in listOfLists) {
+            accumulator.addAll(lineChartBarDatas(list, model));
+          }
+          return accumulator;
+        }),
         builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
           // We already check if it has data (a non-null value).
           // That means we can use the !. operator throughout safely,

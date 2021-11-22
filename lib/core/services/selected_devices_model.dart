@@ -12,11 +12,15 @@ class SelectedDevicesModel {
   /// This is set if a local config file was found and loaded.
   JsonId? localOracleId;
 
-  // TODO: make sure tht we don't pass the same device both as local and remote...
+  /// This will not return any duplicates.
   // TODO: check if local and remote devices are toggled active in settings?
-  List<JsonId> get allUniqueDevices =>
-      localOracleId == null ? selectedOracleIds : selectedOracleIds
-        ..add(localOracleId!);
+  List<JsonId> get allUniqueDevices {
+    // Check for duplicates (local + remote device with same id)
+    var set = Set<JsonId>();
+    set..addAll(selectedOracleIds);
+    if (localOracleId != null) selectedOracleIds.add(localOracleId!);
+    return set.toList();
+  }
 
   loadLocalID() async {
     // TODO

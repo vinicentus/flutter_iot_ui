@@ -48,36 +48,6 @@ class DevicesPageState extends State<DevicesPage> {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: PopupMenuButton(
-                child: Center(child: Text('Choose mode')),
-                // icon: Icon(Icons.ac_unit),
-                itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.phone_android,
-                                color: Theme.of(context).indicatorColor),
-                            Spacer(),
-                            Text('Single device mode'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.devices,
-                                color: Theme.of(context).indicatorColor),
-                            Spacer(),
-                            Text('Multiple devices mode'),
-                          ],
-                        ),
-                      )
-                    ]),
-          ),
         ],
       ),
       drawer: NavDrawer(DevicesPage.route),
@@ -94,7 +64,7 @@ class DevicesPageState extends State<DevicesPage> {
                       JsonId jsonId = devices.keys.elementAt(index);
                       Oracle deviceAtIndex = devices[jsonId]!;
 
-                      return RadioListTile(
+                      return CheckboxListTile(
                         // Use the ID of the oracle as stored in the oracle manager,
                         // instead of the oracle address.
                         title: Text(jsonId.isValidJson
@@ -111,16 +81,22 @@ class DevicesPageState extends State<DevicesPage> {
                               }
                             }),
                         // Selected if selected in Web3Manager is the same as this device
-                        value: jsonId,
-                        onChanged: (JsonId? changedId) {
-                          setState(() {
-                            selectedDevicesModel.selectedOracleIds = [
-                              changedId!
-                            ];
-                          });
+                        value: selectedDevicesModel.selectedOracleIds
+                            .contains(jsonId),
+                        onChanged: (bool? value) {
+                          // value will always be non-null, because we don't use tri-state
+                          if (value!) {
+                            setState(() {
+                              selectedDevicesModel.selectedOracleIds
+                                  .add(jsonId);
+                            });
+                          } else {
+                            setState(() {
+                              selectedDevicesModel.selectedOracleIds
+                                  .remove(jsonId);
+                            });
+                          }
                         },
-                        groupValue:
-                            selectedDevicesModel.selectedOracleIds.first,
                         secondary: OutlinedButton(
                           onPressed: () {
                             showDialog(
