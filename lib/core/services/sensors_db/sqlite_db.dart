@@ -28,7 +28,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
       // Use different db path if debugging
       if (kDebugMode || kProfileMode) {
         print(
-            'running in ${kDebugMode ? 'debug' : 'profile'} mode, using local db');
+            'running in ${kDebugMode ? 'debug' : 'profile'} mode, using different db path');
         dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
       }
     } else {
