@@ -36,6 +36,11 @@ class SelectedDevicesModel {
       if (availableOracles.isNotEmpty && selectedOracleIds.isEmpty) {
         selectedOracleIds.add(availableOracles.keys.last);
       }
+      // else if (availableOracles.isNotEmpty && selectedOracleIds.isNotEmpty) {
+      //   // This secton is used for updating our selected oracle
+      //   selectedOracleIds = [];
+      //   selectedOracleIds.add(availableOracles.keys.last);
+      // }
     }
     return selectedOracleIds;
   }
