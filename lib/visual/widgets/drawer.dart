@@ -34,8 +34,8 @@ class _NavDrawerState extends State<NavDrawer> {
   initState() {
     super.initState();
 
-    if (_selectedDevicesModel.selectedOracleId != null) {
-      _sensorsRemote = _selectedDevicesModel.selectedOracleId!.sensors;
+    if (_selectedDevicesModel.selectedOracleIds.isNotEmpty) {
+      _sensorsRemote = _selectedDevicesModel.selectedOracleIds.first.sensors;
       viewState = ViewState.ready;
     } else {
       // This will complete sometime in the future and call setState
@@ -54,8 +54,8 @@ class _NavDrawerState extends State<NavDrawer> {
     await _selectedDevicesModel.loadRemoteID();
 
     setState(() {
-      if (_selectedDevicesModel.selectedOracleId != null)
-        _sensorsRemote = _selectedDevicesModel.selectedOracleId!.sensors;
+      if (_selectedDevicesModel.selectedOracleIds.isNotEmpty)
+        _sensorsRemote = _selectedDevicesModel.selectedOracleIds.first.sensors;
       viewState = ViewState.ready;
     });
   }

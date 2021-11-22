@@ -5,6 +5,7 @@ import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:get_it/get_it.dart';
 import 'package:web3dart/web3dart.dart';
@@ -14,6 +15,7 @@ import 'sqlite_db.dart' show convertDateTimeToString;
 class Web3Manager extends DatabaseManager {
   // Use the globally exposed web3client, not a separate one.
   Web3 _web3Client = GetIt.instance<Web3>();
+  SelectedDevicesModel _devicesModel = GetIt.instance<SelectedDevicesModel>();
 
   String _createTaskString(
       {required String startTime,
@@ -50,12 +52,15 @@ class Web3Manager extends DatabaseManager {
     await _web3Client.loadUser();
     await _web3Client.getOraclesForActiveUser();
 
-    var taskAddress = await _web3Client.addTask(_createTaskString(
-        // TODO: bad non-null assertions
-        startTime: convertDateTimeToString(start!),
-        stopTime: convertDateTimeToString(stop!),
-        publicKey: publicKey, // TODO
-        tableName: tableName));
+    var taskAddress = await _web3Client.addTask(
+      _createTaskString(
+          // TODO: bad non-null assertions
+          startTime: convertDateTimeToString(start!),
+          stopTime: convertDateTimeToString(stop!),
+          publicKey: publicKey, // TODO
+          tableName: tableName),
+      _devicesModel.selectedOracleIds.first,
+    );
     if (taskAddress is! EthereumAddress) {
       throw Exception('Got back invalid task address: $taskAddress');
     }

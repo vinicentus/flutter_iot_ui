@@ -3,10 +3,10 @@ import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:get_it/get_it.dart';
 
 class SelectedDevicesModel {
-  /// The id of the currently selected device.
-  /// There are numerous cases where this will be null,
+  /// A list of id:s for the currently selected devices.
+  /// There are numerous cases where this will be empty,
   /// such as when no user is loaded, or when there are no oracles for that user.
-  JsonId? selectedOracleId;
+  List<JsonId> selectedOracleIds = <JsonId>[];
 
   /// This is set if a local config file was found and loaded.
   JsonId? localOracleId;
@@ -17,7 +17,7 @@ class SelectedDevicesModel {
         JsonId('{"name":"RaspberryPiNew","sensors":["scd41"],"uniqueId":"1"}');
   }
 
-  Future<JsonId?> loadRemoteID() async {
+  Future<List<JsonId>> loadRemoteID() async {
     var _web3 = GetIt.instance<Web3>();
 
     if (await _web3.checkUserExists()) {
@@ -26,10 +26,10 @@ class SelectedDevicesModel {
       // That should be the last created oracle.
       // In the future, there might not be a single selected device
       // If there is already as selected device, we won't override it.
-      if (availableOracles.isNotEmpty && selectedOracleId == null) {
-        selectedOracleId = availableOracles.keys.last;
+      if (availableOracles.isNotEmpty && selectedOracleIds.isEmpty) {
+        selectedOracleIds.add(availableOracles.keys.last);
       }
     }
-    return selectedOracleId;
+    return selectedOracleIds;
   }
 }

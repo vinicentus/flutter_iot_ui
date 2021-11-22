@@ -114,10 +114,13 @@ class DevicesPageState extends State<DevicesPage> {
                         value: jsonId,
                         onChanged: (JsonId? changedId) {
                           setState(() {
-                            selectedDevicesModel.selectedOracleId = changedId!;
+                            selectedDevicesModel.selectedOracleIds = [
+                              changedId!
+                            ];
                           });
                         },
-                        groupValue: selectedDevicesModel.selectedOracleId,
+                        groupValue:
+                            selectedDevicesModel.selectedOracleIds.first,
                         secondary: OutlinedButton(
                           onPressed: () {
                             showDialog(
