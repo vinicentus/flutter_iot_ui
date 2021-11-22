@@ -1,3 +1,4 @@
+import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
@@ -12,40 +13,44 @@ abstract class DatabaseManager {
   /// Optionally provide a [start] and [stop] time,
   /// to get only the entries between those timestamps.
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
-      {DateTime? start, DateTime? stop});
+      {required JsonId deviceID, DateTime? start, DateTime? stop});
 
   /// Get all database entries for SCD30.
   /// Optionally provide a [start] and [stop] time,
   /// to get only the entries between those timestamps.
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime? start, DateTime? stop});
+      {required JsonId deviceID, DateTime? start, DateTime? stop});
 
   /// Get all database entries for SCD41.
   /// Optionally provide a [start] and [stop] time,
   /// to get only the entries between those timestamps.
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
-      {DateTime? start, DateTime? stop});
+      {required JsonId deviceID, DateTime? start, DateTime? stop});
 
   /// Get all database entries for SVM30.
   /// Optionally provide a [start] and [stop] time,
   /// to get only the entries between those timestamps.
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
-      {DateTime? start, DateTime? stop});
+      {required JsonId deviceID, DateTime? start, DateTime? stop});
 
   /// Get all database entries for any subtype of GenericSensorDataEntry.
   /// Optionally provide a [start] and [stop] time,
   /// to get only the entries between those timestamps.
   Future<List<T>> getEntriesOfType<T extends GenericSensorDataEntry>(
-      {DateTime? start, DateTime? stop}) {
+      {required JsonId deviceID, DateTime? start, DateTime? stop}) {
     switch (T) {
       case SPS30SensorDataEntry:
-        return getSPS30Entries(start: start, stop: stop) as Future<List<T>>;
+        return getSPS30Entries(deviceID: deviceID, start: start, stop: stop)
+            as Future<List<T>>;
       case SCD30SensorDataEntry:
-        return getSCD30Entries(start: start, stop: stop) as Future<List<T>>;
+        return getSCD30Entries(deviceID: deviceID, start: start, stop: stop)
+            as Future<List<T>>;
       case SCD41SensorDataEntry:
-        return getSCD41Entries(start: start, stop: stop) as Future<List<T>>;
+        return getSCD41Entries(deviceID: deviceID, start: start, stop: stop)
+            as Future<List<T>>;
       case SVM30SensorDataEntry:
-        return getSVM30Entries(start: start, stop: stop) as Future<List<T>>;
+        return getSVM30Entries(deviceID: deviceID, start: start, stop: stop)
+            as Future<List<T>>;
       default:
         throw Exception(
             'Tried to get an unimplemented type of GenericSensorDataEntry.');

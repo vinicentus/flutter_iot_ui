@@ -1,11 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
+import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
-import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:get_it/get_it.dart';
 import 'package:web3dart/web3dart.dart';
@@ -15,7 +14,6 @@ import 'sqlite_db.dart' show convertDateTimeToString;
 class Web3Manager extends DatabaseManager {
   // Use the globally exposed web3client, not a separate one.
   Web3 _web3Client = GetIt.instance<Web3>();
-  SelectedDevicesModel _devicesModel = GetIt.instance<SelectedDevicesModel>();
 
   String _createTaskString(
       {required String startTime,
@@ -44,7 +42,8 @@ class Web3Manager extends DatabaseManager {
   }
 
   Future<List> _geteEntries(
-      {required String tableName,
+      {required JsonId deviceId,
+      required String tableName,
       String? publicKey,
       DateTime? start,
       DateTime? stop}) async {
@@ -59,7 +58,7 @@ class Web3Manager extends DatabaseManager {
           stopTime: convertDateTimeToString(stop!),
           publicKey: publicKey, // TODO
           tableName: tableName),
-      _devicesModel.selectedOracleIds.first,
+      deviceId,
     );
     if (taskAddress is! EthereumAddress) {
       throw Exception('Got back invalid task address: $taskAddress');
@@ -105,7 +104,8 @@ class Web3Manager extends DatabaseManager {
 
   // TODO: don't wait for previous task to complete before submitting new one
   Stream<List> _getEntriesInChunksAsStream(
-      {required String tableName,
+      {required JsonId deviceId,
+      required String tableName,
       String? publicKey,
       DateTime? start,
       DateTime? stop}) async* {
@@ -117,6 +117,7 @@ class Web3Manager extends DatabaseManager {
     for (int i = 0; i < intervalCount; i++) {
       print('returning chunk ${i + 1}/$intervalCount');
       yield await _geteEntries(
+        deviceId: deviceId,
         tableName: tableName,
         publicKey: publicKey,
         start: timeChunkList[i],
@@ -126,11 +127,13 @@ class Web3Manager extends DatabaseManager {
   }
 
   Future<List> _getEntriesInChunks(
-      {required String tableName,
+      {required JsonId deviceId,
+      required String tableName,
       String? publicKey,
       DateTime? start,
       DateTime? stop}) {
     return _getEntriesInChunksAsStream(
+            deviceId: deviceId,
             tableName: tableName,
             publicKey: publicKey,
             start: start,
@@ -140,9 +143,14 @@ class Web3Manager extends DatabaseManager {
 
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime? start, DateTime? stop}) async {
+      {required JsonId deviceID, DateTime? start, DateTime? stop}) async {
     List taskResult = await _getEntriesInChunks(
-        tableName: 'scd30_output', publicKey: null, start: start, stop: stop);
+      deviceId: deviceID,
+      tableName: 'scd30_output',
+      publicKey: null,
+      start: start,
+      stop: stop,
+    );
 
     // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
     var returnList = <SCD30SensorDataEntry>[];
@@ -155,9 +163,14 @@ class Web3Manager extends DatabaseManager {
 
   @override
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
-      {DateTime? start, DateTime? stop}) async {
+      {required JsonId deviceID, DateTime? start, DateTime? stop}) async {
     List taskResult = await _getEntriesInChunks(
-        tableName: 'scd41_output', publicKey: null, start: start, stop: stop);
+      deviceId: deviceID,
+      tableName: 'scd41_output',
+      publicKey: null,
+      start: start,
+      stop: stop,
+    );
 
     // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
     var returnList = <SCD41SensorDataEntry>[];
@@ -170,9 +183,14 @@ class Web3Manager extends DatabaseManager {
 
   @override
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
-      {DateTime? start, DateTime? stop}) async {
+      {required JsonId deviceID, DateTime? start, DateTime? stop}) async {
     List taskResult = await _getEntriesInChunks(
-        tableName: 'sps30_output', publicKey: null, start: start, stop: stop);
+      deviceId: deviceID,
+      tableName: 'sps30_output',
+      publicKey: null,
+      start: start,
+      stop: stop,
+    );
 
     var returnList = <SPS30SensorDataEntry>[];
     taskResult.forEach((element) {
@@ -194,9 +212,14 @@ class Web3Manager extends DatabaseManager {
 
   @override
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
-      {DateTime? start, DateTime? stop}) async {
+      {required JsonId deviceID, DateTime? start, DateTime? stop}) async {
     List taskResult = await _getEntriesInChunks(
-        tableName: 'svm30_output', publicKey: null, start: start, stop: stop);
+      deviceId: deviceID,
+      tableName: 'svm30_output',
+      publicKey: null,
+      start: start,
+      stop: stop,
+    );
 
     var returnList = <SVM30SensorDataEntry>[];
     taskResult.forEach((element) {

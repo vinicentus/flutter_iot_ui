@@ -1,11 +1,17 @@
 import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
+import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
 import 'package:get_it/get_it.dart';
 
+/// This fetches data for all the selected devices,
+/// and, refreshes thad data every once in a while.
 Stream<List<T>> dbUpdatesOfType<T extends GenericSensorDataEntry>(
     {required Duration refreshDuration,
     required Duration graphTimeWindow}) async* {
-  var dbManager = GetIt.instance<Web3Manager>(); // TODO: make generic
+  final remoteDbManager = GetIt.instance<Web3Manager>();
+  // final localDbManager = GetIt.instance<Web3Manager>();
+
+  final devices = GetIt.instance<SelectedDevicesModel>();
 
   DateTime today;
   DateTime yesterday;
@@ -18,9 +24,20 @@ Stream<List<T>> dbUpdatesOfType<T extends GenericSensorDataEntry>(
 
     print('dbUpdates loop $today');
 
-    // If this stream is canceled, the stream completes next time we land here
-    // TODO: don't evaluate right hand before returning if stream is canceled
-    yield await dbManager.getEntriesOfType<T>(start: yesterday, stop: today);
+    var accumulator = <T>[];
+    for (final id in devices.selectedOracleIds) {
+      // If this stream is canceled, the stream completes next time we land here
+      // TODO: don't evaluate right hand before returning if stream is canceled
+      accumulator.addAll(await remoteDbManager.getEntriesOfType<T>(
+          deviceID: id, start: yesterday, stop: today));
+    }
+    // TODO: get data for local jsonIDs
+    // if (devices.localOracleId != null) {
+    //   accumulator.addAll(await localDbManager.getEntriesOfType<T>(
+    //       deviceID: devices.localOracleId!, start: yesterday, stop: today));
+    // }
+    yield accumulator;
+
     await Future.delayed(refreshDuration);
   }
 }

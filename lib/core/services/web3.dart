@@ -7,8 +7,6 @@ import 'package:flutter_iot_ui/core/models/contracts/TokenManager.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/User.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/UserManager.g.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
-import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
-import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';

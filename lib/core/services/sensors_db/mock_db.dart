@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
@@ -37,7 +38,7 @@ class MockDbManager extends DatabaseManager {
 
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime? start, DateTime? stop}) {
+      {required JsonId deviceID, DateTime? start, DateTime? stop}) {
     return Future.value(_freshData()
         .map((entry) => SCD30SensorDataEntry.createFromDB(
               entry['datetime'] as String,
@@ -50,7 +51,7 @@ class MockDbManager extends DatabaseManager {
 
   @override
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
-      {DateTime? start, DateTime? stop}) {
+      {required JsonId deviceID, DateTime? start, DateTime? stop}) {
     return Future.value(_freshData()
         .map((entry) => SCD41SensorDataEntry.createFromDB(
               entry['datetime'] as String,
@@ -65,7 +66,7 @@ class MockDbManager extends DatabaseManager {
 
   @override
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
-      {DateTime? start, DateTime? stop}) {
+      {required JsonId deviceID, DateTime? start, DateTime? stop}) {
     return Future.value(_freshData()
         .map((entry) => SPS30SensorDataEntry.createFromDB(
               entry['datetime'] as String,
@@ -85,7 +86,7 @@ class MockDbManager extends DatabaseManager {
 
   @override
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
-      {DateTime? start, DateTime? stop}) {
+      {required JsonId deviceID, DateTime? start, DateTime? stop}) {
     return Future.value(_freshData()
         .map((entry) => SVM30SensorDataEntry.createFromDB(
               entry['datetime'] as String,

@@ -2,6 +2,7 @@ import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:get_it/get_it.dart';
 
+// TODO: only expose future getters
 class SelectedDevicesModel {
   /// A list of id:s for the currently selected devices.
   /// There are numerous cases where this will be empty,
@@ -10,6 +11,12 @@ class SelectedDevicesModel {
 
   /// This is set if a local config file was found and loaded.
   JsonId? localOracleId;
+
+  // TODO: make sure tht we don't pass the same device both as local and remote...
+  // TODO: check if local and remote devices are toggled active in settings?
+  List<JsonId> get allUniqueDevices =>
+      localOracleId == null ? selectedOracleIds : selectedOracleIds
+        ..add(localOracleId!);
 
   loadLocalID() async {
     // TODO
