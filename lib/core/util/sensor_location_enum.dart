@@ -1,0 +1,1 @@
+enum SensorLocation { local, remote }

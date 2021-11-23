@@ -1,11 +1,20 @@
 import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
+import 'package:flutter_iot_ui/core/util/sensor_location_enum.dart';
 import 'package:get_it/get_it.dart';
 
 Stream<List<T>> dbUpdatesOfType<T extends GenericSensorDataEntry>(
     {required Duration refreshDuration,
-    required Duration graphTimeWindow}) async* {
-  var dbManager = GetIt.instance<Web3Manager>(); // TODO: make generic
+    required Duration graphTimeWindow,
+    required SensorLocation sensorLocation}) async* {
+  DatabaseManager dbManager;
+  if (sensorLocation == SensorLocation.remote) {
+    dbManager = GetIt.instance<Web3Manager>();
+  } else {
+    dbManager = GetIt.instance<SQLiteDatabaseManager>();
+  }
 
   DateTime today;
   DateTime yesterday;

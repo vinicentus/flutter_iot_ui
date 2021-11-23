@@ -5,6 +5,7 @@ import 'package:flutter_iot_ui/core/util/color_picker.dart';
 import 'package:flutter_iot_ui/core/util/db_updates_stream.dart';
 import 'package:flutter_iot_ui/core/util/list_contains.dart';
 import 'package:flutter_iot_ui/core/util/moving_average.dart';
+import 'package:flutter_iot_ui/core/util/sensor_location_enum.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/visual/widgets/appbar_trailing.dart';
 import 'package:flutter_iot_ui/visual/widgets/checkbox_widget.dart';
@@ -55,6 +56,11 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
 
     colorPicker.reset();
 
+    // Check route arguments to determine if this is supposedto be local or remote
+    final sensorLocation =
+        ModalRoute.of(context)!.settings.arguments as SensorLocation;
+    print(sensorLocation);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(this.widget.title),
@@ -64,7 +70,8 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
       body: StreamBuilder(
         stream: dbUpdatesOfType<T>(
                 refreshDuration: model.graphRefreshTime,
-                graphTimeWindow: model.graphTimeWindow)
+                graphTimeWindow: model.graphTimeWindow,
+                sensorLocation: sensorLocation)
             .map((e) => lineChartBarDatas(e, model)),
         builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
           // We already check if it has data (a non-null value).
