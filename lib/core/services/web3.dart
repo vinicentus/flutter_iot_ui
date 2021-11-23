@@ -7,6 +7,8 @@ import 'package:flutter_iot_ui/core/models/contracts/TokenManager.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/User.g.dart';
 import 'package:flutter_iot_ui/core/models/contracts/UserManager.g.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
+import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -160,7 +162,14 @@ class Web3 {
   /// Adds a task and returns the address of that created task.
   /// This needs to be processed on-chain, and that takes a while.
   // TODO: make it an extension metod on Oracle class?
-  Future<EthereumAddress> addTask(String params, JsonId jsonId) async {
+  Future<EthereumAddress> addTask(String params) async {
+    var selectedDevicesModel = GetIt.instance<SelectedDevicesModel>();
+
+    if (selectedDevicesModel.selectedOracleId == null) {
+      throw Exception(
+          'Can\'t create a task without selecting a oracle on which to create it first.');
+    }
+
     var taskCreatedEvent = taskManager.self.event('task_created');
 
     var eventStream = ethClient
@@ -172,8 +181,8 @@ class Web3 {
 
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that
-    var txHash = taskManager.create(
-        jsonId.id, BigInt.from(2), BigInt.from(2), params,
+    var txHash = taskManager.create(selectedDevicesModel.selectedOracleId!.id,
+        BigInt.from(2), BigInt.from(2), params,
         credentials: privateKey);
 
     // The stream is canceled when the loop exits

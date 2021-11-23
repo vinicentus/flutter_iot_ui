@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -11,7 +10,6 @@ import 'package:universal_platform/universal_platform.dart';
 
 /// Singleton SQLite Databse Manager, implementing the common functions from [DatabaseManager].
 /// This class just provides convenient functiosn for common database operations.
-// TODO: handle different device IDs
 class SQLiteDatabaseManager extends DatabaseManager {
   static final SQLiteDatabaseManager _singleton =
       SQLiteDatabaseManager._internal();
@@ -75,7 +73,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
   }
 
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
-      {required JsonId deviceID, DateTime? start, DateTime? stop}) async {
+      {DateTime? start, DateTime? stop}) async {
     var maps = await _getDBEntries('sps30_output', start, stop);
 
     var returnList = List.generate(maps.length, (i) {
@@ -97,7 +95,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
   }
 
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {required JsonId deviceID, DateTime? start, DateTime? stop}) async {
+      {DateTime? start, DateTime? stop}) async {
     var maps = await _getDBEntries('scd30_output', start, stop);
 
     var returnList = List.generate(maps.length, (i) {
@@ -112,7 +110,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
   }
 
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
-      {required JsonId deviceID, DateTime? start, DateTime? stop}) async {
+      {DateTime? start, DateTime? stop}) async {
     var maps = await _getDBEntries('scd41_output', start, stop);
 
     var returnList = List.generate(maps.length, (i) {
@@ -127,7 +125,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
   }
 
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
-      {required JsonId deviceID, DateTime? start, DateTime? stop}) async {
+      {DateTime? start, DateTime? stop}) async {
     var maps = await _getDBEntries('svm30_output', start, stop);
 
     var returnList = List.generate(maps.length, (i) {

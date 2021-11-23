@@ -35,19 +35,12 @@ class DevicesPageState extends State<DevicesPage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: MaterialButton(
-              child: Text(
-                'Create device',
-                style: TextStyle(color: Colors.white),
-              ),
+          MaterialButton(
+              child: Text('Create device'),
               onPressed: () {
                 showDialog(
                     context: context, builder: (context) => FormWidget());
-              },
-            ),
-          ),
+              })
         ],
       ),
       drawer: NavDrawer(DevicesPage.route),
@@ -64,7 +57,7 @@ class DevicesPageState extends State<DevicesPage> {
                       JsonId jsonId = devices.keys.elementAt(index);
                       Oracle deviceAtIndex = devices[jsonId]!;
 
-                      return CheckboxListTile(
+                      return RadioListTile(
                         // Use the ID of the oracle as stored in the oracle manager,
                         // instead of the oracle address.
                         title: Text(jsonId.isValidJson
@@ -81,22 +74,13 @@ class DevicesPageState extends State<DevicesPage> {
                               }
                             }),
                         // Selected if selected in Web3Manager is the same as this device
-                        value: selectedDevicesModel.selectedOracleIds
-                            .contains(jsonId),
-                        onChanged: (bool? value) {
-                          // value will always be non-null, because we don't use tri-state
-                          if (value!) {
-                            setState(() {
-                              selectedDevicesModel.selectedOracleIds
-                                  .add(jsonId);
-                            });
-                          } else {
-                            setState(() {
-                              selectedDevicesModel.selectedOracleIds
-                                  .remove(jsonId);
-                            });
-                          }
+                        value: jsonId,
+                        onChanged: (JsonId? changedId) {
+                          setState(() {
+                            selectedDevicesModel.selectedOracleId = changedId!;
+                          });
                         },
+                        groupValue: selectedDevicesModel.selectedOracleId,
                         secondary: OutlinedButton(
                           onPressed: () {
                             showDialog(
