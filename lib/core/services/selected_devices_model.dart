@@ -11,10 +11,11 @@ class SelectedDevicesModel {
   /// This is set if a local config file was found and loaded.
   JsonId? localOracleId;
 
-  loadLocalID() async {
+  Future<JsonId?> loadLocalID() async {
     // TODO
     localOracleId =
         JsonId('{"name":"RaspberryPiNew","sensors":["scd41"],"uniqueId":"1"}');
+    return localOracleId;
   }
 
   Future<JsonId?> loadRemoteID() async {
