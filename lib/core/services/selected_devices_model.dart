@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
+import 'package:flutter_iot_ui/core/util/config_parser.dart';
 import 'package:get_it/get_it.dart';
 
 class SelectedDevicesModel {
@@ -12,9 +14,14 @@ class SelectedDevicesModel {
   JsonId? localOracleId;
 
   Future<JsonId?> loadLocalID() async {
-    // TODO
-    localOracleId =
-        JsonId('{"name":"RaspberryPiNew","sensors":["scd41"],"uniqueId":"1"}');
+    // If debugmode, use string, else try parse file
+    if (kDebugMode || kProfileMode) {
+      localOracleId = JsonId(
+          '{"name":"RaspberryPiNew","sensors":["scd41"],"uniqueId":"1"}');
+    } else {
+      localOracleId = await YamlConfigParser().getJsonId();
+    }
+
     return localOracleId;
   }
 
