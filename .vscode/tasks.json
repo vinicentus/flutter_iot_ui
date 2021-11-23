@@ -68,7 +68,7 @@
 			"command": "scp",
 			"args": [
 				"-r",
-				"pi@192.168.13.205:/home/pi/IoT-Microservice/app/oracle/sensor_data.db",
+				"pi@192.168.13.205:/home/pi/git-repos/IoT-Microservice/app/oracle/sensor_data.db",
 				"C:\\Users\\langstvi\\OneDrive - Arcada\\Documents\\sensor_data.db"
 			],
 			"problemMatcher": [],
