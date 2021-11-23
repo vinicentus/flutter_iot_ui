@@ -4,7 +4,7 @@ import 'package:yaml/yaml.dart';
 
 class YamlConfigParser {
   var _localPath =
-      ' ~/git-repos/IoT-Microservice/app/resources/device_settings.yaml';
+      '/home/pi/git-repos/IoT-Microservice/app/resources/device_settings.yaml';
 
   parse() async {
     final contents = await File(_localPath).readAsString();
@@ -14,6 +14,8 @@ class YamlConfigParser {
   Future<JsonId> getJsonId() async {
     var yaml = await parse();
     return JsonId.fromValues(
-        yaml['id']['name'], yaml['id']['sensors'], yaml['id']['uniqueId']);
+        yaml['id']['name'],
+        yaml['id']['sensors'].whereType<String>().toList(),
+        yaml['id']['uniqueId']);
   }
 }

@@ -67,7 +67,7 @@ Higher values mean smoother lines on the graph.'''),
             title: Text('Show data from local database'),
             subtitle: Text(
                 '''If set, the app will try to get data from a local SQLite DB.
-It will try to load sensor configuration from ~/git-repos/IoT-Microservice/app/resources/device_settings.yaml'''),
+It will try to load sensor configuration from /home/pi/git-repos/IoT-Microservice/app/resources/device_settings.yaml'''),
             value: model.usesSqLite(),
             onChanged: model.setUsesSqLite,
           ),

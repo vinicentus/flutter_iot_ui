@@ -36,7 +36,8 @@ class SQLiteDatabaseManager extends DatabaseManager {
     }
   }
 
-  String dbPath = '/home/pi/IoT-Microservice/app/oracle/sensor_data.db';
+  String dbPath =
+      '/home/pi/git-repos/IoT-Microservice/app/oracle/sensor_data.db';
 
   Future<Database> get openedDatabase {
     return openDatabase(dbPath, readOnly: true, singleInstance: true);
