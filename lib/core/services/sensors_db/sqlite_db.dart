@@ -1,15 +1,18 @@
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
+import 'package:sqlite3/open.dart';
+import 'package:sqlite3/sqlite3.dart';
 import 'package:universal_platform/universal_platform.dart';
 
 /// Singleton SQLite Databse Manager, implementing the common functions from [DatabaseManager].
-/// This class just provides convenient functiosn for common database operations.
+/// This class just provides convenient functions for common database operations.
 class SQLiteDatabaseManager extends DatabaseManager {
   static final SQLiteDatabaseManager _singleton =
       SQLiteDatabaseManager._internal();
@@ -19,124 +22,114 @@ class SQLiteDatabaseManager extends DatabaseManager {
   }
 
   SQLiteDatabaseManager._internal() {
-    if (UniversalPlatform.isDesktop) {
-      // Initialize FFI
-      sqfliteFfiInit();
-      // Change the default factory
-      databaseFactory = databaseFactoryFfi;
-
-      // Use different db path if debugging
-      if (kDebugMode || kProfileMode) {
+    // Use different db path if debugging
+    if (kDebugMode || kProfileMode) {
+      if (UniversalPlatform.isWindows) {
+        open.overrideFor(OperatingSystem.windows, _openDllOnWindows);
         print(
-            'running in ${kDebugMode ? 'debug' : 'profile'} mode, using different db path');
+            'running in ${kDebugMode ? 'debug' : 'profile'} mode on Windows, using different db path, and loading shared library for sqlite3.');
         dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
+      } else {
+        print('Running on in debug mode but not on windows...');
       }
-    } else {
-      throw Exception('Running on a platform that does not support SQLite ...');
     }
+  }
+
+  DynamicLibrary _openDllOnWindows() {
+    final library = File(
+        'C:/Users/langstvi/OneDrive - Arcada/Documents/sqlite-dll-win64-x64-3360000/sqlite3.dll');
+    return DynamicLibrary.open(library.path);
   }
 
   String dbPath =
       '/home/pi/git-repos/IoT-Microservice/app/oracle/sensor_data.db';
 
-  Future<Database> get openedDatabase {
-    return openDatabase(dbPath, readOnly: true, singleInstance: true);
-  }
+  Database get openedDatabase => sqlite3.open(dbPath, mode: OpenMode.readOnly);
 
-  Future<void> closeDatabase() async => (await openedDatabase).close();
+  void closeDatabase() => openedDatabase.dispose();
 
-  Future<List<Map<String, dynamic>>> _getDBEntries(
-      String tableName, DateTime? start, DateTime? stop) async {
-    final List<Map<String, dynamic>> maps;
+  ResultSet _getDBEntries(String tableName, DateTime? start, DateTime? stop) {
+    final ResultSet maps;
 
     // If no date limitations are provided, we fetch all entries.
     if (start == null && stop == null) {
-      maps = await (await openedDatabase).query(tableName);
+      maps = openedDatabase.select('SELECT * FROM $tableName');
     } else {
       // The question marks are filled in with values from whereArgs
-      var where = '';
-      if (start != null) where += 'datetime >= ?';
-      if (start != null && stop != null) where += ' AND ';
-      if (stop != null) where += 'datetime <= ?';
+      var sql = 'SELECT * FROM $tableName WHERE ';
+      if (start != null) sql += 'datetime >= ?';
+      if (start != null && stop != null) sql += ' AND ';
+      if (stop != null) sql += 'datetime <= ?';
 
       var whereArgs = <String>[];
       // We use UTC in the database
       if (start != null) whereArgs.add(convertDateTimeToString(start));
       if (stop != null) whereArgs.add(convertDateTimeToString(stop));
 
-      maps = await (await openedDatabase)
-          .query(tableName, where: where, whereArgs: whereArgs);
+      maps = openedDatabase.select(sql, whereArgs);
     }
 
-    await closeDatabase();
+    closeDatabase();
 
     return maps;
   }
 
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
-      {DateTime? start, DateTime? stop}) async {
-    var maps = await _getDBEntries('sps30_output', start, stop);
+      {DateTime? start, DateTime? stop}) {
+    var maps = _getDBEntries('sps30_output', start, stop);
 
-    var returnList = List.generate(maps.length, (i) {
-      return SPS30SensorDataEntry.createFromDB(
-        maps[i]['datetime']!,
-        maps[i]['d1']!,
-        maps[i]['d2']!,
-        maps[i]['d3']!,
-        maps[i]['d4']!,
-        maps[i]['d5']!,
-        maps[i]['d6']!,
-        maps[i]['d7']!,
-        maps[i]['d8']!,
-        maps[i]['d9']!,
-        maps[i]['d10']!,
-      );
-    });
-    return returnList;
+    var iterable = maps.map((Row row) => SPS30SensorDataEntry.createFromDB(
+          row['datetime']!,
+          row['d1']!,
+          row['d2']!,
+          row['d3']!,
+          row['d4']!,
+          row['d5']!,
+          row['d6']!,
+          row['d7']!,
+          row['d8']!,
+          row['d9']!,
+          row['d10']!,
+        ));
+    return Future.value(iterable.toList());
   }
 
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime? start, DateTime? stop}) async {
-    var maps = await _getDBEntries('scd30_output', start, stop);
+      {DateTime? start, DateTime? stop}) {
+    var maps = _getDBEntries('scd30_output', start, stop);
 
-    var returnList = List.generate(maps.length, (i) {
-      return SCD30SensorDataEntry.createFromDB(
-        maps[i]['datetime']!,
-        maps[i]['d1']!,
-        maps[i]['d2']!,
-        maps[i]['d3']!,
-      );
-    });
-    return returnList;
+    var iterable = maps.map((Row row) => SCD30SensorDataEntry.createFromDB(
+          row['datetime']!,
+          row['d1']!,
+          row['d2']!,
+          row['d3']!,
+        ));
+    return Future.value(iterable.toList());
   }
 
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
-      {DateTime? start, DateTime? stop}) async {
-    var maps = await _getDBEntries('scd41_output', start, stop);
+      {DateTime? start, DateTime? stop}) {
+    var maps = _getDBEntries('scd41_output', start, stop);
 
-    var returnList = List.generate(maps.length, (i) {
-      return SCD41SensorDataEntry.createFromDB(
-        maps[i]['datetime']!,
-        maps[i]['d1']!,
-        maps[i]['d2']!,
-        maps[i]['d3']!,
-      );
-    });
-    return returnList;
+    var iterable = maps.map((Row row) => SCD41SensorDataEntry.createFromDB(
+          row['datetime']!,
+          row['d1']!,
+          row['d2']!,
+          row['d3']!,
+        ));
+    return Future.value(iterable.toList());
   }
 
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
-      {DateTime? start, DateTime? stop}) async {
-    var maps = await _getDBEntries('svm30_output', start, stop);
+      {DateTime? start, DateTime? stop}) {
+    var maps = _getDBEntries('svm30_output', start, stop);
 
-    var returnList = List.generate(maps.length, (i) {
-      return SVM30SensorDataEntry.createFromDB(
-        maps[i]['datetime']!,
-        maps[i]['co2']!,
-        maps[i]['tvoc']!,
-      );
-    });
-    return returnList;
+    var iterable = maps.map((Row row) => SVM30SensorDataEntry.createFromDB(
+          row['datetime']!,
+          row['co2']!,
+          row['tvoc']!,
+        ));
+    return Future.value(iterable.toList());
   }
 }
 
