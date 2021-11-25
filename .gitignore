@@ -44,3 +44,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# flutter-pi related (file needed to build release version for flutter-pi)
+gen_snapshot_linux_x64_release
