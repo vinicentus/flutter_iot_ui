@@ -66,14 +66,6 @@ class _DeviceInfoDialogState extends State<DeviceInfoDialog> {
                 ),
               ),
               SimpleDialogOption(
-                child: Text(
-                    'Discoverable Status (obsolete): ${model.discoverable}'),
-              ),
-              SimpleDialogOption(
-                child: Text(
-                    'Discovery configuratio (obsolete): "${model.configuration}"'),
-              ),
-              SimpleDialogOption(
                 child:
                     Text('Number of complete assignments: ${model.completed}'),
               ),

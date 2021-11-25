@@ -21,8 +21,6 @@ class DeviceInfoDialogModel extends ChangeNotifier {
     _price = (await _device.price()).toInt();
     _taskManager = await _device.task_manager();
     _owner = await _device.owner();
-    _discoverable = await _device.discoverable();
-    _configuration = await _device.config();
     _completed = (await _device.completed()).toInt();
 
     dataState = ViewState.ready;
@@ -56,14 +54,6 @@ class DeviceInfoDialogModel extends ChangeNotifier {
   late EthereumAddress _owner;
 
   EthereumAddress get owner => _owner;
-
-  late bool _discoverable;
-
-  bool get discoverable => _discoverable;
-
-  late String _configuration;
-
-  String get configuration => _configuration;
 
   late int _completed;
 
