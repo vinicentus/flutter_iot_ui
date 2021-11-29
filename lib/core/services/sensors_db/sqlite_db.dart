@@ -14,14 +14,7 @@ import 'package:universal_platform/universal_platform.dart';
 /// Singleton SQLite Databse Manager, implementing the common functions from [DatabaseManager].
 /// This class just provides convenient functions for common database operations.
 class SQLiteDatabaseManager extends DatabaseManager {
-  static final SQLiteDatabaseManager _singleton =
-      SQLiteDatabaseManager._internal();
-
-  factory SQLiteDatabaseManager() {
-    return _singleton;
-  }
-
-  SQLiteDatabaseManager._internal() {
+  SQLiteDatabaseManager() {
     // Use different db path if debugging
     if (kDebugMode || kProfileMode) {
       if (UniversalPlatform.isWindows) {
