@@ -23,15 +23,19 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager {
   String get _accessLink => _generateAccessLink(
       'eu1', keystore.storjS3AccessKey, 'iot-microservice/temp.db');
 
+  http.Client _httpClient = http.Client();
+
   Future<File> _fetchAndStoreDB() async {
     final stopwatch = Stopwatch()..start();
-    var response = await http.get(Uri.parse(_accessLink));
+    var response = await _httpClient.get(Uri.parse(_accessLink));
     print('fetch executed in ${stopwatch.elapsed}');
     if (response.statusCode == 200) {
-      return File(super.dbPath).writeAsBytes(response.bodyBytes).then((value) {
-        print('write executed in ${stopwatch.elapsed}');
-        return value;
-      });
+      var file = await File(super.dbPath).writeAsBytes(response.bodyBytes);
+
+      print('write executed in ${stopwatch.elapsed}');
+      stopwatch.stop();
+
+      return file;
     } else {
       print(response.statusCode);
       print(response.body);
