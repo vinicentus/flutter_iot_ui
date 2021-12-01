@@ -1,6 +1,6 @@
 import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
-import 'package:flutter_iot_ui/core/services/sensors_db/storj_web3_db.dart';
-import 'package:flutter_iot_ui/core/services/sensors_db/web3_db.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/storj_web3_sqlite_db.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/web_chunks_db.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
 import 'package:get_it/get_it.dart';
@@ -14,8 +14,11 @@ void registerGetItServices() {
   getIt.registerSingletonWithDependencies(() => SelectedDevicesModel(),
       dependsOn: [Web3]);
 
-  getIt.registerSingletonWithDependencies<Web3Manager>(() => Web3Manager(),
+  getIt.registerSingletonWithDependencies<Web3ChunkDbManager>(
+      () => Web3ChunkDbManager(),
       dependsOn: [Web3]);
   // TODO: change back to SQLiteDatabaseManager
-  getIt.registerSingleton<SQLiteDatabaseManager>(StorjSQLiteWeb3DbManager());
+  getIt.registerSingletonWithDependencies<SQLiteDatabaseManager>(
+      () => StorjSQLiteWeb3DbManager(),
+      dependsOn: [Web3]);
 }
