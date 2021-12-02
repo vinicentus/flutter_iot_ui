@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
-import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/global_deps.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/core/viewmodels/token_manager_model.dart';
@@ -38,24 +36,14 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         initialRoute: InitialLoadingPage.route,
-        // TODO: clean up
         routes: {
           InitialLoadingPage.route: (context) =>
               // This is where we define the next route after the loading screen
               InitialLoadingPage(nextRoute: SettingsPage.route),
           SVM30Page.route: (context) => SVM30Page(),
-          CarbonDioxidePage.route + '/scd30': (context) =>
-              CarbonDioxidePage<SCD30SensorDataEntry>(),
-          TemperaturePage.route + '/scd30': (context) =>
-              TemperaturePage<SCD30SensorDataEntry>(),
-          HumidityPage.route + '/scd30': (context) =>
-              HumidityPage<SCD30SensorDataEntry>(),
-          CarbonDioxidePage.route + '/scd41': (context) =>
-              CarbonDioxidePage<SCD41SensorDataEntry>(),
-          TemperaturePage.route + '/scd41': (context) =>
-              TemperaturePage<SCD41SensorDataEntry>(),
-          HumidityPage.route + '/scd41': (context) =>
-              HumidityPage<SCD41SensorDataEntry>(),
+          CarbonDioxidePage.route: (context) => CarbonDioxidePage(),
+          TemperaturePage.route: (context) => TemperaturePage(),
+          HumidityPage.route: (context) => HumidityPage(),
           MassConcentrationPage.route: (context) => MassConcentrationPage(),
           NumberConcentrationPage.route: (context) => NumberConcentrationPage(),
           TypicalParticleSizePage.route: (context) => TypicalParticleSizePage(),

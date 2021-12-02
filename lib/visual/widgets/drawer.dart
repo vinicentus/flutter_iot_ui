@@ -59,8 +59,13 @@ class _NavDrawerState extends State<NavDrawer> {
       required Widget leading,
       required Widget title,
       required String routeName,
-      Object? routeArguments}) {
-    var isSelected = routeName == widget.selectedRoute;
+      List? routeArguments}) {
+    var activeArguments = ModalRoute.of(context)!.settings.arguments as List?;
+
+    bool routesMatch = routeName == widget.selectedRoute;
+    bool argumentsMatch = routeArguments?[0] == activeArguments?[0] &&
+        routeArguments?[1] == activeArguments?[1];
+    bool isSelected = routesMatch && argumentsMatch;
 
     return ListTile(
       leading: leading,
@@ -172,7 +177,7 @@ class _NavDrawerState extends State<NavDrawer> {
             leading: Icon(Icons.airplay),
             title: Text('SVM30'),
             routeName: SVM30Page.route,
-            routeArguments: sensorLocation),
+            routeArguments: [sensorLocation]),
       ]);
     }
 
@@ -187,20 +192,20 @@ class _NavDrawerState extends State<NavDrawer> {
             context: context,
             leading: Icon(Icons.air),
             title: Text('Carbon Dioxide'),
-            routeName: CarbonDioxidePage.route + '/scd30',
-            routeArguments: sensorLocation),
+            routeName: CarbonDioxidePage.route,
+            routeArguments: [sensorLocation, 'scd30']),
         _buildMenuItem(
             context: context,
             leading: Icon(Icons.thermostat),
             title: Text('Temperature'),
-            routeName: TemperaturePage.route + '/scd30',
-            routeArguments: sensorLocation),
+            routeName: TemperaturePage.route,
+            routeArguments: [sensorLocation, 'scd30']),
         _buildMenuItem(
             context: context,
             leading: Icon(Icons.water),
             title: Text('Humidity'),
-            routeName: HumidityPage.route + '/scd30',
-            routeArguments: sensorLocation),
+            routeName: HumidityPage.route,
+            routeArguments: [sensorLocation, 'scd30']),
       ]);
     }
 
@@ -215,20 +220,20 @@ class _NavDrawerState extends State<NavDrawer> {
             context: context,
             leading: Icon(Icons.air),
             title: Text('Carbon Dioxide'),
-            routeName: CarbonDioxidePage.route + '/scd41',
-            routeArguments: sensorLocation),
+            routeName: CarbonDioxidePage.route,
+            routeArguments: [sensorLocation, 'scd41']),
         _buildMenuItem(
             context: context,
             leading: Icon(Icons.thermostat),
             title: Text('Temperature'),
-            routeName: TemperaturePage.route + '/scd41',
-            routeArguments: sensorLocation),
+            routeName: TemperaturePage.route,
+            routeArguments: [sensorLocation, 'scd41']),
         _buildMenuItem(
             context: context,
             leading: Icon(Icons.water),
             title: Text('Humidity'),
-            routeName: HumidityPage.route + '/scd41',
-            routeArguments: sensorLocation),
+            routeName: HumidityPage.route,
+            routeArguments: [sensorLocation, 'scd41']),
       ]);
     }
 
@@ -244,19 +249,19 @@ class _NavDrawerState extends State<NavDrawer> {
             leading: Icon(Icons.circle),
             title: Text('Mass Concentration'),
             routeName: MassConcentrationPage.route,
-            routeArguments: sensorLocation),
+            routeArguments: [sensorLocation]),
         _buildMenuItem(
             context: context,
             leading: Icon(Icons.ac_unit),
             title: Text('Number Concentration'),
             routeName: NumberConcentrationPage.route,
-            routeArguments: sensorLocation),
+            routeArguments: [sensorLocation]),
         _buildMenuItem(
             context: context,
             leading: Icon(Icons.add_road),
             title: Text('Typical Particle Size'),
             routeName: TypicalParticleSizePage.route,
-            routeArguments: sensorLocation),
+            routeArguments: [sensorLocation]),
       ]);
     }
 

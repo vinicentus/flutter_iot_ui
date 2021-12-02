@@ -57,8 +57,8 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
     colorPicker.reset();
 
     // Check route arguments to determine if this is supposedto be local or remote
-    final sensorLocation =
-        ModalRoute.of(context)!.settings.arguments as SensorLocation;
+    final sensorLocation = (ModalRoute.of(context)!.settings.arguments as List)
+        .first as SensorLocation;
     print(sensorLocation);
 
     return Scaffold(
