@@ -43,6 +43,7 @@ mixin SimpleWeb3DbManager on DatabaseManager {
     });
 
     var awaitedEvent = await event;
+    print('got back completed task');
 
     // Example of valid task in list [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
     // This breaks the while loop
