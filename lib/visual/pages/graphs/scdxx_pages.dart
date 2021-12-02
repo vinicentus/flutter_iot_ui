@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
+import 'package:flutter_iot_ui/core/util/sensor_location_enum.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/general_graph_page.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -13,11 +14,15 @@ class CarbonDioxidePage extends StatelessWidget {
     var routeArguments = ModalRoute.of(context)!.settings.arguments as List;
     var type = routeArguments[1];
 
+    // Check route arguments to determine if this is supposed to be local or remote
+    final sensorLocation = routeArguments.first as SensorLocation;
+
     if (type == 'scd41') {
       return GeneralGraphPage<SCD41SensorDataEntry>(
         route: CarbonDioxidePage.route,
         title: this.title,
         unit: 'ppm',
+        sensorLocation: sensorLocation,
         transformFunctions: [
           (SCD41SensorDataEntry e) => FlSpot(
               e.timeStamp.millisecondsSinceEpoch.toDouble(),
@@ -29,6 +34,7 @@ class CarbonDioxidePage extends StatelessWidget {
         route: CarbonDioxidePage.route,
         title: this.title,
         unit: 'ppm',
+        sensorLocation: sensorLocation,
         transformFunctions: [
           (SCD30SensorDataEntry e) => FlSpot(
               e.timeStamp.millisecondsSinceEpoch.toDouble(),
@@ -50,11 +56,15 @@ class TemperaturePage extends StatelessWidget {
     var routeArguments = ModalRoute.of(context)!.settings.arguments as List;
     var type = routeArguments[1];
 
+    // Check route arguments to determine if this is supposed to be local or remote
+    final sensorLocation = routeArguments.first as SensorLocation;
+
     if (type == 'scd41') {
       return GeneralGraphPage<SCD41SensorDataEntry>(
         route: TemperaturePage.route,
         title: this.title,
         unit: '°C',
+        sensorLocation: sensorLocation,
         transformFunctions: [
           (SCD41SensorDataEntry e) => FlSpot(
               e.timeStamp.millisecondsSinceEpoch.toDouble(), e.temperature)
@@ -65,6 +75,7 @@ class TemperaturePage extends StatelessWidget {
         route: TemperaturePage.route,
         title: this.title,
         unit: '°C',
+        sensorLocation: sensorLocation,
         transformFunctions: [
           (SCD30SensorDataEntry e) => FlSpot(
               e.timeStamp.millisecondsSinceEpoch.toDouble(), e.temperature)
@@ -85,11 +96,15 @@ class HumidityPage extends StatelessWidget {
     var routeArguments = ModalRoute.of(context)!.settings.arguments as List;
     var type = routeArguments[1];
 
+    // Check route arguments to determine if this is supposed to be local or remote
+    final sensorLocation = routeArguments.first as SensorLocation;
+
     if (type == 'scd41') {
       return GeneralGraphPage<SCD41SensorDataEntry>(
         route: HumidityPage.route,
         title: this.title,
         unit: '%RH',
+        sensorLocation: sensorLocation,
         transformFunctions: [
           (SCD41SensorDataEntry e) =>
               FlSpot(e.timeStamp.millisecondsSinceEpoch.toDouble(), e.humidity)
@@ -101,6 +116,7 @@ class HumidityPage extends StatelessWidget {
         route: HumidityPage.route,
         title: this.title,
         unit: '%RH',
+        sensorLocation: sensorLocation,
         transformFunctions: [
           (SCD30SensorDataEntry e) =>
               FlSpot(e.timeStamp.millisecondsSinceEpoch.toDouble(), e.humidity)

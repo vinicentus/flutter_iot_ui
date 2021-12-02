@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
+import 'package:flutter_iot_ui/core/util/sensor_location_enum.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/visual/pages/graphs/general_graph_page.dart';
 import 'package:provider/provider.dart';
@@ -15,10 +16,15 @@ class NumberConcentrationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var model = context.read<GraphSettingsModel>();
 
+    // Check route arguments to determine if this is supposed to be local or remote
+    final sensorLocation = (ModalRoute.of(context)!.settings.arguments as List)
+        .first as SensorLocation;
+
     return GeneralGraphPage<SPS30SensorDataEntry>(
       title: title,
       route: route,
       unit: unit,
+      sensorLocation: sensorLocation,
       transformFunctions: [
         (SPS30SensorDataEntry e) => FlSpot(
             e.timeStamp.millisecondsSinceEpoch.toDouble(),

@@ -20,6 +20,7 @@ class GeneralGraphPage<T extends GenericSensorDataEntry>
   final String unit;
   final List<FlSpot Function(T)> transformFunctions;
   final List<String> checkBoxNames;
+  final SensorLocation sensorLocation;
 
   GeneralGraphPage({
     Key? key,
@@ -28,6 +29,7 @@ class GeneralGraphPage<T extends GenericSensorDataEntry>
     required this.unit,
     this.transformFunctions = const [],
     this.checkBoxNames = const [],
+    required this.sensorLocation,
   }) : super(key: key);
 
   @override
@@ -40,9 +42,23 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
 
   var colorPicker = ColorPicker.material();
 
+  var stream;
+
   @override
   void initState() {
     super.initState();
+
+    var model = context.read<GraphSettingsModel>();
+
+    // This has to be registered here, because actions such as opening and closing the drawer will trigger a rebuild.
+    // If this was included in the build method, the state would not be saved between rebuilds.
+    // Alternatively we could have a null initial stream var that would be initialized in build only if null...
+    // That way we could depend on the context.
+    stream = dbUpdatesOfType<T>(
+            refreshDuration: model.graphRefreshTime,
+            graphTimeWindow: model.graphTimeWindow,
+            sensorLocation: widget.sensorLocation)
+        .map((e) => lineChartBarDatas(e, model));
 
     for (String name in this.widget.checkBoxNames) {
       print('OK');
@@ -52,14 +68,9 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
 
   @override
   Widget build(BuildContext context) {
-    var model = context.read<GraphSettingsModel>();
-
     colorPicker.reset();
 
-    // Check route arguments to determine if this is supposedto be local or remote
-    final sensorLocation = (ModalRoute.of(context)!.settings.arguments as List)
-        .first as SensorLocation;
-    print(sensorLocation);
+    print(widget.sensorLocation);
 
     return Scaffold(
       appBar: AppBar(
@@ -68,11 +79,7 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
       ),
       drawer: NavDrawer(this.widget.route),
       body: StreamBuilder(
-        stream: dbUpdatesOfType<T>(
-                refreshDuration: model.graphRefreshTime,
-                graphTimeWindow: model.graphTimeWindow,
-                sensorLocation: sensorLocation)
-            .map((e) => lineChartBarDatas(e, model)),
+        stream: stream,
         builder: (context, AsyncSnapshot<List<LineChartBarData>> snapshot) {
           // We already check if it has data (a non-null value).
           // That means we can use the !. operator throughout safely,
