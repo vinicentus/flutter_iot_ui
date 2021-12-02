@@ -138,6 +138,8 @@ class _NavDrawerState extends State<NavDrawer> {
 
     return Drawer(
         child: ListView(
+      controller:
+          ScrollController(), // I don't know why this is neede, but probably related to https://github.com/flutter/flutter/issues/85456
       children: children,
     ));
   }
