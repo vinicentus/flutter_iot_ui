@@ -162,7 +162,8 @@ class Web3 {
   /// Adds a task and returns the address of that created task.
   /// This needs to be processed on-chain, and that takes a while.
   // TODO: make it an extension metod on Oracle class?
-  Future<EthereumAddress> addTask(String params) async {
+  Future<EthereumAddress> addTask(String params,
+      {Duration timeout = const Duration(seconds: 10)}) async {
     var selectedDevicesModel = GetIt.instance<SelectedDevicesModel>();
 
     if (selectedDevicesModel.selectedOracleId == null) {
@@ -177,7 +178,7 @@ class Web3 {
             contract: taskManager.self, event: taskCreatedEvent))
         // Time out stream if after 10 seconds
         // (meaning we have 10 seconds to get the right event before stream is canceled)
-        .timeout(Duration(seconds: 10));
+        .timeout(timeout);
 
     // The result will be a transaction hash
     // We don't need to wait for this since we catch the result in the event listener and wait on that

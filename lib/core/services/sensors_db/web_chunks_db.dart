@@ -40,12 +40,12 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
 
     for (int i = 0; i < intervalCount; i++) {
       print('returning chunk ${i + 1}/$intervalCount');
-      yield await geteEntries(
+      yield convertFromBase64(await waitForTaskCompletion(
         tableName: tableName,
         publicKey: publicKey,
         start: timeChunkList[i],
         stop: timeChunkList[i + 1],
-      );
+      )) as List;
     }
   }
 

@@ -48,7 +48,10 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
       {DateTime? start, DateTime? stop}) async {
-    await geteEntries(tableName: 'scd30_output', taskReturnType: 'storj');
+    await waitForTaskCompletion(
+        tableName: 'scd30_output',
+        taskReturnType: 'storj',
+        timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
     return super.getSCD30Entries(start: start, stop: stop);
   }
@@ -56,7 +59,10 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   @override
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
       {DateTime? start, DateTime? stop}) async {
-    await geteEntries(tableName: 'scd41_output', taskReturnType: 'storj');
+    await waitForTaskCompletion(
+        tableName: 'scd41_output',
+        taskReturnType: 'storj',
+        timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
     return super.getSCD41Entries(start: start, stop: stop);
   }
@@ -64,7 +70,10 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   @override
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
-    await geteEntries(tableName: 'sps30_output', taskReturnType: 'storj');
+    await waitForTaskCompletion(
+        tableName: 'sps30_output',
+        taskReturnType: 'storj',
+        timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
     return super.getSPS30Entries(start: start, stop: stop);
   }
@@ -72,7 +81,10 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   @override
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop}) async {
-    await geteEntries(tableName: 'svm30_output', taskReturnType: 'storj');
+    await waitForTaskCompletion(
+        tableName: 'svm30_output',
+        taskReturnType: 'storj',
+        timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
     return super.getSVM30Entries(start: start, stop: stop);
   }
