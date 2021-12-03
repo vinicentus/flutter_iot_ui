@@ -74,4 +74,14 @@ class GraphSettingsModel extends ChangeNotifier {
     _usesSQLite = value;
     notifyListeners();
   }
+
+  bool _usesStorj = true;
+
+  bool usesStorj() => _usesStorj;
+
+  setUsesStorj(bool value) {
+    // TODO: load different db object from getit
+    _usesStorj = value;
+    notifyListeners();
+  }
 }

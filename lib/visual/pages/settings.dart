@@ -63,6 +63,13 @@ Higher values mean smoother lines on the graph.'''),
             value: model.usesWeb3(),
             onChanged: model.setUsesWeb3,
           ),
+          if (model.usesWeb3())
+            SwitchListTile(
+              title: Text('Use Storj to get data.'),
+              subtitle: Text('This option is only vaailable when using web3.'),
+              value: model.usesStorj(),
+              onChanged: model.setUsesStorj,
+            ),
           SwitchListTile(
             title: Text('Show data from local database'),
             subtitle: Text(

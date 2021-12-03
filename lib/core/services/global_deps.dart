@@ -17,8 +17,8 @@ void registerGetItServices() {
   getIt.registerSingletonWithDependencies<Web3ChunkDbManager>(
       () => Web3ChunkDbManager(),
       dependsOn: [Web3]);
-  // TODO: change back to SQLiteDatabaseManager
-  getIt.registerSingletonWithDependencies<SQLiteDatabaseManager>(
+  getIt.registerSingletonWithDependencies<StorjSQLiteWeb3DbManager>(
       () => StorjSQLiteWeb3DbManager(),
       dependsOn: [Web3]);
+  getIt.registerSingleton<SQLiteDatabaseManager>(SQLiteDatabaseManager());
 }

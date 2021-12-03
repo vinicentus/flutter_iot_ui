@@ -1,6 +1,7 @@
 import 'package:flutter_iot_ui/core/models/sensors/generic_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/storj_web3_sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web_chunks_db.dart';
 import 'package:flutter_iot_ui/core/util/sensor_location_enum.dart';
 import 'package:get_it/get_it.dart';
@@ -8,10 +9,15 @@ import 'package:get_it/get_it.dart';
 Stream<List<T>> dbUpdatesOfType<T extends GenericSensorDataEntry>(
     {required Duration refreshDuration,
     required Duration graphTimeWindow,
-    required SensorLocation sensorLocation}) async* {
+    required SensorLocation sensorLocation,
+    required bool usesStorj}) async* {
   DatabaseManager dbManager;
   if (sensorLocation == SensorLocation.remote) {
-    dbManager = GetIt.instance<Web3ChunkDbManager>();
+    if (usesStorj) {
+      dbManager = GetIt.instance<StorjSQLiteWeb3DbManager>();
+    } else {
+      dbManager = GetIt.instance<Web3ChunkDbManager>();
+    }
   } else {
     dbManager = GetIt.instance<SQLiteDatabaseManager>();
   }
