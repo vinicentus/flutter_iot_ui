@@ -1,3 +1,4 @@
+import 'package:flutter_iot_ui/core/services/cryptography.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/storj_web3_sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web_chunks_db.dart';
@@ -21,4 +22,6 @@ void registerGetItServices() {
       () => StorjSQLiteWeb3DbManager(),
       dependsOn: [Web3]);
   getIt.registerSingleton<SQLiteDatabaseManager>(SQLiteDatabaseManager());
+
+  getIt.registerSingleton<EncryptorDecryptor>(EncryptorDecryptor());
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/services/cryptography.dart';
 import 'package:flutter_iot_ui/core/services/global_deps.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/core/viewmodels/token_manager_model.dart';
@@ -13,10 +14,12 @@ import 'package:flutter_iot_ui/visual/pages/graphs/svm30_page.dart';
 import 'package:flutter_iot_ui/visual/pages/token_manager.dart';
 import 'package:flutter_iot_ui/visual/pages/users.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   registerGetItServices();
+  GetIt.instance<EncryptorDecryptor>().loadKeysAndDecrypt(); // TODO: remove
   runApp(MyApp());
 }
 

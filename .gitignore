@@ -48,3 +48,7 @@ app.*.map.json
 # flutter-pi related (file needed to build release version for flutter-pi)
 gen_snapshot_linux_x64_release
 lib/core/util/storj_keys.dart
+
+# Private RSA keys
+resources/private_key.pem
+resources/public_key.pem
