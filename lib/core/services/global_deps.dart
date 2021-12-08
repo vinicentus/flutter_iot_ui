@@ -15,6 +15,8 @@ void registerGetItServices() {
   getIt.registerSingletonWithDependencies(() => SelectedDevicesModel(),
       dependsOn: [Web3]);
 
+  getIt.registerSingleton<EncryptorDecryptor>(EncryptorDecryptor());
+
   getIt.registerSingletonWithDependencies<Web3ChunkDbManager>(
       () => Web3ChunkDbManager(),
       dependsOn: [Web3]);
@@ -22,6 +24,4 @@ void registerGetItServices() {
       () => StorjSQLiteWeb3DbManager(),
       dependsOn: [Web3]);
   getIt.registerSingleton<SQLiteDatabaseManager>(SQLiteDatabaseManager());
-
-  getIt.registerSingleton<EncryptorDecryptor>(EncryptorDecryptor());
 }

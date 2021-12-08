@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_iot_ui/core/services/cryptography.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:get_it/get_it.dart';
 import 'package:web3dart/web3dart.dart';
@@ -25,7 +26,7 @@ mixin SimpleWeb3DbManager on DatabaseManager {
         // TODO: bad non-null assertions
         startTime: start != null ? convertDateTimeToString(start) : null,
         stopTime: stop != null ? convertDateTimeToString(stop) : null,
-        publicKey: publicKey, // TODO
+        publicKey: publicKey, // whole pem file as string
         tableName: tableName,
         taskReturnType: taskReturnType));
     if (taskAddress is! EthereumAddress) {
@@ -77,5 +78,19 @@ mixin SimpleWeb3DbManager on DatabaseManager {
     var utf8List = base64.decode(base64Task);
     var jsonString = utf8.decode(utf8List);
     return json.decode(jsonString);
+  }
+
+  // TODO: check map types, should be Map<String, String>
+  Future<List> decryptResult(Map<String, dynamic> jsonData) async {
+    EncryptorDecryptor decryptor = GetIt.instance<EncryptorDecryptor>();
+
+    var key = jsonData['key']!;
+    var data = jsonData['data']!;
+
+    var decrypted = await decryptor.decryptBoth(key, data);
+
+    var decryptedJsonData = json.decode(decrypted);
+
+    return decryptedJsonData;
   }
 }

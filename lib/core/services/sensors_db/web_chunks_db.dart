@@ -3,10 +3,18 @@ import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
+import 'package:flutter_iot_ui/core/services/cryptography.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_mixin.dart';
+import 'package:get_it/get_it.dart';
 
 class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
+  EncryptorDecryptor decryptor = GetIt.instance<EncryptorDecryptor>();
+  // TODO: move to settings page
+  bool useEncryption = true;
+
+  String? publickKey;
+
   /// Split interval into smaller chunks that are a maximum of 1 hour long
   @visibleForTesting
   List<DateTime> splitIntoSmallTimeIntervals(DateTime start, DateTime stop) {
@@ -29,10 +37,7 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
 
   // TODO: don't wait for previous task to complete before submitting new one
   Stream<List> _getEntriesInChunksAsStream(
-      {required String tableName,
-      String? publicKey,
-      DateTime? start,
-      DateTime? stop}) async* {
+      {required String tableName, DateTime? start, DateTime? stop}) async* {
     // TODO: bad null check
     var timeChunkList = splitIntoSmallTimeIntervals(start!, stop!);
 
@@ -40,25 +45,35 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
 
     for (int i = 0; i < intervalCount; i++) {
       print('returning chunk ${i + 1}/$intervalCount');
-      yield convertFromBase64(await waitForTaskCompletion(
-        tableName: tableName,
-        publicKey: publicKey,
-        start: timeChunkList[i],
-        stop: timeChunkList[i + 1],
-      )) as List;
+      if (useEncryption) {
+        print('Using encryption, including public RSA key in task...');
+        publickKey = await decryptor.rsaPublicKeyBase64();
+
+        var completedPartiallyDecodedTask =
+            convertFromBase64(await waitForTaskCompletion(
+          tableName: tableName,
+          publicKey: publickKey,
+          start: timeChunkList[i],
+          stop: timeChunkList[i + 1],
+        ));
+
+        print('Decrypting the task result...');
+        yield await decryptResult(completedPartiallyDecodedTask);
+      } else {
+        yield convertFromBase64(await waitForTaskCompletion(
+          tableName: tableName,
+          publicKey: null,
+          start: timeChunkList[i],
+          stop: timeChunkList[i + 1],
+        )) as List;
+      }
     }
   }
 
   Future<List> _getEntriesInChunks(
-      {required String tableName,
-      String? publicKey,
-      DateTime? start,
-      DateTime? stop}) {
+      {required String tableName, DateTime? start, DateTime? stop}) {
     return _getEntriesInChunksAsStream(
-            tableName: tableName,
-            publicKey: publicKey,
-            start: start,
-            stop: stop)
+            tableName: tableName, start: start, stop: stop)
         .fold([], (previous, element) => previous..addAll(element));
   }
 
@@ -66,7 +81,7 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
       {DateTime? start, DateTime? stop}) async {
     List taskResult = await _getEntriesInChunks(
-        tableName: 'scd30_output', publicKey: null, start: start, stop: stop);
+        tableName: 'scd30_output', start: start, stop: stop);
 
     // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
     var returnList = <SCD30SensorDataEntry>[];
@@ -81,7 +96,7 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
       {DateTime? start, DateTime? stop}) async {
     List taskResult = await _getEntriesInChunks(
-        tableName: 'scd41_output', publicKey: null, start: start, stop: stop);
+        tableName: 'scd41_output', start: start, stop: stop);
 
     // [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
     var returnList = <SCD41SensorDataEntry>[];
@@ -96,7 +111,7 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
     List taskResult = await _getEntriesInChunks(
-        tableName: 'sps30_output', publicKey: null, start: start, stop: stop);
+        tableName: 'sps30_output', start: start, stop: stop);
 
     var returnList = <SPS30SensorDataEntry>[];
     taskResult.forEach((element) {
@@ -120,7 +135,7 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop}) async {
     List taskResult = await _getEntriesInChunks(
-        tableName: 'svm30_output', publicKey: null, start: start, stop: stop);
+        tableName: 'svm30_output', start: start, stop: stop);
 
     var returnList = <SVM30SensorDataEntry>[];
     taskResult.forEach((element) {
