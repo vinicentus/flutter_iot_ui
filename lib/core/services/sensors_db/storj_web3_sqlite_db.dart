@@ -4,45 +4,48 @@ import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
+import 'package:flutter_iot_ui/core/services/cryptography.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_mixin.dart';
 import 'package:flutter_iot_ui/core/util/storj_keys.dart' as keystore;
-import 'package:http/http.dart' as http;
+import 'package:get_it/get_it.dart';
+import 'package:storj_dart/storj_dart.dart';
+import 'package:storj_dart/convenience_lib.dart';
 
 // TODO: add task to make IoT device update data
 class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     with SimpleWeb3DbManager {
   StorjSQLiteWeb3DbManager() {
+    // TODO: use sqlite3.openInMemory()
     // super.dbPath = '/home/pi/git-repos/IoT-Microservice/app/oracle/temp.db';
     super.dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/temp.db';
+
+    // Initialize storj library
+    loadDynamicLibrary(
+        'C:/Users/langstvi/OneDrive - Arcada/Documents/libuplinkc.so');
   }
 
-  // https://link.<region>.storjshare.io/raw/<access key>/<object path>
-  String _generateAccessLink(
-          String region, String accessKey, String objectPath) =>
-      'https://link.$region.storjshare.io/raw/$accessKey/$objectPath';
+  EncryptorDecryptor decryptor = GetIt.instance<EncryptorDecryptor>();
+  // TODO: move to settings page
+  bool useEncryption = true;
 
-  String get _accessLink => _generateAccessLink(
-      'eu1', keystore.storjS3AccessKey, 'iot-microservice/temp.db');
-
-  http.Client _httpClient = http.Client();
+  String? publickKey;
 
   Future<File> _fetchAndStoreDB() async {
     final stopwatch = Stopwatch()..start();
-    var response = await _httpClient.get(Uri.parse(_accessLink));
+
+    var access = DartUplinkAccess.parseAccess(keystore.access);
+    var project = DartUplinkProject.openProject(access);
+    var fileBytes =
+        await project.downloadBytesFuture('iot-microservice', 'temp.db');
     print('fetch executed in ${stopwatch.elapsed}');
-    if (response.statusCode == 200) {
-      var file = await File(super.dbPath).writeAsBytes(response.bodyBytes);
+    stopwatch.reset();
 
-      print('write executed in ${stopwatch.elapsed}');
-      stopwatch.stop();
+    var file = await File(super.dbPath).writeAsBytes(fileBytes);
+    print('write executed in ${stopwatch.elapsed}');
+    stopwatch.stop();
 
-      return file;
-    } else {
-      print(response.statusCode);
-      print(response.body);
-      throw Exception('Failed to load data.');
-    }
+    return file;
   }
 
   @override
