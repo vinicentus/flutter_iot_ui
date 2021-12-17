@@ -9,8 +9,8 @@ import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_mixin.dart';
 import 'package:flutter_iot_ui/core/util/storj_keys.dart' as keystore;
 import 'package:get_it/get_it.dart';
-import 'package:storj_dart/storj_dart.dart';
-import 'package:storj_dart/convenience_lib.dart';
+import 'package:uplink_dart/uplink_dart.dart';
+import 'package:uplink_dart/convenience_lib.dart';
 
 // TODO: add task to make IoT device update data
 class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager

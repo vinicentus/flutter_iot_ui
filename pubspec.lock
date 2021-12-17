@@ -509,13 +509,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
-  storj_dart:
-    dependency: "direct main"
-    description:
-      path: "../storj.dart"
-      relative: true
-    source: path
-    version: "0.1.0"
   stream_channel:
     dependency: transitive
     description:
@@ -572,6 +565,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0+1"
+  uplink_dart:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "2ed95e2e5ed350cdfb34ced9c672806e3dbc0e7f"
+      url: "https://github.com/vinicentus/uplink_dart"
+    source: git
+    version: "0.1.0"
   uuid:
     dependency: transitive
     description:

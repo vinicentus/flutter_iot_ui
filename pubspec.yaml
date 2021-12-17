@@ -44,8 +44,9 @@ dependencies:
   http: ^0.13.4
   encrypt: ^5.0.1
   pem: ^2.0.0
-  storj_dart:
-    path: '../storj.dart'
+  uplink_dart:
+    git:
+      url: https://github.com/vinicentus/uplink_dart
 
 dev_dependencies:
   build_runner: ^2.1.4
