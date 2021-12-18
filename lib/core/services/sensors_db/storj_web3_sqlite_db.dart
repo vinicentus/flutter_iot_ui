@@ -36,24 +36,39 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
 
   String? publickKey;
 
+  String _bucketName = 'iot-microservice';
+  String _filePath = 'temp.db';
+
+  /// Because the IoT device is not allowed to delete old databses,
+  /// we have to delete is before requesting new data.
+  /// If there exists an old database when the IoT device tries to upload,
+  /// the task will fail, because the IoT device is not allowed
+  /// to overwrite any data.
+  ///
+  /// Currently this has no way of knowing if there exist a file or not,
+  /// it just blindly tries to delete it. This is OK if we know there is
+  /// a file to delete.
+  void _deleteOldDB() {
+    var project = DartUplinkProject.openProject(masterAccess);
+    project.deleteObject(_bucketName, _filePath);
+    project.close();
+  }
+
   String _generateAccess() {
-    // var now = DateTime.now();
-    // var future = now.add(Duration(minutes: 10));
+    var now = DateTime.now();
+    // Only allow the IoT Device to upload, only the next minute
+    var future = now.add(Duration(minutes: 1));
     return masterAccess.share(
-        DartUplinkPermission(
-          allowUpload: true,
-        ), //notBefore: now, notAfter: future),
-        [
-          DartUplinkUplinkSharePrefix('iot-microservice', 'temp.db')
-        ]).serialize();
+      DartUplinkPermission(allowUpload: true, notBefore: now, notAfter: future),
+      [DartUplinkUplinkSharePrefix(_bucketName, _filePath)],
+    ).serialize();
   }
 
   Future<File> _fetchAndStoreDB() async {
     final stopwatch = Stopwatch()..start();
 
     var project = DartUplinkProject.openProject(masterAccess);
-    var fileBytes =
-        await project.downloadBytesFuture('iot-microservice', 'temp.db');
+    var fileBytes = await project.downloadBytesFuture(_bucketName, _filePath);
     print('fetch executed in ${stopwatch.elapsed}');
     stopwatch.reset();
 
@@ -86,6 +101,7 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
             possiblyEncryptedAccess: access, isEncrypted: false),
         timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
+    _deleteOldDB();
     return super.getSCD30Entries(start: start, stop: stop);
   }
 
@@ -99,6 +115,7 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
             possiblyEncryptedAccess: access, isEncrypted: false),
         timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
+    _deleteOldDB();
     return super.getSCD41Entries(start: start, stop: stop);
   }
 
@@ -111,6 +128,7 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
             possiblyEncryptedAccess: access, isEncrypted: false),
         timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
+    _deleteOldDB();
     return super.getSPS30Entries(start: start, stop: stop);
   }
 
@@ -123,6 +141,7 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
             possiblyEncryptedAccess: access, isEncrypted: false),
         timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
+    _deleteOldDB();
     return super.getSVM30Entries(start: start, stop: stop);
   }
 }
