@@ -23,19 +23,35 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     // Initialize storj library
     loadDynamicLibrary(
         'C:/Users/langstvi/OneDrive - Arcada/Documents/libuplinkc.so');
+
+    // This must be called after loadDynamicLibrary, and masterAccess needs to be marked late
+    masterAccess = DartUplinkAccess.parseAccess(keystore.access);
   }
 
-  EncryptorDecryptor decryptor = GetIt.instance<EncryptorDecryptor>();
+  late DartUplinkAccess masterAccess;
+
+  EncryptorDecryptor encryptor = GetIt.instance<EncryptorDecryptor>();
   // TODO: move to settings page
   bool useEncryption = true;
 
   String? publickKey;
 
+  String _generateAccess() {
+    // var now = DateTime.now();
+    // var future = now.add(Duration(minutes: 10));
+    return masterAccess.share(
+        DartUplinkPermission(
+          allowUpload: true,
+        ), //notBefore: now, notAfter: future),
+        [
+          DartUplinkUplinkSharePrefix('iot-microservice', 'temp.db')
+        ]).serialize();
+  }
+
   Future<File> _fetchAndStoreDB() async {
     final stopwatch = Stopwatch()..start();
 
-    var access = DartUplinkAccess.parseAccess(keystore.access);
-    var project = DartUplinkProject.openProject(access);
+    var project = DartUplinkProject.openProject(masterAccess);
     var fileBytes =
         await project.downloadBytesFuture('iot-microservice', 'temp.db');
     print('fetch executed in ${stopwatch.elapsed}');
@@ -48,12 +64,26 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     return file;
   }
 
+  String createStorjTaskString({
+    required String possiblyEncryptedAccess,
+    required bool isEncrypted,
+    String? publicKey,
+  }) {
+    return convertToBase64({
+      'possibly_encrypted_access': possiblyEncryptedAccess,
+      'is_encrypted': isEncrypted,
+      'public_key': publicKey, // whole pem file as string
+      'task_return_type': 'storj'
+    });
+  }
+
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
       {DateTime? start, DateTime? stop}) async {
+    var access = _generateAccess();
     await waitForTaskCompletion(
-        tableName: 'scd30_output',
-        taskReturnType: 'storj',
+        createStorjTaskString(
+            possiblyEncryptedAccess: access, isEncrypted: false),
         timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
     return super.getSCD30Entries(start: start, stop: stop);
@@ -62,9 +92,11 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   @override
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
       {DateTime? start, DateTime? stop}) async {
+    var access = _generateAccess();
+    print(access);
     await waitForTaskCompletion(
-        tableName: 'scd41_output',
-        taskReturnType: 'storj',
+        createStorjTaskString(
+            possiblyEncryptedAccess: access, isEncrypted: false),
         timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
     return super.getSCD41Entries(start: start, stop: stop);
@@ -73,9 +105,10 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   @override
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
+    var access = _generateAccess();
     await waitForTaskCompletion(
-        tableName: 'sps30_output',
-        taskReturnType: 'storj',
+        createStorjTaskString(
+            possiblyEncryptedAccess: access, isEncrypted: false),
         timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
     return super.getSPS30Entries(start: start, stop: stop);
@@ -84,9 +117,10 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   @override
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop}) async {
+    var access = _generateAccess();
     await waitForTaskCompletion(
-        tableName: 'svm30_output',
-        taskReturnType: 'storj',
+        createStorjTaskString(
+            possiblyEncryptedAccess: access, isEncrypted: false),
         timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
     return super.getSVM30Entries(start: start, stop: stop);

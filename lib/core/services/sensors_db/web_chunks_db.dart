@@ -6,6 +6,7 @@ import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/cryptography.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_mixin.dart';
+import 'package:flutter_iot_ui/core/util/datetime_string.dart';
 import 'package:get_it/get_it.dart';
 
 class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
@@ -35,6 +36,22 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
     }
   }
 
+  String createNormalTaskString({
+    DateTime? startTime,
+    DateTime? stopTime,
+    String? publicKey,
+    required String tableName, // TODO
+  }) {
+    return convertToBase64({
+      '_start_time':
+          startTime != null ? convertDateTimeToString(startTime) : null,
+      '_stop_time': stopTime != null ? convertDateTimeToString(stopTime) : null,
+      'public_key': publicKey, // whole pem file as string
+      'tableName': tableName,
+      'task_return_type': 'normal'
+    });
+  }
+
   // TODO: don't wait for previous task to complete before submitting new one
   Stream<List> _getEntriesInChunksAsStream(
       {required String tableName, DateTime? start, DateTime? stop}) async* {
@@ -49,23 +66,24 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
         print('Using encryption, including public RSA key in task...');
         publickKey = await decryptor.rsaPublicKeyBase64();
 
-        var completedPartiallyDecodedTask =
-            convertFromBase64(await waitForTaskCompletion(
+        var completedPartiallyDecodedTask = convertFromBase64(
+            await waitForTaskCompletion(createNormalTaskString(
           tableName: tableName,
           publicKey: publickKey,
-          start: timeChunkList[i],
-          stop: timeChunkList[i + 1],
-        ));
+          startTime: timeChunkList[i],
+          stopTime: timeChunkList[i + 1],
+        )));
 
         print('Decrypting the task result...');
         yield await decryptResult(completedPartiallyDecodedTask);
       } else {
-        yield convertFromBase64(await waitForTaskCompletion(
+        yield convertFromBase64(
+            await waitForTaskCompletion(createNormalTaskString(
           tableName: tableName,
           publicKey: null,
-          start: timeChunkList[i],
-          stop: timeChunkList[i + 1],
-        )) as List;
+          startTime: timeChunkList[i],
+          stopTime: timeChunkList[i + 1],
+        ))) as List;
       }
     }
   }

@@ -7,6 +7,7 @@ import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
+import 'package:flutter_iot_ui/core/util/datetime_string.dart';
 import 'package:sqlite3/open.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -125,7 +126,3 @@ class SQLiteDatabaseManager extends DatabaseManager {
     return Future.value(iterable.toList());
   }
 }
-
-// TODO
-String convertDateTimeToString(DateTime datetime) =>
-    datetime.toUtc().toIso8601String().split('.')[0] + 'Z';

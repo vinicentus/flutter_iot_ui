@@ -11,24 +11,13 @@ mixin SimpleWeb3DbManager on DatabaseManager {
   // Use the globally exposed web3client, not a separate one.
   Web3 web3Client = GetIt.instance<Web3>();
 
-  Future<String> waitForTaskCompletion(
-      {required String tableName,
-      String? publicKey,
-      DateTime? start,
-      DateTime? stop,
-      String? taskReturnType,
-      Duration timeout = const Duration(seconds: 10)}) async {
+  Future<String> waitForTaskCompletion(String taskString,
+      {Duration timeout = const Duration(seconds: 10)}) async {
     // TODO: don't load all contracts (also loaduser and loadoracle) every time
     await web3Client.loadUser();
     await web3Client.getOraclesForActiveUser();
 
-    var taskAddress = await web3Client.addTask(createTaskString(
-        // TODO: bad non-null assertions
-        startTime: start != null ? convertDateTimeToString(start) : null,
-        stopTime: stop != null ? convertDateTimeToString(stop) : null,
-        publicKey: publicKey, // whole pem file as string
-        tableName: tableName,
-        taskReturnType: taskReturnType));
+    var taskAddress = await web3Client.addTask(taskString);
     if (taskAddress is! EthereumAddress) {
       throw Exception('Got back invalid task address: $taskAddress');
     }
@@ -49,22 +38,6 @@ mixin SimpleWeb3DbManager on DatabaseManager {
     // Example of valid task in list [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
     // This breaks the while loop
     return awaitedEvent.data;
-  }
-
-  String createTaskString(
-      {String? startTime,
-      String? stopTime,
-      String? publicKey,
-      required String tableName, // TODO
-      String? taskReturnType // TODO
-      }) {
-    return convertToBase64({
-      '_start_time': startTime,
-      '_stop_time': stopTime,
-      'public_key': publicKey,
-      'tableName': tableName,
-      'task_return_type': taskReturnType
-    });
   }
 
   String convertToBase64(Map<String, dynamic> input) {
