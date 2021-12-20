@@ -1,11 +1,13 @@
 {
     "gateway": {
+        // The IP address where you deployed your ethereum network, specifically the jsonRPC node
         "host": "192.168.13.203",
         "port": 8545,
         "wsPort": 8546
     },
     "chainId": 11865,
     "keys": {
+        // This is a public address, not a key...
         "public": "0xfEd0c3ad8aF8247A22484325D501eb84c1Aa4C9a",
         "private": "0xce3c66316d901fbe798213600903baf4e3b0c72c9e67e8ba5c89a395fad502f1"
     }

@@ -28,6 +28,13 @@ A working [flutter](https://docs.flutter.dev/get-started/install) installation w
 
 * update any other paths in [paths.dart](lib/core/util/paths.dart) to suit your needs and your machine.
 
+* Change default ethereum keys
+    * Generate a new ethereum public/private key pair using you preferred method. This will serve as the underlying key for a registered User smart contract, and will be used by all the IoT devices and User Interfaces.
+    * Swap out the `public` address and `private` key fields in [settings.json](resources/settings.json)
+    * The same key should be copied over to any IoT devices you wish to access, because currently, a user can only access their own devices...
+
+* Update [settings.json](resources/settings.json) with the IP adddress of your jsonRPC geth node (the machine where you deployed [geth-docker](https://github.com/vinicentus/geth-docker))
+
 * run this project, either in you IDE or from the terminal using `flutter run`, see the flutter docs if you want to build an executable
 
 #### Running on IoT device (Raspberry Pi)
