@@ -1,7 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
@@ -12,20 +11,18 @@ import 'package:sqlite3/open.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:universal_platform/universal_platform.dart';
 
-/// Singleton SQLite Databse Manager, implementing the common functions from [DatabaseManager].
+/// SQLite Databse Manager, implementing the common functions from [DatabaseManager].
 /// This class just provides convenient functions for common database operations.
 class SQLiteDatabaseManager extends DatabaseManager {
   SQLiteDatabaseManager() {
-    // Use different db path if debugging
-    if (kDebugMode || kProfileMode) {
-      if (UniversalPlatform.isWindows) {
-        open.overrideFor(OperatingSystem.windows, _openDllOnWindows);
-        print(
-            'running in ${kDebugMode ? 'debug' : 'profile'} mode on Windows, using different db path, and loading shared library for sqlite3.');
-        dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
-      } else {
-        print('Running on in debug mode but not on windows...');
-      }
+    // Use different db path if on windows
+    if (UniversalPlatform.isWindows) {
+      open.overrideFor(OperatingSystem.windows, _openDllOnWindows);
+      dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
+      print(
+          'running on Windows, using different db path, and loading shared library for sqlite3.');
+    } else {
+      print('Running on in debug mode but not on windows...');
     }
   }
 
