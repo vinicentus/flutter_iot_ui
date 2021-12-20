@@ -7,6 +7,7 @@ import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/abstract_db.dart';
 import 'package:flutter_iot_ui/core/util/datetime_string.dart';
+import 'package:flutter_iot_ui/core/util/paths.dart';
 import 'package:sqlite3/open.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:universal_platform/universal_platform.dart';
@@ -18,7 +19,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
     // Use different db path if on windows
     if (UniversalPlatform.isWindows) {
       open.overrideFor(OperatingSystem.windows, _openDllOnWindows);
-      dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/sensor_data.db';
+      dbPath = dbPathSeparateDevice;
       print(
           'running on Windows, using different db path, and loading shared library for sqlite3.');
     } else {
@@ -27,13 +28,11 @@ class SQLiteDatabaseManager extends DatabaseManager {
   }
 
   DynamicLibrary _openDllOnWindows() {
-    final library = File(
-        'C:/Users/langstvi/OneDrive - Arcada/Documents/sqlite-dll-win64-x64-3360000/sqlite3.dll');
+    final library = File(sqliteDllPath);
     return DynamicLibrary.open(library.path);
   }
 
-  String dbPath =
-      '/home/pi/git-repos/IoT-Microservice/app/oracle/sensor_data.db';
+  String dbPath = dbPathIotDevice;
 
   Database get openedDatabase => sqlite3.open(dbPath, mode: OpenMode.readOnly);
 

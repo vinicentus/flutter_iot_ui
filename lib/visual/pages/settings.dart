@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_iot_ui/core/util/paths.dart';
 import 'package:flutter_iot_ui/core/viewmodels/graph_settings_model.dart';
 import 'package:flutter_iot_ui/visual/widgets/drawer.dart';
 import 'package:provider/provider.dart';
@@ -74,7 +75,7 @@ Higher values mean smoother lines on the graph.'''),
             title: Text('Show data from local database'),
             subtitle: Text(
                 '''If set, the app will try to get data from a local SQLite DB.
-It will try to load sensor configuration from /home/pi/git-repos/IoT-Microservice/app/resources/device_settings.yaml'''),
+It will try to load sensor configuration from $configPathIotDevice'''),
             value: model.usesSqLite(),
             onChanged: model.setUsesSqLite,
           ),

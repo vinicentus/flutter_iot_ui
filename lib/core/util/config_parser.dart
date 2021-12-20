@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
+import 'package:flutter_iot_ui/core/util/paths.dart';
 import 'package:yaml/yaml.dart';
 
 class YamlConfigParser {
-  var _localPath =
-      '/home/pi/git-repos/IoT-Microservice/app/resources/device_settings.yaml';
+  var _localPath = configPathIotDevice;
 
   parse() async {
     final contents = await File(_localPath).readAsString();

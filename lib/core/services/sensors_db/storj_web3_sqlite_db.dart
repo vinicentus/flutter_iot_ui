@@ -7,6 +7,7 @@ import 'package:flutter_iot_ui/core/models/sensors/scd30_datamodel.dart';
 import 'package:flutter_iot_ui/core/services/cryptography.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_mixin.dart';
+import 'package:flutter_iot_ui/core/util/paths.dart';
 import 'package:flutter_iot_ui/core/util/storj_keys.dart' as keystore;
 import 'package:get_it/get_it.dart';
 import 'package:uplink_dart/uplink_dart.dart';
@@ -15,14 +16,12 @@ import 'package:uplink_dart/convenience_lib.dart';
 // TODO: add task to make IoT device update data
 class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     with SimpleWeb3DbManager {
-  StorjSQLiteWeb3DbManager() {
-    // TODO: use sqlite3.openInMemory()
-    // super.dbPath = '/home/pi/git-repos/IoT-Microservice/app/oracle/temp.db';
-    super.dbPath = 'C:/Users/langstvi/OneDrive - Arcada/Documents/temp.db';
+  // Call super in order to choose correct db path
+  StorjSQLiteWeb3DbManager() : super() {
+    super.dbPath = tempDbPath;
 
     // Initialize storj library
-    loadDynamicLibrary(
-        'C:/Users/langstvi/OneDrive - Arcada/Documents/libuplinkc.so');
+    loadDynamicLibrary(libuplinkcDllPath);
 
     // This must be called after loadDynamicLibrary, and masterAccess needs to be marked late
     masterAccess = DartUplinkAccess.parseAccess(keystore.access);
