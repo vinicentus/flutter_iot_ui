@@ -15,15 +15,17 @@ import 'package:universal_platform/universal_platform.dart';
 /// SQLite Databse Manager, implementing the common functions from [DatabaseManager].
 /// This class just provides convenient functions for common database operations.
 class SQLiteDatabaseManager extends DatabaseManager {
-  SQLiteDatabaseManager() {
+  SQLiteDatabaseManager()
+      : this.withPath(UniversalPlatform.isWindows
+            ? dbPathSeparateDevice
+            : dbPathIotDevice);
+
+  SQLiteDatabaseManager.withPath(this.dbPath) {
     // Use different db path if on windows
     if (UniversalPlatform.isWindows) {
       open.overrideFor(OperatingSystem.windows, _openDllOnWindows);
-      dbPath = dbPathSeparateDevice;
       print(
           'running on Windows, using different db path, and loading shared library for sqlite3.');
-    } else {
-      print('Running on in debug mode but not on windows...');
     }
   }
 
@@ -32,7 +34,7 @@ class SQLiteDatabaseManager extends DatabaseManager {
     return DynamicLibrary.open(library.path);
   }
 
-  String dbPath = dbPathIotDevice;
+  final String dbPath;
 
   Database get openedDatabase => sqlite3.open(dbPath, mode: OpenMode.readOnly);
 

@@ -17,9 +17,7 @@ import 'package:uplink_dart/convenience_lib.dart';
 class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     with SimpleWeb3DbManager {
   // Call super in order to choose correct db path
-  StorjSQLiteWeb3DbManager() : super() {
-    super.dbPath = tempDbPath;
-
+  StorjSQLiteWeb3DbManager() : super.withPath(tempDbPath) {
     // Initialize storj library
     loadDynamicLibrary(libuplinkcDllPath);
 
