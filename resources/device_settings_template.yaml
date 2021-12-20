@@ -29,5 +29,6 @@ chainId: chain-id-12345
 
 # ETHEREUM KEYS
 keys:
+    # This is the public ethereum address
     public: 'public-address-12345'
     private: 'private-key-12345'
