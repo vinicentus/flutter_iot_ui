@@ -7,7 +7,7 @@ class EncryptorDecryptor {
   Future<pointycastle.RSAPublicKey> rsaPublicKey() => encryptio
       .parseKeyFromFile<pointycastle.RSAPublicKey>('resources/public_key.pem');
 
-  Future<String> rsaPublicKeyBase64() async {
+  Future<String> rsaPublicKeyString() async {
     var file = await rootBundle.loadString('resources/public_key.pem');
     return file;
   }

@@ -10,13 +10,16 @@ Stream<List<T>> dbUpdatesOfType<T extends GenericSensorDataEntry>(
     {required Duration refreshDuration,
     required Duration graphTimeWindow,
     required SensorLocation sensorLocation,
-    required bool usesStorj}) async* {
+    required bool usesStorj,
+    required bool useEncryption}) async* {
   DatabaseManager dbManager;
   if (sensorLocation == SensorLocation.remote) {
     if (usesStorj) {
       dbManager = GetIt.instance<StorjSQLiteWeb3DbManager>();
+      (dbManager as StorjSQLiteWeb3DbManager).useEncryption = useEncryption;
     } else {
       dbManager = GetIt.instance<Web3ChunkDbManager>();
+      (dbManager as Web3ChunkDbManager).useEncryption = useEncryption;
     }
   } else {
     dbManager = GetIt.instance<SQLiteDatabaseManager>();

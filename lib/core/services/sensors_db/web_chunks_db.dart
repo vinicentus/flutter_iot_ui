@@ -11,10 +11,9 @@ import 'package:get_it/get_it.dart';
 
 class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
   EncryptorDecryptor decryptor = GetIt.instance<EncryptorDecryptor>();
-  // TODO: move to settings page
-  bool useEncryption = true;
 
-  String? publickKey;
+  bool useEncryption = true;
+  String? publicKey;
 
   /// Split interval into smaller chunks that are a maximum of 1 hour long
   @visibleForTesting
@@ -64,12 +63,12 @@ class Web3ChunkDbManager extends DatabaseManager with SimpleWeb3DbManager {
       print('returning chunk ${i + 1}/$intervalCount');
       if (useEncryption) {
         print('Using encryption, including public RSA key in task...');
-        publickKey = await decryptor.rsaPublicKeyBase64();
+        publicKey = await decryptor.rsaPublicKeyString();
 
         var completedPartiallyDecodedTask = convertFromBase64(
             await waitForTaskCompletion(createNormalTaskString(
           tableName: tableName,
-          publicKey: publickKey,
+          publicKey: publicKey,
           startTime: timeChunkList[i],
           stopTime: timeChunkList[i + 1],
         )));

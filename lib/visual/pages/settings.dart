@@ -67,9 +67,19 @@ Higher values mean smoother lines on the graph.'''),
           if (model.usesWeb3())
             SwitchListTile(
               title: Text('Use Storj to get data.'),
-              subtitle: Text('This option is only vaailable when using web3.'),
+              subtitle: Text('This option is only available when using web3.'),
               value: model.usesStorj(),
               onChanged: model.setUsesStorj,
+            ),
+          if (model.usesWeb3())
+            SwitchListTile(
+              title: Text('Encrypt data'),
+              subtitle:
+                  Text('''Send back encrypted data in chunked/normal web3 mode,
+or encrypt storj access token that is sent to the IoT device when requesting data.
+This option is only available when using web3.'''),
+              value: model.usesEncryption(),
+              onChanged: model.setUsesEncryption,
             ),
           SwitchListTile(
             title: Text('Show data from local database'),

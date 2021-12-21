@@ -28,10 +28,10 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   late DartUplinkAccess masterAccess;
 
   EncryptorDecryptor encryptor = GetIt.instance<EncryptorDecryptor>();
-  // TODO: move to settings page
   bool useEncryption = true;
 
-  String? publickKey;
+  // This is not the public key of the UI, but rather that of the IoT device
+  String? publicKey;
 
   String _bucketName = 'iot-microservice';
   String _filePath = 'temp.db';
@@ -89,10 +89,26 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     });
   }
 
+  String createRequestRsaTaskString() {
+    return convertToBase64({'task_return_type': 'send_rsa_key'});
+  }
+
+  Future<String> _requestRsaPublicKey() async {
+    if (publicKey == null) {
+      return publicKey =
+          await waitForTaskCompletion(createRequestRsaTaskString());
+    } else {
+      return publicKey!;
+    }
+  }
+
   @override
   Future<List<SCD30SensorDataEntry>> getSCD30Entries(
       {DateTime? start, DateTime? stop}) async {
     var access = _generateAccess();
+    if (useEncryption) {
+      print(await _requestRsaPublicKey());
+    }
     await waitForTaskCompletion(
         createStorjTaskString(
             possiblyEncryptedAccess: access, isEncrypted: false),
@@ -106,7 +122,9 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
       {DateTime? start, DateTime? stop}) async {
     var access = _generateAccess();
-    print(access);
+    if (useEncryption) {
+      print(await _requestRsaPublicKey());
+    }
     await waitForTaskCompletion(
         createStorjTaskString(
             possiblyEncryptedAccess: access, isEncrypted: false),
@@ -120,6 +138,9 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
     var access = _generateAccess();
+    if (useEncryption) {
+      print(await _requestRsaPublicKey());
+    }
     await waitForTaskCompletion(
         createStorjTaskString(
             possiblyEncryptedAccess: access, isEncrypted: false),
@@ -133,6 +154,9 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop}) async {
     var access = _generateAccess();
+    if (useEncryption) {
+      print(await _requestRsaPublicKey());
+    }
     await waitForTaskCompletion(
         createStorjTaskString(
             possiblyEncryptedAccess: access, isEncrypted: false),

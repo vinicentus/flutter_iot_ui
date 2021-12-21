@@ -84,4 +84,13 @@ class GraphSettingsModel extends ChangeNotifier {
     _usesStorj = value;
     notifyListeners();
   }
+
+  bool _usesEncryption = true;
+
+  bool usesEncryption() => _usesEncryption;
+
+  setUsesEncryption(bool value) {
+    _usesEncryption = value;
+    notifyListeners();
+  }
 }

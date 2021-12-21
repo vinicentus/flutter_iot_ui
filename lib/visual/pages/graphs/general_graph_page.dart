@@ -58,7 +58,8 @@ class _GeneralGraphPageState<T extends GenericSensorDataEntry>
             refreshDuration: model.graphRefreshTime,
             graphTimeWindow: model.graphTimeWindow,
             sensorLocation: widget.sensorLocation,
-            usesStorj: model.usesStorj())
+            usesStorj: model.usesStorj(),
+            useEncryption: model.usesEncryption())
         .map((e) => lineChartBarDatas(e, model));
 
     for (String name in this.widget.checkBoxNames) {
