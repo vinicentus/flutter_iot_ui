@@ -34,9 +34,12 @@ mixin SimpleWeb3DbManager on DatabaseManager {
     var awaitedEvent = await event;
     print('got back completed task');
 
-    // Example of valid task in list [2021-08-23T00:00:01Z, 406.9552001953125, 19.77590560913086, 61.5251579284668],
-    // This breaks the while loop
-    return awaitedEvent.data;
+    // This is how the IoT device report an error in the task
+    if (awaitedEvent.data.startsWith('TASK COMPLETED WITH ERROR:')) {
+      throw Exception(awaitedEvent.data);
+    } else {
+      return awaitedEvent.data;
+    }
   }
 
   String convertToBase64(Map<String, dynamic> input) {
