@@ -13,7 +13,6 @@ import 'package:get_it/get_it.dart';
 import 'package:uplink_dart/uplink_dart.dart';
 import 'package:uplink_dart/convenience_lib.dart';
 
-// TODO: add task to make IoT device update data
 class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     with SimpleWeb3DbManager {
   // Call super in order to choose correct db path
@@ -79,12 +78,10 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   String createStorjTaskString({
     required String possiblyEncryptedAccess,
     required bool isEncrypted,
-    String? publicKey,
   }) {
     return convertToBase64({
       'possibly_encrypted_access': possiblyEncryptedAccess,
       'is_encrypted': isEncrypted,
-      'public_key': publicKey, // whole pem file as string
       'task_return_type': 'storj'
     });
   }
@@ -102,67 +99,54 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     }
   }
 
-  @override
-  Future<List<SCD30SensorDataEntry>> getSCD30Entries(
-      {DateTime? start, DateTime? stop}) async {
+  Future<void> _prepareForGetEntries() async {
     var access = _generateAccess();
+    // Encrypt access if requested
     if (useEncryption) {
-      print(await _requestRsaPublicKey());
+      await _requestRsaPublicKey();
+      print(publicKey);
+      var list = encryptor.encryptBoth(access, publicKey!);
+      var symmetricKey = list[0];
+      var data = list[1];
+
+      access = encryptor.encodeBase64KeyAndData(symmetricKey, data);
     }
+    print(access);
     await waitForTaskCompletion(
         createStorjTaskString(
-            possiblyEncryptedAccess: access, isEncrypted: false),
+            possiblyEncryptedAccess: access,
+            // Make sure to indicate if encryption was used
+            isEncrypted: useEncryption),
         timeout: Duration(seconds: 30));
     await _fetchAndStoreDB();
     _deleteOldDB();
+  }
+
+  @override
+  Future<List<SCD30SensorDataEntry>> getSCD30Entries(
+      {DateTime? start, DateTime? stop}) async {
+    await _prepareForGetEntries();
     return super.getSCD30Entries(start: start, stop: stop);
   }
 
   @override
   Future<List<SCD41SensorDataEntry>> getSCD41Entries(
       {DateTime? start, DateTime? stop}) async {
-    var access = _generateAccess();
-    if (useEncryption) {
-      print(await _requestRsaPublicKey());
-    }
-    await waitForTaskCompletion(
-        createStorjTaskString(
-            possiblyEncryptedAccess: access, isEncrypted: false),
-        timeout: Duration(seconds: 30));
-    await _fetchAndStoreDB();
-    _deleteOldDB();
+    await _prepareForGetEntries();
     return super.getSCD41Entries(start: start, stop: stop);
   }
 
   @override
   Future<List<SPS30SensorDataEntry>> getSPS30Entries(
       {DateTime? start, DateTime? stop}) async {
-    var access = _generateAccess();
-    if (useEncryption) {
-      print(await _requestRsaPublicKey());
-    }
-    await waitForTaskCompletion(
-        createStorjTaskString(
-            possiblyEncryptedAccess: access, isEncrypted: false),
-        timeout: Duration(seconds: 30));
-    await _fetchAndStoreDB();
-    _deleteOldDB();
+    await _prepareForGetEntries();
     return super.getSPS30Entries(start: start, stop: stop);
   }
 
   @override
   Future<List<SVM30SensorDataEntry>> getSVM30Entries(
       {DateTime? start, DateTime? stop}) async {
-    var access = _generateAccess();
-    if (useEncryption) {
-      print(await _requestRsaPublicKey());
-    }
-    await waitForTaskCompletion(
-        createStorjTaskString(
-            possiblyEncryptedAccess: access, isEncrypted: false),
-        timeout: Duration(seconds: 30));
-    await _fetchAndStoreDB();
-    _deleteOldDB();
+    await _prepareForGetEntries();
     return super.getSVM30Entries(start: start, stop: stop);
   }
 }
