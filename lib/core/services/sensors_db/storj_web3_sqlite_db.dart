@@ -98,16 +98,26 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   }
 
   Future<void> _prepareForGetEntries() async {
-    var access = _generateAccess();
-    // Encrypt access if requested
+    // Delete old db
+    // TODO: check if old db file is present before trying to delete
+    _deleteOldDB();
+
     if (useEncryption) {
       await _requestRsaPublicKey();
+    }
+
+    // Generate access after we have the key, so we don't waste any time for which it is active
+    var access = _generateAccess();
+
+    // Encrypt access if requested
+    if (useEncryption) {
       var list = encryptor.encryptBoth(access, publicKey!);
       var symmetricKey = list[0];
       var data = list[1];
 
       access = encryptor.encodeBase64KeyAndData(symmetricKey, data);
     }
+
     await waitForTaskCompletion(
         createStorjTaskString(
             possiblyEncryptedAccess: access,
