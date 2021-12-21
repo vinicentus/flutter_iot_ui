@@ -66,11 +66,9 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     var project = DartUplinkProject.openProject(masterAccess);
     var fileBytes = await project.downloadBytesFuture(_bucketName, _filePath);
     print('fetch executed in ${stopwatch.elapsed}');
-    stopwatch.reset();
+    stopwatch.stop();
 
     var file = await File(super.dbPath).writeAsBytes(fileBytes);
-    print('write executed in ${stopwatch.elapsed}');
-    stopwatch.stop();
 
     return file;
   }
@@ -104,14 +102,12 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
     // Encrypt access if requested
     if (useEncryption) {
       await _requestRsaPublicKey();
-      print(publicKey);
       var list = encryptor.encryptBoth(access, publicKey!);
       var symmetricKey = list[0];
       var data = list[1];
 
       access = encryptor.encodeBase64KeyAndData(symmetricKey, data);
     }
-    print(access);
     await waitForTaskCompletion(
         createStorjTaskString(
             possiblyEncryptedAccess: access,
