@@ -57,6 +57,9 @@ class TokenManagerPageModel extends ChangeNotifier {
   }
 
   String computeMaxPurchaseableAMount() {
+    // TODO: Check max amount set in contract
+    // var contractCapacity = await _manager.capacity();
+
     return (currentUserBalance / price).floor().toString();
   }
 }

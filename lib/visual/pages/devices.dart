@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iot_ui/core/models/contracts/Oracle.g.dart';
 import 'package:flutter_iot_ui/core/models/json_id.dart';
+import 'package:flutter_iot_ui/core/services/sensors_db/storj_web3_sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/web3.dart';
 import 'package:flutter_iot_ui/core/viewmodels/device_info_dialog_model.dart';
 import 'package:flutter_iot_ui/core/services/selected_devices_model.dart';
@@ -76,6 +77,10 @@ class DevicesPageState extends State<DevicesPage> {
                         // Selected if selected in Web3Manager is the same as this device
                         value: jsonId,
                         onChanged: (JsonId? changedId) {
+                          // Needed because oterwise the StorjSQLiteWeb3DbManager tries to use the RSA key of the previous device
+                          // TODO: move this to a better location
+                          GetIt.instance<StorjSQLiteWeb3DbManager>().publicKey =
+                              null;
                           setState(() {
                             selectedDevicesModel.selectedOracleId = changedId!;
                           });
