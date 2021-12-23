@@ -51,3 +51,6 @@ gen_snapshot_linux_x64_release
 # Private RSA keys
 resources/private_key.pem
 resources/public_key.pem
+
+# smart contract ABI files
+lib/core/models/contracts/*.abi.json
