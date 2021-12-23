@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_iot_ui/core/models/sensors/svm30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/sps30_datamodel.dart';
 import 'package:flutter_iot_ui/core/models/sensors/scd41_datamodel.dart';
@@ -8,7 +10,6 @@ import 'package:flutter_iot_ui/core/services/cryptography.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/sqlite_db.dart';
 import 'package:flutter_iot_ui/core/services/sensors_db/web3_mixin.dart';
 import 'package:flutter_iot_ui/core/util/paths.dart';
-import 'package:flutter_iot_ui/core/util/storj_keys.dart' as keystore;
 import 'package:get_it/get_it.dart';
 import 'package:uplink_dart/uplink_dart.dart';
 import 'package:uplink_dart/convenience_lib.dart';
@@ -19,9 +20,19 @@ class StorjSQLiteWeb3DbManager extends SQLiteDatabaseManager
   StorjSQLiteWeb3DbManager() : super.withPath(tempDbPath) {
     // Initialize storj library
     loadDynamicLibrary(libuplinkcDllPath);
+  }
+
+  // Essentially an asynchronous constructor, useb by GetIt
+  static Future<StorjSQLiteWeb3DbManager> createAsync() async {
+    var instance = StorjSQLiteWeb3DbManager();
 
     // This must be called after loadDynamicLibrary, and masterAccess needs to be marked late
-    masterAccess = DartUplinkAccess.parseAccess(keystore.access);
+    String jsonData = await rootBundle.loadString('resources/settings.json');
+    Map settings = json.decode(jsonData);
+    instance.masterAccess =
+        DartUplinkAccess.parseAccess(settings['storj-access']);
+
+    return instance;
   }
 
   late DartUplinkAccess masterAccess;

@@ -20,8 +20,8 @@ void registerGetItServices() {
   getIt.registerSingletonWithDependencies<Web3ChunkDbManager>(
       () => Web3ChunkDbManager(),
       dependsOn: [Web3]);
-  getIt.registerSingletonWithDependencies<StorjSQLiteWeb3DbManager>(
-      () => StorjSQLiteWeb3DbManager(),
+  getIt.registerSingletonAsync<StorjSQLiteWeb3DbManager>(
+      () => StorjSQLiteWeb3DbManager.createAsync(),
       dependsOn: [Web3]);
   getIt.registerSingleton<SQLiteDatabaseManager>(SQLiteDatabaseManager());
 }
