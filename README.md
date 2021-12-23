@@ -8,6 +8,7 @@ The user inteface can be used to inspect and modify the most commonly used param
 Here is a diagram of the data flow when using storj as the backend:
 ![image](/docs/big%20storj%20sequence%20diagram.png)
 Note that each storj access that is created by this UI is only valid for one minute, and only allows uploading the file `temp.db`.
+Also note that the whole sqlite database is currently uploaded to storj. Other task types have more granular data access.
 
 ## Getting Started
 
