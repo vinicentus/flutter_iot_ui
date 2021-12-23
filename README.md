@@ -17,6 +17,19 @@ You can update paths in [paths.dart](lib/core/util/paths.dart) as needed.
 ### Prerequisites
 A working [flutter](https://docs.flutter.dev/get-started/install) installation with desktop support enabled. See [Desktop support for Flutter](https://docs.flutter.dev/desktop).
 
+A Storj DCS account and an access token generated specifically for this dApp. See below
+#### Generating a Storj Access
+* Sign up for Storj DCS
+* Create a bucket named `iot-microservice`
+* Create an Access token using their web UI, only valid for the bucket `iot-microservice`
+* use the Storj Uplink CLI to generate a more restricted access
+    * This should only be allowed access to the one file you will acccess, currently hardcoded to be `temp.db` in the bucket bucket `iot-microservice`
+    * it should have all permissions, except that the list permissions is currently not required
+    * it is recommended to set an expiry date
+    * example: `uplink share --access your-access-string-from-web-here sj://iot-microservice/temp.db --readonly=false --writeonly=false --disallow-lists --not-after 2023-01-01T00:00:00+02:00`
+        * (replace `your-access-string-from-web-here` with the access you got from the Storj DCS Web UI)
+        * This will give you a new and even more restricted access string, which will be used by the UI
+
 ### Installation steps
 
 * _uplink_dart:_ follow the build steps of [uplink_dart](https://github.com/vinicentus/uplink_dart#instalation-steps) and place the resulting .so file in the path indicated by `libuplinkcDllPath` in [paths.dart](lib/core/util/paths.dart) (can be modified).
@@ -32,6 +45,12 @@ A working [flutter](https://docs.flutter.dev/get-started/install) installation w
     * Generate a new ethereum public/private key pair using you preferred method. This will serve as the underlying key for a registered User smart contract, and will be used by all the IoT devices and User Interfaces.
     * Swap out the `public` address and `private` key fields in [settings.json](resources/settings.json)
     * The same key should be copied over to any IoT devices you wish to access, because currently, a user can only access their own devices...
+
+* Generate new RSA keys
+    * It is currently not possible to do directly, and the recommended approach is to either generate keys using any other tool for RSA key generation, or to use the script [generate_pems.py from IoT-Microservice](https://github.com/vinicentus/IoT-Microservice/blob/main/app/oracle/generate_pems.py).
+    * copy over the keys to `resources/private_key.pem` and `resources/public_key.pem`.
+
+* Paste the generated access string from the prerequisites step inside [resources/settings.json](resources/settings.json) in the `storj-access` field. 
 
 * Update [settings.json](resources/settings.json) with the IP adddress of your jsonRPC geth node (the machine where you deployed [geth-docker](https://github.com/vinicentus/geth-docker))
 
