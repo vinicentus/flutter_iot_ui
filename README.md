@@ -17,6 +17,8 @@ You can update paths in [paths.dart](lib/core/util/paths.dart) as needed.
 ### Prerequisites
 A working [flutter](https://docs.flutter.dev/get-started/install) installation with desktop support enabled. See [Desktop support for Flutter](https://docs.flutter.dev/desktop).
 
+ABI json file describing your smart contracts, from the truffle migrate deployment step
+
 A Storj DCS account and an access token generated specifically for this dApp. See below
 #### Generating a Storj Access
 * Sign up for Storj DCS
@@ -51,6 +53,8 @@ A Storj DCS account and an access token generated specifically for this dApp. Se
     * copy over the keys to `resources/private_key.pem` and `resources/public_key.pem`.
 
 * Paste the generated access string from the prerequisites step inside [resources/settings.json](resources/settings.json) in the `storj-access` field. 
+
+* Copy over your generated ABI json files into `lib/core/models/contracts`. All filenames should end in `.abi.json`, example: `OracleManager.abi.json`.
 
 * Update [settings.json](resources/settings.json) with the IP adddress of your jsonRPC geth node (the machine where you deployed [geth-docker](https://github.com/vinicentus/geth-docker))
 
